@@ -1,19 +1,19 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "pay-later"
-client_id = "4fd4f1171fc3d999235a8da23786d5d8"
-application_url = "https://target-liberal-failures-katrina.trycloudflare.com"
+name = "paylater"
+client_id = "809a6d540ff4edfbd302c10e2895d03a"
+application_url = "https://paylater.cpro-server.de"
 embedded = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_customers,read_orders,write_orders"
+scopes = "read_customers,read_orders,write_orders, write_products"
 
 [auth]
 redirect_urls = [
-  "https://target-liberal-failures-katrina.trycloudflare.com/auth/callback",
-  "https://target-liberal-failures-katrina.trycloudflare.com/auth/shopify/callback",
-  "https://target-liberal-failures-katrina.trycloudflare.com/api/auth/callback"
+  "https://paylater.cpro-server.de/auth/callback",
+  "https://paylater.cpro-server.de/auth/shopify/callback",
+  "https://paylater.cpro-server.de/api/auth/callback"
 ]
 
 [webhooks]
@@ -23,5 +23,5 @@ api_version = "2024-01"
 embedded = false
 
 [build]
-automatically_update_urls_on_dev = true
+automatically_update_urls_on_dev = false
 dev_store_url = "helge-test.myshopify.com"

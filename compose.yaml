@@ -7,8 +7,8 @@ services:
       SHOPIFY_APP_URL: "https://paylater.cpro-server.de"
       SHOPIFY_SHOP: "helge-test.myshopify.com"
       HOST: "0.0.0.0"
-      SHOPIFY_API_KEY: "4fd4f1171fc3d999235a8da23786d5d8"
-      SHOPIFY_API_SECRET: "f25b4f87a8cd2cee49e4d8981af1ac39"
+      SHOPIFY_API_KEY: "809a6d540ff4edfbd302c10e2895d03a"
+      SHOPIFY_API_SECRET: "5c41e11efc7d7e340ac54ea9403c6f66"
       SCOPES: "write_products,write_orders,read_orders"
       DATABASE_URL: "mysql://root:1WrPZqlCnk4CHbpd31cq@payLater_db:3306/payLater" # TODO: change me for new instance
     labels:
