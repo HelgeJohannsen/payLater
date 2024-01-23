@@ -20,6 +20,9 @@ If you used the CLI to create the template, you can skip this section.
 docker exec -it payLater_db mysql -u root -p
 use payLater;
 select * from Order;
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/github_helge
 Using yarn:
 
 ```shell
