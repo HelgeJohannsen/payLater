@@ -1,7 +1,7 @@
 import db from "../db.server";
 export async function getOrder(orderId: string) {
   // TODO: check typing
-  const order = await db.order.findFirst({ where: { orderId } });
+  const order = await db.orders.findFirst({ where: { orderId } });
   // console.log("shop", shop);
   if (!order) {
 
@@ -15,10 +15,10 @@ export async function setOrderStatus(orderId: string, status: string) {
     const data = {
       status
     };
-    const order2 = await db.order.findFirst({ where: { orderId } });
+    const order2 = await db.orders.findFirst({ where: { orderId } });
     const id = order2?.id
   console.log(` --> setOrderId(orderId:${orderId}, status:${status})`);
-  const order = await db.order.update({ where: { id },  data });
+  const order = await db.orders.update({ where: { id },  data });
   return 
 }
 
@@ -35,7 +35,7 @@ export async function createOrder(orderId: string, orderName: string, paymentMet
     street, 
     country
   };
-    const order = await db.order.create({ data });
+    const order = await db.orders.create({ data });
     if (!order) {
       console.log("order not created")
       return null;
