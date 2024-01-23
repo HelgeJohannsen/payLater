@@ -38,8 +38,10 @@ function Extension() {
   const order_id = order.id.split("Order/")[1];
   const [showExt, setShowExt] = useState(true);
   const  [fetchedOrder, setfetchedOrder] = useState<fetchedOrderI>();
+  const  [parametersLink, setParametersLink] = useState<URLSearchParams | undefined>();
   const application_url = "https://paylater.cpro-server.de"
-  console.log("test")
+
+  console.log("test 3")
   useEffect(() => {
     const getAppConfig = async () => {
       try {
@@ -48,13 +50,36 @@ function Extension() {
         const requestUrl = `${application_url}/${apiEndpoint}?${parameters}`;
 
         const response = await fetch(requestUrl, { method: "GET" });
+        console.log("response", response)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data = await response.json();
+        const data: fetchedOrderI = await response.json();
         console.log("data -",data)
         setfetchedOrder(data);
         console.log("fetchedOrder", fetchedOrder)
+
+        const parameters2 = new URLSearchParams({
+          vendorID: "8403",
+          orderID: order_id,
+          customerAccountNumber: "Test123456789",
+          paymentMethode: data.paymentMethode,
+          order_amount: textAmount,
+          gender: "FEMALE",
+         // firstName: firstName,
+          //lastName: fetchedOrder["lastName"],
+          firstName: "Test",
+          lastName: "Approval",
+          zip: data.zip,
+          city: data.city,
+          street: data.street,
+          country: "DE",
+          birthdate: "01-01-1990",
+          returntocheckoutURL: `https://paylater.cpro-server.de/api/notify`,
+          notifyURL: `https://paylater.cpro-server.de/api/notify`,
+          failureURL: `https://www.facebook.com`,
+        });
+        setParametersLink(parameters2)
       } catch (error) {
         console.error("Error fetching AppConfig:", error);
       }
@@ -62,29 +87,8 @@ function Extension() {
     getAppConfig();
   }, []);
 
-  const parameters = new URLSearchParams({
-    vendorID: "8403",
-    orderID: order_id,
-    customerAccountNumber: "Test123456789",
-    paymentMethode: fetchedOrder.paymentMethode,
-    order_amount: textAmount,
-    gender: "FEMALE",
-   // firstName: firstName,
-    //lastName: fetchedOrder["lastName"],
-    firstName: "Test",
-    lastName: "Approval",
-    zip: fetchedOrder.zip,
-    city: fetchedOrder.city,
-    street: fetchedOrder.street,
-    country: "DE",
-    birthdate: "01-01-1990",
-    returntocheckoutURL: `https://paylater.cpro-server.de/api/notify`,
-    notifyURL: `https://paylater.cpro-server.de/api/notify`,
-    failureURL: `https://www.facebook.com`,
-  });
-
   //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
-  const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parameters}`;
+  const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
   if (order && showExt) {
     return (
       <InlineLayout
