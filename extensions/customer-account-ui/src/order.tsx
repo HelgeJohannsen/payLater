@@ -17,14 +17,27 @@ export default reactExtension(
   () => <Extension />
 );
 
+interface fetchedOrderI {
+  id: number
+  orderId: string
+  orderName: string
+  paymentMethode: string
+  status: string
+  firstName: string
+  lastName: string
+  zip: string
+  city: string
+  street: string
+  country: string
+}
+
 function Extension() {
   const order = useOrder();
   const cost = useTotalAmount();
   const textAmount = `${cost.amount}`;
   const order_id = order.id.split("Order/")[1];
   const [showExt, setShowExt] = useState(true);
-  const  [fetchedOrder, setfetchedOrder] = useState({});
-  const  [firstName, setfirstName] = useState("");
+  const  [fetchedOrder, setfetchedOrder] = useState<fetchedOrderI>();
   const application_url = "https://paylater.cpro-server.de"
   console.log("test")
   useEffect(() => {
@@ -39,10 +52,9 @@ function Extension() {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
+        console.log("data -",data)
         setfetchedOrder(data);
-        console.log("fetchedOrder",data)
-        console.log("fetchedOrder",data["firstName"])
-        setfirstName(data["firstName"])
+        console.log("fetchedOrder", fetchedOrder)
       } catch (error) {
         console.error("Error fetching AppConfig:", error);
       }
@@ -54,25 +66,21 @@ function Extension() {
     vendorID: "8403",
     orderID: order_id,
     customerAccountNumber: "Test123456789",
-    paymentMethode: fetchedOrder["paymentMethode"],
+    paymentMethode: fetchedOrder.paymentMethode,
     order_amount: textAmount,
     gender: "FEMALE",
    // firstName: firstName,
     //lastName: fetchedOrder["lastName"],
     firstName: "Test",
     lastName: "Approval",
-    zip: fetchedOrder["zip"],
-    city: fetchedOrder["city"],
-    street: fetchedOrder["street"],
+    zip: fetchedOrder.zip,
+    city: fetchedOrder.city,
+    street: fetchedOrder.street,
     country: "DE",
     birthdate: "01-01-1990",
     returntocheckoutURL: `https://paylater.cpro-server.de/api/notify`,
     notifyURL: `https://paylater.cpro-server.de/api/notify`,
     failureURL: `https://www.facebook.com`,
-
-
-
-
   });
 
   //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
