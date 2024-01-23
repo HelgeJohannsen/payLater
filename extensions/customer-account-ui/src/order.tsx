@@ -105,4 +105,4 @@ function Extension() {
   [ ] Check the if the payment method is form Consors
   [ ] Get the vendorId from the backend and use a manual value as a backup
   [ ] Remember to change the manual vendorID on this file
-*/ */
+*/
