@@ -13,7 +13,7 @@ RUN npm install
 #RUN npm remove @shopify/app @shopify/cli
 RUN npm run build
 #RUN npm prisma migrate dev -- --name init
-
+RUN npm run prisma migrate reset
 # You'll probably want to remove this in production, it's here to make it easier to test things!
 #RUN rm -f prisma/dev.sqlite
 #RUN chmod +x ./setupAndStart.sh
