@@ -23,7 +23,7 @@ model Session {
   userId      BigInt?
 }
 
-model order {
+model Order {
   id     Int      @id @default(autoincrement())
   orderId   String?
   orderName String?
