@@ -19,11 +19,11 @@ services:
       - DB_PASSWORD=todo
       - DB_USER=root
       - DB_NAME=db
-      - DB_HOST=devPayLater.db
+      - DB_HOST=payLater_db
       - DB_PORT=3306
 
   db:
-    container_name: devPayLater.db
+    container_name: payLater_db
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
     image: mariadb:10
     restart: always
