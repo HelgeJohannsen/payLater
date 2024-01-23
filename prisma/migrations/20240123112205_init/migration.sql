@@ -13,7 +13,7 @@ CREATE TABLE `Session` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Order` (
+CREATE TABLE `Orders` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `orderId` VARCHAR(191) NULL,
     `orderName` VARCHAR(191) NULL,
