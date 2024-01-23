@@ -9,7 +9,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   console.log("notify loader Request:", request.url);
   const requestedURL = new URL(request.url);
-  const orderID = requestedURL.searchParams.get("orderID");
+  const orderID = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
   if (orderID == null || status == null ) {
     throw new Response(

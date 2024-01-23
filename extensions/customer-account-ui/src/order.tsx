@@ -75,7 +75,7 @@ function Extension() {
           street: data.street,
           country: "DE",
           birthdate: "01-01-1990",
-          returntocheckoutURL: `https://paylater.cpro-server.de/api/notify`,
+          returntocheckoutURL: `https://www.helge-test.de`,
           notifyURL: `https://paylater.cpro-server.de/api/notify`,
           failureURL: `https://www.facebook.com`,
         });
