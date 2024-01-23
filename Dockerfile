@@ -19,4 +19,3 @@ RUN npm run build
 #RUN chmod +x ./setupAndStart.sh
 #CMD ["./setupAndStart.sh"]
 CMD ["npm", "run", "docker-start"]
-RUN npm run prisma migrate reset
