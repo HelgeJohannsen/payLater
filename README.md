@@ -18,6 +18,8 @@ Visit the [`shopify.dev` documentation](https://shopify.dev/docs/api/shopify-app
 
 If you used the CLI to create the template, you can skip this section.
 docker exec -it payLater_db mysql -u root -p
+use payLater;
+select * from Order;
 Using yarn:
 
 ```shell
