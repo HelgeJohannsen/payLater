@@ -66,8 +66,8 @@ function Extension() {
     street: fetchedOrder["street"],
     country: "DE",
     birthdate: "01-01-1990",
-    returntocheckoutURL: `https://cons-f-dev.cpro-server.de/api/notify`,
-    notifyURL: `https://cons-f-dev.cpro-server.de/api/notify`,
+    returntocheckoutURL: `https://paylater.cpro-server.de/api/notify`,
+    notifyURL: `https://paylater.cpro-server.de/api/notify`,
     failureURL: `https://www.facebook.com`,
 
 

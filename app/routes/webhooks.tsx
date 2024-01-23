@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         console.log("shipping_address",orderData?.shipping_address.first_name) 
         //if(orderData.payment_gateway_names.includes("Kauf auf Rechnung by Consors Finanz")){spaymentMethode("INVOICE")}
         //if(orderData.payment_gateway_names.includes("Kauf per Lastschrift by Consors Finanz")){spaymentMethode("DIRECT_DEBIT")}
-        if(orderData.payment_gateway_names.includes("bogus")){paymentMethode = "DIRECT_DEBIT"}
+        if(orderData.payment_gateway_names.includes("bogus")){paymentMethode = "INVOICE"}
         createOrder(
           String(orderData?.id),
           orderData?.name,
