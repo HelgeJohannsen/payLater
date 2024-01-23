@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Session {
@@ -23,7 +23,10 @@ model Session {
 
 model order {
   id     Int      @id @default(autoincrement())
-  orderId   String
+  orderId   String?
+  orderName String?
+  paymentMethode String?
+    status String?
     firstName String
     lastName String
     zip String

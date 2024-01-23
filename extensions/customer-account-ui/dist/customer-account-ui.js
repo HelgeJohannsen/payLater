@@ -1133,7 +1133,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState2(initialState) {
+          function useState3(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
@@ -1145,7 +1145,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect2(create, deps) {
+          function useEffect3(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1927,7 +1927,7 @@
           exports.useContext = useContext3;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect2;
+          exports.useEffect = useEffect3;
           exports.useId = useId;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect;
@@ -1935,7 +1935,7 @@
           exports.useMemo = useMemo2;
           exports.useReducer = useReducer;
           exports.useRef = useRef2;
-          exports.useState = useState2;
+          exports.useState = useState3;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -18402,10 +18402,10 @@
             }
           }
           var jsx5 = jsxWithValidationDynamic;
-          var jsxs = jsxWithValidationStatic;
+          var jsxs2 = jsxWithValidationStatic;
           exports.Fragment = REACT_FRAGMENT_TYPE;
           exports.jsx = jsx5;
-          exports.jsxs = jsxs;
+          exports.jsxs = jsxs2;
         })();
       }
     }
@@ -18422,9 +18422,6 @@
       }
     }
   });
-
-  // extensions/customer-account-ui/src/order.tsx
-  var import_react11 = __toESM(require_react());
 
   // node_modules/@remote-ui/rpc/build/esm/memory.mjs
   function isBasicObject(value) {
@@ -19124,11 +19121,14 @@
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/customer-account/extension.mjs
   var extension = createExtensionRegistrationFunction();
 
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/List/List.mjs
-  var List = createRemoteComponent("List");
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Button/Button.mjs
+  var Button = createRemoteComponent("Button");
 
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/ListItem/ListItem.mjs
-  var ListItem = createRemoteComponent("ListItem");
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Image/Image.mjs
+  var Image = createRemoteComponent("Image");
+
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/InlineLayout/InlineLayout.mjs
+  var InlineLayout = createRemoteComponent("InlineLayout");
 
   // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/render.mjs
   var import_react6 = __toESM(require_react(), 1);
@@ -19458,8 +19458,19 @@ ${errorInfo.componentStack}`);
     }
   };
 
+  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Button/Button.mjs
+  var Button2 = createRemoteReactComponent(Button, {
+    fragmentProps: ["overlay"]
+  });
+
+  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Image/Image.mjs
+  var Image2 = createRemoteReactComponent(Image);
+
+  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/InlineLayout/InlineLayout.mjs
+  var InlineLayout2 = createRemoteReactComponent(InlineLayout);
+
   // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/hooks/api.mjs
-  var import_react8 = __toESM(require_react(), 1);
+  var import_react11 = __toESM(require_react(), 1);
 
   // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/errors.mjs
   var CustomerAccountUIExtensionError = class extends Error {
@@ -19468,69 +19479,143 @@ ${errorInfo.componentStack}`);
       this.name = "CustomerAccountUIExtensionError";
     }
   };
+  var ExtensionHasNoMethodError = class extends Error {
+    constructor(method, target) {
+      super(`Cannot call '${method}()' on target '${target}'. The corresponding property was not found on the API.`);
+      this.name = "ExtensionHasNoMethodError";
+    }
+  };
+  var ExtensionHasNoFieldError = class extends Error {
+    constructor(field, target) {
+      super(`Cannot access '${field}' on target '${target}'. The corresponding property was not found on the API.`);
+      this.name = "ExtensionHasNoFieldrror";
+    }
+  };
 
   // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/hooks/api.mjs
   function useApi() {
-    const api = (0, import_react8.useContext)(ExtensionApiContext);
+    const api = (0, import_react11.useContext)(ExtensionApiContext);
     if (api == null) {
       throw new CustomerAccountUIExtensionError("You can only call this hook when running as a UI extension.");
     }
     return api;
   }
 
-  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/List/List.mjs
-  var List2 = createRemoteReactComponent(List);
+  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/hooks/subscription.mjs
+  var import_react12 = __toESM(require_react(), 1);
+  function useSubscription(subscription) {
+    const [, setValue] = (0, import_react12.useState)(subscription.current);
+    (0, import_react12.useEffect)(() => {
+      let didUnsubscribe = false;
+      const checkForUpdates = (newValue) => {
+        if (didUnsubscribe) {
+          return;
+        }
+        setValue(newValue);
+      };
+      const unsubscribe = subscription.subscribe(checkForUpdates);
+      checkForUpdates(subscription.current);
+      return () => {
+        didUnsubscribe = true;
+        unsubscribe();
+      };
+    }, [subscription]);
+    return subscription.current;
+  }
 
-  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/ListItem/ListItem.mjs
-  var ListItem2 = createRemoteReactComponent(ListItem);
+  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/hooks/cost.mjs
+  function useTotalAmount() {
+    const api = useApi();
+    const extensionTarget = api.extension.target;
+    if (!("cost" in api)) {
+      throw new ExtensionHasNoFieldError("cost", extensionTarget);
+    }
+    return useSubscription(api.cost.totalAmount);
+  }
+
+  // node_modules/@shopify/ui-extensions-react/build/esm/surfaces/customer-account/hooks/order.mjs
+  function useOrder() {
+    const api = useApi();
+    if ("order" in api) {
+      return useSubscription(api.order);
+    }
+    throw new ExtensionHasNoMethodError("order", api.extension.target);
+  }
 
   // extensions/customer-account-ui/src/order.tsx
+  var import_react13 = __toESM(require_react());
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var order_default = reactExtension(
     "customer-account.order-status.block.render",
     () => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Extension, {})
   );
   function Extension() {
-    var _a;
-    const [data, setData] = (0, import_react11.useState)();
-    const { query } = useApi();
-    function backendUrl() {
-      return "https://cons-f-dev.cpro-server.de";
-    }
-    (0, import_react11.useEffect)(() => {
+    const order = useOrder();
+    const cost = useTotalAmount();
+    const textAmount = `${cost.amount}`;
+    const order_id = order.id.split("Order/")[1];
+    const [showExt, setShowExt] = (0, import_react13.useState)(true);
+    const [fetchedOrder, setfetchedOrder] = (0, import_react13.useState)({});
+    const [firstName, setfirstName] = (0, import_react13.useState)("");
+    const application_url = "https://target-liberal-failures-katrina.trycloudflare.com";
+    (0, import_react13.useEffect)(() => {
       const getAppConfig = () => __async(this, null, function* () {
         try {
-          const apiEndpoint = "/api/public/config";
-          const parameters = new URLSearchParams({ shop: "helge-test.myshopify.com" });
-          const requestUrl = `https://cons-f-dev.cpro-server.de${apiEndpoint}?${parameters}`;
+          const apiEndpoint = "app/getOrder";
+          const parameters2 = new URLSearchParams({ orderId: order_id });
+          const requestUrl = `${application_url}/${apiEndpoint}?${parameters2}`;
           const response = yield fetch(requestUrl, { method: "GET" });
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          const data2 = yield response.json();
-          console.log(data2);
+          const data = yield response.json();
+          setfetchedOrder(data);
+          console.log("fetchedOrder", data);
+          console.log("fetchedOrder", data["firstName"]);
+          setfirstName(data["firstName"]);
         } catch (error) {
           console.error("Error fetching AppConfig:", error);
         }
       });
       getAppConfig();
     }, []);
-    (0, import_react11.useEffect)(() => {
-      query(
-        `query ($first: Int!) {
-        products(first: $first) {
-          nodes {
-            id
-            title
-          }
-        }
-      }`,
+    const parameters = new URLSearchParams({
+      vendorID: "8403",
+      orderID: order_id,
+      customerAccountNumber: "Test123456789",
+      paymentMethode: fetchedOrder["paymentMethode"],
+      order_amount: textAmount,
+      gender: "FEMALE",
+      // firstName: firstName,
+      //lastName: fetchedOrder["lastName"],
+      firstName: "Test",
+      lastName: "Approval",
+      zip: fetchedOrder["zip"],
+      city: fetchedOrder["city"],
+      street: fetchedOrder["street"],
+      country: "DE",
+      birthdate: "01-01-1990",
+      returntocheckoutURL: `https://cons-f-dev.cpro-server.de/api/notify`,
+      notifyURL: `https://cons-f-dev.cpro-server.de/api/notify`,
+      failureURL: `https://www.facebook.com`
+    });
+    const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parameters}`;
+    if (order && showExt) {
+      return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
+        InlineLayout2,
         {
-          variables: { first: 5 }
+          columns: ["45%", "50%"],
+          spacing: "base",
+          blockAlignment: "center",
+          inlineAlignment: "center",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Image2, { source: "https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Button2, { to: link, children: "Jetzt Finanzieren mit Consors Finanz" })
+          ]
         }
-      ).then(({ data: data2, errors }) => setData(data2)).catch(console.error);
-    }, [query]);
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(List2, { children: (_a = data == null ? void 0 : data.products) == null ? void 0 : _a.nodes.map((node) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ListItem2, { children: node.title }, node.id)) });
+      );
+    }
+    return null;
   }
 })();
 //# sourceMappingURL=customer-account-ui.js.map
