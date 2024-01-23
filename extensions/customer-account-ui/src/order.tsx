@@ -33,15 +33,17 @@ interface fetchedOrderI {
 
 function Extension() {
   const order = useOrder();
+  if(order === undefined) {
+    return <></>
+  }
   const cost = useTotalAmount();
   const textAmount = `${cost.amount}`;
-  const order_id = order.id.split("Order/")[1];
+  const order_id = order?.id.split("Order/")[1];
   const [showExt, setShowExt] = useState(true);
   const  [fetchedOrder, setfetchedOrder] = useState<fetchedOrderI>();
   const  [parametersLink, setParametersLink] = useState<URLSearchParams | undefined>();
   const application_url = "https://paylater.cpro-server.de"
 
-  console.log("test 3")
   useEffect(() => {
     const getAppConfig = async () => {
       try {
@@ -50,14 +52,12 @@ function Extension() {
         const requestUrl = `${application_url}/${apiEndpoint}?${parameters}`;
 
         const response = await fetch(requestUrl, { method: "GET" });
-        console.log("response", response)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data: fetchedOrderI = await response.json();
         console.log("data -",data)
         setfetchedOrder(data);
-        console.log("fetchedOrder", fetchedOrder)
 
         const parameters2 = new URLSearchParams({
           vendorID: "8403",
