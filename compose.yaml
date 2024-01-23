@@ -4,7 +4,7 @@ services:
     build: .
     #    image: "traefik/whoami"
     environment:
-      SHOPIFY_APP_URL: "https://payLater.cpro-server.de"
+      SHOPIFY_APP_URL: "https://paylater.cpro-server.de"
       SHOPIFY_SHOP: "helge-test.myshopify.com"
       HOST: "0.0.0.0"
       SHOPIFY_API_KEY: "4fd4f1171fc3d999235a8da23786d5d8"
@@ -13,9 +13,9 @@ services:
       DATABASE_URL: "mysql://root:1WrPZqlCnk4CHbpd31cq@payLater_db:3306/payLater" # TODO: change me for new instance
     labels:
       - traefik.enable=true
-      - traefik.http.routers.payLater.rule=Host(`payLater.cpro-server.de`) # TODO: change me for new instance
-      - traefik.http.routers.payLater.entrypoints=websecure
-      - traefik.http.routers.payLater.tls.certresolver=letsencrypt
+      - traefik.http.routers.paylater.rule=Host(`paylater.cpro-server.de`) # TODO: change me for new instance
+      - traefik.http.routers.paylater.entrypoints=websecure
+      - traefik.http.routers.paylater.tls.certresolver=letsencrypt
     #   - traefik.http.services.ebike.loadbalancer.server.port=3000
     restart: unless-stopped
     networks:
