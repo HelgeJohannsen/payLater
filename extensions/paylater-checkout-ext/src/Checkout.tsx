@@ -3,7 +3,9 @@ import {
   useApi,
   useBuyerJourneyIntercept,
   useSelectedPaymentOptions,
+  useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
+import { isObjectsEqual } from "./utils";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -11,8 +13,9 @@ export default reactExtension(
 );
 
 function Extension() {
-  const { cost } = useApi();
+  const { cost, billingAddress, shippingAddress } = useApi();
   const selectedPaymentMethod = useSelectedPaymentOptions();
+  const { countryCode } = useShippingAddress();
   const checkoutTotalValue = cost.totalAmount.current.amount;
   const currentPaymentHandle = selectedPaymentMethod[0].handle;
   let errorMsg = "";
@@ -43,20 +46,29 @@ function Extension() {
       if (handle !== currentPaymentHandle) return false;
       if (minimumValue < checkoutTotalValue) return false;
       else {
-        errorMsg = `Apologies, but a minimum value of ${minimumValue} Euro is required for ${key} payment method.`;
+        errorMsg = `Apologies, but a minimum value of ${minimumValue} Euro is required for ${key}
+        payment method.`;
+
         return true;
       }
     });
   };
 
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
-    return canBlockProgress && isProcessBlock()
+    const isPayLaterPossible =
+      countryCode === "DE" &&
+      !isProcessBlock() &&
+      isObjectsEqual(shippingAddress.current, billingAddress.current);
+
+    return canBlockProgress && !isPayLaterPossible
       ? {
           behavior: "block",
           reason: "Minimum value",
           errors: [
             {
-              message: errorMsg,
+              message: errorMsg
+                ? errorMsg
+                : `Apologies, but the Shipping Address and Billing Address must be the same`,
             },
           ],
         }
