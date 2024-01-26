@@ -1,16 +1,29 @@
-function isObjectsEqual(obj1, obj2) {
-  const obj1Keys = Object.keys(obj1);
-  const obj2Keys = Object.keys(obj2);
+import type { Address } from "../types";
 
-  if (obj1Keys.length !== obj2Keys.length) {
+function isAddressEqual(obj1, obj2) {
+  const getAddress = (obj) => {
+    return {
+      address1: obj.address1,
+      address2: obj.address2,
+      countryCode: obj.countryCode,
+      city: obj.city,
+      zip: obj.zip,
+    };
+  };
+  const shippingAddress: Address = getAddress(obj1);
+  const billingAddress: Address = getAddress(obj2);
+
+  if (
+    Object.keys(shippingAddress).length !== Object.keys(billingAddress).length
+  ) {
     return false;
   }
-  for (let key of obj1Keys) {
-    if (obj1[key] !== obj2[key]) {
+  for (let key of Object.keys(shippingAddress)) {
+    if (shippingAddress[key] !== billingAddress[key]) {
       return false;
     }
   }
   return true;
 }
 
-export { isObjectsEqual };
+export { isAddressEqual };

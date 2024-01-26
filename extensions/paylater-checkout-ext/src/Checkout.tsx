@@ -5,7 +5,7 @@ import {
   useSelectedPaymentOptions,
   useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
-import { isObjectsEqual } from "./utils";
+import { isAddressEqual } from "./utils";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -58,7 +58,7 @@ function Extension() {
     const isPayLaterPossible =
       countryCode === "DE" &&
       !isProcessBlock() &&
-      isObjectsEqual(shippingAddress.current, billingAddress.current);
+      isAddressEqual(shippingAddress.current, billingAddress.current);
 
     return canBlockProgress && !isPayLaterPossible
       ? {
@@ -68,7 +68,7 @@ function Extension() {
             {
               message: errorMsg
                 ? errorMsg
-                : `Apologies, but the Shipping Address and Billing Address must be the same`,
+                : `Apologies, but the shipping address and billing address need to match when using a Consors Finanz payment method.`,
             },
           ],
         }
