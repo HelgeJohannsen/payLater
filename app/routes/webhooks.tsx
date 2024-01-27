@@ -52,6 +52,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           orderData?.shipping_address.address1,
           "DE",
         )
+      }else{
+        console.log("Error parsing data", data) 
       }
     case "APP_UNINSTALLED":
       if (session) {
