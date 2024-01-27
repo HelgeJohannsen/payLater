@@ -31,7 +31,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   switch (topic) {
     case "ORDERS_CREATE":
       console.log("payload:",payload) 
-/*       const data = payload?.valueOf();
+      const data = payload?.valueOf();
       const parseResult = orderCreated.safeParse(data); 
       console.log(data) 
       var paymentMethode = "INVOICE"
@@ -55,7 +55,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         )
       }else{
         console.log("Error parsing data", data) 
-      } */
+      }
     case "APP_UNINSTALLED":
       if (session) {
         await db.session.deleteMany({ where: { shop } });
