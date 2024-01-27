@@ -8,7 +8,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { topic, shop, session, admin, payload } = await authenticate.webhook(
     request
   );
-
+    console.log("session:", session)
   if (!admin) {
     // The admin context isn't returned if the webhook fired after a shop was uninstalled.
     throw new Response();
