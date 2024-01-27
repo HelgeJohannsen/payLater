@@ -8,9 +8,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { topic, shop, session, admin, payload } = await authenticate.webhook(
     request
   );
+  const { admin } = await authenticate.admin(request);
   if(session == undefined){
     console.log("session not registered:", session)
-    const { admin } = await authenticate.admin(request);
+
   }
     console.log("session:", session)
   if (!admin) {
@@ -77,7 +78,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       }
     case "APP_UNINSTALLED":
       if (session) {
-        await db.session.deleteMany({ where: { shop } });
+       // await db.session.deleteMany({ where: { shop } });
       }
 
       break;
