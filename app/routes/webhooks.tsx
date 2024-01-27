@@ -15,7 +15,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
     // The admin context isn't returned if the webhook fired after a shop was uninstalled.
-    console.log("admin :", admin)
+    console.log("admin:", admin)
 
     console.log("session:", session)
   if (!admin) {
