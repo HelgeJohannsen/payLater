@@ -82,7 +82,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       }
     case "APP_UNINSTALLED":
       if (session) {
-       // await db.session.deleteMany({ where: { shop } });
+        console.log("delete session")
+       await db.session.deleteMany({ where: { shop } });
       }
 
       break;
