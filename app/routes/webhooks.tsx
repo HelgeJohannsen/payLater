@@ -18,7 +18,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     name: z.string(),
     payment_gateway_names: z.string().array(),
     shipping_address: z.object({
-      first_name: z.string(),
+      first_name: z.string().nullish(),
       last_name: z.string(),
       zip: z.string(),
       city: z.string(),
