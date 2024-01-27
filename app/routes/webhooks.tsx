@@ -42,17 +42,32 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         //if(orderData.payment_gateway_names.includes("Kauf auf Rechnung by Consors Finanz")){spaymentMethode("INVOICE")}
         //if(orderData.payment_gateway_names.includes("Kauf per Lastschrift by Consors Finanz")){spaymentMethode("DIRECT_DEBIT")}
         if(orderData.payment_gateway_names.includes("bogus")){paymentMethode = "INVOICE"}
-        createOrder(
-          String(orderData?.id),
-          orderData?.name,
-          paymentMethode,
-          orderData?.shipping_address.first_name,
-          orderData?.shipping_address.last_name,
-          orderData?.shipping_address.zip,
-          orderData?.shipping_address.city,
-          orderData?.shipping_address.address1,
-          "DE",
-        )
+        if(orderData?.shipping_address.first_name){
+          createOrder(
+            String(orderData?.id),
+            orderData?.name,
+            paymentMethode,
+            orderData?.shipping_address.first_name,
+            orderData?.shipping_address.last_name,
+            orderData?.shipping_address.zip,
+            orderData?.shipping_address.city,
+            orderData?.shipping_address.address1,
+            "DE",
+          )
+        }else{
+          createOrder(
+            String(orderData?.id),
+            orderData?.name,
+            paymentMethode,
+            "",
+            orderData?.shipping_address.last_name,
+            orderData?.shipping_address.zip,
+            orderData?.shipping_address.city,
+            orderData?.shipping_address.address1,
+            "DE",
+          )
+        }
+
       }else{
         console.log("Error parsing data", data) 
       }
