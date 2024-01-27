@@ -80,6 +80,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       }else{
         console.log("Error parsing data", data) 
       }
+      break;
     case "APP_UNINSTALLED":
       if (session) {
         console.log("delete session")
