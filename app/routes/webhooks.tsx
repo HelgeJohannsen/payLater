@@ -8,7 +8,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { topic, shop, session, admin, payload } = await authenticate.webhook(
     request
   );
-  if(session!){
+  if(session == undefined){
     console.log("session not registered:", session)
     const { admin } = await authenticate.admin(request);
   }
