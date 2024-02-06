@@ -98,7 +98,7 @@ export default function Index() {
             Consors EFI
           </Text>
           <TextField
-            id="title"
+            id="customer-account-number"
             label="customerAccountNumber"
             autoComplete="off"
             value={customerAccountNumberTextfield}
@@ -106,7 +106,7 @@ export default function Index() {
             onBlur={() => handleSave()}
           />
           <TextField
-            id="title"
+            id="vendor-id"
             label="VendorID"
             autoComplete="off"
             value={vendorIdTextfield}

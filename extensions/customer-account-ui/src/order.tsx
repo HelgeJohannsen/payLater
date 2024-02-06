@@ -1,5 +1,5 @@
 //https://bezahlen.consorsfinanz.de/web/connector/#/home?vendorID=8403&orderID=Test987654321&customerAccountNumber=Test123456789&paymentMethode=INVOICE&order_amount=100.00&gender=FEMALE&firstName=Test&lastName=Approval&birthdate=01-01-1990&mobile=0175123456789&email=Your.Domain@Domain.de&returntocheckoutURL=https:%2F%2Fen68cljscjs8m66.m.pipedream.net%2F&zip=45143&city=Essen&street=Konitzer%20Weg%2020&country=DE&notifyURL=https:%2F%2Fen68cljscjs8m66.m.pipedream.net%2F&failureURL=https:%2F%2Fwww.facebook.com
-
+//https://bezahlen.consorsfinanz.de/web/connector/#/home?vendorID=8403&orderID=5717552169239&customerAccountNumber=Test123456789&paymentMethode=INVOICE&order_amount=729.95&gender=FEMALE&firstNameTest=&lastName=Approval&zip=22087&city=Hamburg&street=h%C3%BChnerk+12&country=DE&returntocheckoutURL=https%3A%2F%2Fhelge-test.myshopify.com%2F%2Faccount%2Forders&notifyURL=https%3A%2F%2Fpaylater.cpro-server.de%2Fapi%2Fnotify&failureURL=https%3A%2F%2Fhelge-test.myshopify.com%2F%2Faccount%2Forders
 import {
   Banner,
   Button,
@@ -9,6 +9,7 @@ import {
   useOrder,
   useShop,
   useTotalAmount,
+  BlockLayout
 } from "@shopify/ui-extensions-react/customer-account";
 import { useEffect, useState } from "react";
 
@@ -22,7 +23,7 @@ interface fetchedOrderI {
   orderName: string;
   paymentMethode: string;
   status: string;
-  firstName: string;
+  firstName: string | undefined;
   lastName: string;
   zip: string;
   city: string;
@@ -64,8 +65,10 @@ function Extension() {
           paymentMethode: orderInfo.paymentMethode,
           order_amount: orderAmountAsString,
           gender: "FEMALE",
-          firstName: orderInfo.firstName,
-          lastName: orderInfo.lastName,
+          // firstName: orderInfo.firstName ?? "",
+          // lastName: orderInfo.lastName,
+          firstName: "Test",
+          lastName: "Approval",
           zip: orderInfo.zip,
           city: orderInfo.city,
           street: orderInfo.street,
@@ -82,7 +85,11 @@ function Extension() {
     getAppConfig();
   }, []);
 
+ 
+
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
+
+  console.log("link", link)
 
   return order ? (
     <InlineLayout
@@ -92,11 +99,18 @@ function Extension() {
       inlineAlignment={"center"}
     >
       <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
-      {fetchedOrder?.status === "ACCEPTED" ? (
-        <Banner status="success" title="Bezahlt" />
-      ) : (
-        <Button to={link}>Jetzt Bezahlen mit Consors Finanz</Button>
-      )}
+      {fetchedOrder?.status === "ACCEPTED" && <Banner status="success" title="Bezahlt" />}
+
+      {fetchedOrder?.status === "ERROR" && 
+        <BlockLayout spacing={"base"}>
+            <Banner status="warning" title="Es ist ein Fehler aufgetreten, bitte starten sie den Bezahlprozess erneut" />
+            <Button to={link} inlineAlignment="center">Jetzt Bezahlen mit Consors Finanz</Button>
+        </BlockLayout> 
+      }
+
+      {fetchedOrder?.status !== "ERROR" && fetchedOrder?.status !== "ACCEPTED" && 
+        <Button to={link} inlineAlignment="center">Jetzt Bezahlen mit Consors Finanz</Button>
+      }
     </InlineLayout>
   ) : (
     <></>

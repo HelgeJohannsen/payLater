@@ -19,37 +19,42 @@ function Extension() {
   const checkoutTotalValue = cost.totalAmount.current.amount;
   let errorMsg = "";
 
-  const isProcessBlock = () => {
-    if (selectedPaymentMethod[0].type !== "manualPayment") return false;
+  console.log("selectedPaymentMethod", selectedPaymentMethod);
+  console.log("shippingAddress, billingAddress", shippingAddress.current, billingAddress.current);
 
-    if (9.99 < checkoutTotalValue) return false;
+  const isProcessAllow = () => {
+    if (selectedPaymentMethod[0].type !== "manualPayment") return true;
+
+    if (9.99 < checkoutTotalValue) return true;
     else {
       errorMsg = `Apologies, but a minimum value of 9.99 Euro is required for Consors Finanz payment method.`;
-      return true;
+      return false;
     }
   };
 
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     const isPayLaterPossible =
       countryCode === "DE" &&
-      !isProcessBlock() &&
+      !isProcessAllow() &&
       isAddressEqual(shippingAddress.current, billingAddress.current);
 
-    return canBlockProgress && !isPayLaterPossible
-      ? {
-          behavior: "block",
-          reason: "Minimum value",
-          errors: [
-            {
-              message: errorMsg
-                ? errorMsg
-                : `Apologies, but the shipping address and billing address need to match when using a Consors Finanz payment method.`,
-            },
-          ],
-        }
-      : {
-          behavior: "allow",
-        };
+    return countryCode === "DE" && isProcessAllow() ? {
+      behavior: "allow",
+      }
+    : isAddressEqual(shippingAddress.current, billingAddress.current) ?
+    {
+      behavior: "block",
+      reason: "Minimum value",
+      errors: [
+        {
+          message: errorMsg
+            ? errorMsg
+            : `Apologies, but the shipping address and billing address need to match when using a Consors Finanz payment method.`,
+        },
+      ],
+    }: {
+      behavior: "allow",
+      }
   });
 
   return <></>;
