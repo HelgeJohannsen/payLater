@@ -1,4 +1,4 @@
-/* import {
+import {
   reactExtension,
   useApi,
   useBuyerJourneyIntercept,
@@ -54,4 +54,3 @@ function Extension() {
 
   return <></>;
 }
- */
