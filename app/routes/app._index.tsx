@@ -104,7 +104,6 @@ export default function Index() {
             value={customerAccountNumberTextfield}
             onChange={(value) => setcustomerAccountNumberTextfield(value)}
             onBlur={() => handleSave()}
-            error={"error"}
           />
           <TextField
             id="title"
@@ -113,7 +112,6 @@ export default function Index() {
             value={vendorIdTextfield}
             onChange={(value) => setVendorIdTextfield(value)}
             onBlur={() => handleSave()}
-            error={"error"}
           />
         </Card>
     </Page>
