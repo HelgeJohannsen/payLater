@@ -81,7 +81,7 @@ function Extension() {
           city: data.city,
           street: data.street,
           country: "DE",
-          birthdate: "01-01-1990",
+          //birthdate: "01-01-1990",
           returntocheckoutURL: `${shop.storefrontUrl}/account/orders`,
           notifyURL: `https://paylater.cpro-server.de/api/notify`,
           failureURL: `${shop.storefrontUrl}/account/orders`,
