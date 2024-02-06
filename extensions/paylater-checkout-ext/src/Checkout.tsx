@@ -29,9 +29,6 @@ function Extension() {
     }
   };
 
-  console.log("countryCode", countryCode)
-  console.log("billingAddress, shippingAddress ", billingAddress, shippingAddress )
-
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     const isPayLaterPossible =
       countryCode === "DE" &&

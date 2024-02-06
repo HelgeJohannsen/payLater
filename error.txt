@@ -1,0 +1,25 @@
+ > [web 6/7] RUN npm run build:
+0.909
+0.909 > build
+0.909 > tsc && remix build
+0.909
+5.764 extensions/paylater-checkout-ext/src/Checkout.tsx(18,11): error TS2339: Property 'countryCode' does not exist on type 'MailingAddress | undefined'.
+
+5.765 extensions/paylater-checkout-ext/src/Checkout.tsx(39,22): error TS18048: 'shippingAddress' is possibly 'undefined'.
+5.765 extensions/paylater-checkout-ext/src/Checkout.tsx(39,22): error TS2345: Argument of type 'MailingAddress | undefined' is not assignable to parameter of type 'MailingAddress'.
+5.765   Type 'undefined' is not assignable to type 'MailingAddress'.
+5.765 extensions/paylater-checkout-ext/src/Checkout.tsx(39,47): error TS18048: 'billingAddress' is possibly 'undefined'.
+5.765 extensions/paylater-checkout-ext/src/utils/index.ts(8,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+5.765   Type 'undefined' is not assignable to type 'string'.
+5.765 extensions/paylater-checkout-ext/src/utils/index.ts(10,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+5.765   Type 'undefined' is not assignable to type 'string'.
+5.765 extensions/paylater-checkout-ext/src/utils/index.ts(11,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+5.765   Type 'undefined' is not assignable to type 'string'.
+5.765 extensions/paylater-checkout-ext/src/utils/index.ts(12,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+5.765   Type 'undefined' is not assignable to type 'string'.
+5.765 extensions/paylater-checkout-ext/src/utils/index.ts(24,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Address'.
+5.765   No index signature with a parameter of type 'string' was found on type 'Address'.
+5.765 extensions/paylater-checkout-ext/src/utils/index.ts(24,34): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Address'.
+5.765   No index signature with a parameter of type 'string' was found on type 'Address'.
+------
+failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 2
