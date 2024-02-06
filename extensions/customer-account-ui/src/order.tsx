@@ -6,7 +6,6 @@ import {
   Image,
   InlineLayout,
   reactExtension,
-  useApi,
   useOrder,
   useShop,
   useTotalAmount,
@@ -17,38 +16,33 @@ export default reactExtension(
   "customer-account.order-status.block.render",
   () => <Extension />
 );
-
 interface fetchedOrderI {
-  id: number
-  orderId: string
-  orderName: string
-  paymentMethode: string
-  status: string
-  firstName: string
-  lastName: string
-  zip: string
-  city: string
-  street: string
-  country: string
+  id: number;
+  orderId: string;
+  orderName: string;
+  paymentMethode: string;
+  status: string;
+  firstName: string;
+  lastName: string;
+  zip: string;
+  city: string;
+  street: string;
+  country: string;
 }
 
 function Extension() {
   const order = useOrder();
-  if(order === undefined) {
-    return <></>
-  }
+
   const cost = useTotalAmount();
-  const textAmount = `${cost.amount}`;
+  const orderAmountAsString = `${cost.amount}`;
   const order_id = order?.id.split("Order/")[1];
-  const [showExt, setShowExt] = useState(true);
   const shop = useShop();
-  const [buttonText, setButtonText] = useState("Jetzt Bezahlen mit Consors Finanz")
-  const  [status, setStatus] = useState("");
-  const  [fetchedOrder, setfetchedOrder] = useState<fetchedOrderI>();
-  const  [parametersLink, setParametersLink] = useState<URLSearchParams | undefined>();
-  const application_url = "https://paylater.cpro-server.de"
+  const [fetchedOrder, setfetchedOrder] = useState<fetchedOrderI>();
+  const [parametersLink, setParametersLink] = useState<
+    URLSearchParams | undefined
+  >();
+  const application_url = "https://paylater.cpro-server.de";
   useEffect(() => {
-    
     const getAppConfig = async () => {
       try {
         const apiEndpoint = "app/getOrder";
@@ -59,34 +53,28 @@ function Extension() {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data: fetchedOrderI = await response.json();
-        console.log("data -",data)
-        setfetchedOrder(data);
-        setStatus(data.status)
-        if(data.status == "ACCEPTED"){
-          setButtonText("Bezahlt")
-        }
+        const orderInfo: fetchedOrderI = await response.json();
+        // console.log("orderInfo -", orderInfo);
+        setfetchedOrder(orderInfo);
+
         const parameters2 = new URLSearchParams({
           vendorID: "8403",
           orderID: order_id,
           customerAccountNumber: "Test123456789",
-          paymentMethode: data.paymentMethode,
-          order_amount: textAmount,
+          paymentMethode: orderInfo.paymentMethode,
+          order_amount: orderAmountAsString,
           gender: "FEMALE",
-         // firstName: firstName,
-          //lastName: fetchedOrder["lastName"],
-          firstName: "Test",
-          lastName: "Approval",
-          zip: data.zip,
-          city: data.city,
-          street: data.street,
-          country: "DE",
-          //birthdate: "01-01-1990",
+          firstName: orderInfo.firstName,
+          lastName: orderInfo.lastName,
+          zip: orderInfo.zip,
+          city: orderInfo.city,
+          street: orderInfo.street,
+          country: orderInfo.country,
           returntocheckoutURL: `${shop.storefrontUrl}/account/orders`,
           notifyURL: `https://paylater.cpro-server.de/api/notify`,
           failureURL: `${shop.storefrontUrl}/account/orders`,
         });
-        setParametersLink(parameters2)
+        setParametersLink(parameters2);
       } catch (error) {
         console.error("Error fetching AppConfig:", error);
       }
@@ -94,23 +82,23 @@ function Extension() {
     getAppConfig();
   }, []);
 
-  //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
-  if (order && showExt) {
-    return (
-      <InlineLayout
-        columns={["45%", "50%"]}
-        spacing={"base"}
-        blockAlignment={"center"}
-        inlineAlignment={"center"}
-      >
-        <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
+
+  return order ? (
+    <InlineLayout
+      columns={["45%", "50%"]}
+      spacing={"base"}
+      blockAlignment={"center"}
+      inlineAlignment={"center"}
+    >
+      <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
+      {fetchedOrder?.status === "ACCEPTED" ? (
+        <Banner status="success" title="Bezahlt" />
+      ) : (
         <Button to={link}>Jetzt Bezahlen mit Consors Finanz</Button>
-        {buttonText}
-      </InlineLayout>
-    );
-  }
-
-  return null;
+      )}
+    </InlineLayout>
+  ) : (
+    <></>
+  );
 }
-
