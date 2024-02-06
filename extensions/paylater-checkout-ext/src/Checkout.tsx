@@ -15,7 +15,7 @@ export default reactExtension(
 function Extension() {
   const { cost, billingAddress, shippingAddress } = useApi();
   const selectedPaymentMethod = useSelectedPaymentOptions();
-  const { countryCode } = useShippingAddress();
+  const { countryCode } = shippingAddress?.current
   const checkoutTotalValue = cost.totalAmount.current.amount;
   let errorMsg = "";
 
@@ -28,6 +28,9 @@ function Extension() {
       return true;
     }
   };
+
+  console.log("countryCode", countryCode)
+  console.log("billingAddress, shippingAddress ", billingAddress, shippingAddress )
 
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     const isPayLaterPossible =
