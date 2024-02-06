@@ -8,6 +8,7 @@ import {
   reactExtension,
   useApi,
   useOrder,
+  useShop,
   useTotalAmount,
 } from "@shopify/ui-extensions-react/customer-account";
 import { useEffect, useState } from "react";
@@ -40,11 +41,14 @@ function Extension() {
   const textAmount = `${cost.amount}`;
   const order_id = order?.id.split("Order/")[1];
   const [showExt, setShowExt] = useState(true);
+  const shop = useShop();
+  const [buttonText, setButtonText] = useState("Jetzt Bezahlen mit Consors Finanz")
+  const  [status, setStatus] = useState("");
   const  [fetchedOrder, setfetchedOrder] = useState<fetchedOrderI>();
   const  [parametersLink, setParametersLink] = useState<URLSearchParams | undefined>();
   const application_url = "https://paylater.cpro-server.de"
-
   useEffect(() => {
+    
     const getAppConfig = async () => {
       try {
         const apiEndpoint = "app/getOrder";
@@ -58,7 +62,10 @@ function Extension() {
         const data: fetchedOrderI = await response.json();
         console.log("data -",data)
         setfetchedOrder(data);
-
+        setStatus(data.status)
+        if(data.status == "ACCEPTED"){
+          setButtonText("Bezahlt")
+        }
         const parameters2 = new URLSearchParams({
           vendorID: "8403",
           orderID: order_id,
@@ -75,9 +82,9 @@ function Extension() {
           street: data.street,
           country: "DE",
           birthdate: "01-01-1990",
-          returntocheckoutURL: `https://www.helge-test.de`,
+          returntocheckoutURL: `${shop.storefrontUrl}/account/orders`,
           notifyURL: `https://paylater.cpro-server.de/api/notify`,
-          failureURL: `https://www.facebook.com`,
+          failureURL: `${shop.storefrontUrl}/account/orders`,
         });
         setParametersLink(parameters2)
       } catch (error) {
@@ -98,7 +105,8 @@ function Extension() {
         inlineAlignment={"center"}
       >
         <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
-        <Button to={link}>Jetzt Finanzieren mit Consors Finanz</Button>
+        <Button to={link}>Jetzt Bezahlen mit Consors Finanz</Button>
+        {buttonText}
       </InlineLayout>
     );
   }
