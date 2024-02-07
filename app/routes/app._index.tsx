@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Link,
   useActionData,
@@ -12,7 +13,6 @@ import {
   Checkbox,
   ChoiceList,
   EmptyState,
-
   Icon,
   IndexTable,
   Layout,
@@ -27,15 +27,14 @@ import {
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
-import { createConfig, getOrCreateConfig } from "../models/config.server";
 import { useState } from "react";
-
+import { createConfig, getOrCreateConfig } from "../models/config.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const {session} = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const Settings = await getOrCreateConfig(session.shop);
   return {
-    ...Settings
+    ...Settings,
   };
 };
 
@@ -54,21 +53,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     },
   });
   return Config;
-}
+};
 
 export default function Index() {
   const laoderData = useLoaderData<typeof loader>();
-  const {
-    id,
-    customerAccountNumber,
-    vendorId,
-    shop,
-  } = laoderData!; // TODO: might be undefined if server not reachable ?
+  const { id, customerAccountNumber, vendorId, shop } = laoderData!; // TODO: might be undefined if server not reachable ?
 
-
-  const [customerAccountNumberTextfield, setcustomerAccountNumberTextfield] = useState(customerAccountNumber);
+  const [customerAccountNumberTextfield, setcustomerAccountNumberTextfield] =
+    useState(customerAccountNumber);
   const [vendorIdTextfield, setVendorIdTextfield] = useState(vendorId);
-
 
   const submit = useSubmit();
 
@@ -81,39 +74,37 @@ export default function Index() {
         customerAccountNumber: customerAccountNumberTextfield ?? null,
         vendorId: vendorIdTextfield ?? null,
         shop: shop ?? null,
-
       };
 
       submit(data, { method: "post" });
     }
   }
 
-
   return (
     <Page>
       <ui-title-bar title="Einstellungen"> </ui-title-bar>
 
-        <Card>
-          <Text as="h2" variant="headingMd">
-            Consors EFI
-          </Text>
-          <TextField
-            id="customer-account-number"
-            label="customerAccountNumber"
-            autoComplete="off"
-            value={customerAccountNumberTextfield}
-            onChange={(value) => setcustomerAccountNumberTextfield(value)}
-            onBlur={() => handleSave()}
-          />
-          <TextField
-            id="vendor-id"
-            label="VendorID"
-            autoComplete="off"
-            value={vendorIdTextfield}
-            onChange={(value) => setVendorIdTextfield(value)}
-            onBlur={() => handleSave()}
-          />
-        </Card>
+      <Card>
+        <Text as="h2" variant="headingMd">
+          Consors EFI
+        </Text>
+        <TextField
+          id="customer-account-number"
+          label="customerAccountNumber"
+          autoComplete="off"
+          value={customerAccountNumberTextfield}
+          onChange={(value) => setcustomerAccountNumberTextfield(value)}
+          onBlur={() => handleSave()}
+        />
+        <TextField
+          id="vendor-id"
+          label="VendorID"
+          autoComplete="off"
+          value={vendorIdTextfield}
+          onChange={(value) => setVendorIdTextfield(value)}
+          onBlur={() => handleSave()}
+        />
+      </Card>
     </Page>
   );
 }

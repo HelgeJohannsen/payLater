@@ -29,6 +29,11 @@ const shopify = shopifyApp({
       callbackUrl: "/webhooks",
       format: JSON,
     },
+    ORDERS_FULFILLED: {
+      deliveryMethod: DeliveryMethod.Http,
+      callbackUrl: "/webhooks",
+      format: JSON,
+    },
   },
   hooks: {
     afterAuth: async ({ session }) => {

@@ -1,82 +1,36 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
+import { webbhook_oredersCreate } from "~/webhooks/ordersCreate";
+import { webbhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
 import db from "../db.server";
-import { z } from "zod";
-import { createOrder } from "~/models/order.server";
+import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { topic, shop, session, admin, payload } = await authenticate.webhook(
     request
   );
   //const { admin } = await authenticate.admin(request);
-  if(session == undefined){
-    console.log("session not registered:", session)
-
+  if (session == undefined) {
+    console.log("session not registered:", session);
   }
   if (!admin) {
     // The admin context isn't returned if the webhook fired after a shop was uninstalled.
     throw new Response();
   }
-  const orderCreated = z.object({
-    id: z.number(),
-    name: z.string(),
-    payment_gateway_names: z.string().array(),
-    shipping_address: z.object({
-      first_name: z.string().nullish(),
-      last_name: z.string(),
-      zip: z.string(),
-      city: z.string(),
-      address1: z.string(),
-    }
-    )
-  });
-  
 
   switch (topic) {
     case "ORDERS_CREATE":
-      console.log("payload:",payload) 
-      const data = payload?.valueOf();
-      const parseResult = orderCreated.safeParse(data); 
-      console.log(data) 
-      var paymentMethode = "INVOICE"
-      var firstName = ""
-      if (parseResult.success) {
-        const orderData = parseResult.data;
-        console.log("data", orderData) 
-        console.log("shipping_address",orderData?.shipping_address.first_name) 
-        //if(orderData.payment_gateway_names.includes("Kauf auf Rechnung by Consors Finanz")){spaymentMethode("INVOICE")}
-        //if(orderData.payment_gateway_names.includes("Kauf per Lastschrift by Consors Finanz")){spaymentMethode("DIRECT_DEBIT")}
-        if(orderData.payment_gateway_names.includes("bogus")){paymentMethode = "INVOICE"}
-        if(orderData?.shipping_address.first_name){
-            firstName = orderData?.shipping_address.first_name
-        }
-        if (
-          orderData.payment_gateway_names.includes("bogus") || //Only for test shop
-          orderData.payment_gateway_names.includes("Kauf auf Rechnung by Consors Finanz") ||
-          orderData.payment_gateway_names.includes("Kauf per Lastschrift by Consors Finanz") ||
-          orderData.payment_gateway_names.includes("3-Monats-Zahlung by Consors Finanz")){
-            createOrder(
-              String(orderData?.id),
-              orderData?.name,
-              paymentMethode,
-              firstName,
-              orderData?.shipping_address.last_name,
-              orderData?.shipping_address.zip,
-              orderData?.shipping_address.city,
-              orderData?.shipping_address.address1,
-              "DE",
-            )
-          }
+      webbhook_oredersCreate(shop, payload);
+      // console.log("Bestellung erstellt:", payload);
+      return new Response("webhook ORDERS_CREATE", { status: 200 });
 
-
-      }else{
-        console.log("Error parsing data", data) 
-      }
-      break;
+    case "ORDERS_FULFILLED":
+      // console.log("ORDERS_FULFILLED ");
+      webbhook_ordersFulfillment(shop, payload);
+      return new Response("webhook ORDERS_FULFILLED", { status: 200 });
     case "APP_UNINSTALLED":
       if (session) {
-        console.log("delete session")
-       await db.session.deleteMany({ where: { shop } });
+        console.log("delete session");
+        await db.session.deleteMany({ where: { shop } });
       }
 
       break;
