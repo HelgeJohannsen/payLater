@@ -1,6 +1,8 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
+import { webbhook_oredersCancel } from "~/webhooks/ordersCancel";
 import { webbhook_oredersCreate } from "~/webhooks/ordersCreate";
 import { webbhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
+import { webbhook_ordersPartiallyFulFilled } from "~/webhooks/ordersPartiallyFulFilled";
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
@@ -20,20 +22,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   switch (topic) {
     case "ORDERS_CREATE":
       webbhook_oredersCreate(shop, payload);
-      // console.log("Bestellung erstellt:", payload);
       return new Response("webhook ORDERS_CREATE", { status: 200 });
 
     case "ORDERS_FULFILLED":
-      // console.log("ORDERS_FULFILLED ");
       webbhook_ordersFulfillment(shop, payload);
       return new Response("webhook ORDERS_FULFILLED", { status: 200 });
+
+    case "ORDERS_PARTIALLY_FULFILLED":
+      webbhook_ordersPartiallyFulFilled(shop, payload);
+      return new Response("webhook ORDERS_PARTIALLY_FULFILLED", {
+        status: 200,
+      });
+
+    case "ORDERS_CANCELLED":
+      webbhook_oredersCancel(shop, payload);
+      return new Response("webhook ORDERS_CANCELLED", { status: 200 });
+
     case "APP_UNINSTALLED":
       if (session) {
         console.log("delete session");
         await db.session.deleteMany({ where: { shop } });
       }
-
       break;
+
     case "CUSTOMERS_DATA_REQUEST":
     case "CUSTOMERS_REDACT":
     case "SHOP_REDACT":
