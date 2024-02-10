@@ -42,6 +42,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const { shop } = session;
   const body = await request.formData();
+
+  console.log("body: ", body);
+  console.log("session: ", session);
+  console.log("request: ", request);
   // console.log(" minBestellWert:" + body.get("minBestellWert"));
   // console.log(" id:" + body.get("vendorId"));
   const Config = await db.config.update({
