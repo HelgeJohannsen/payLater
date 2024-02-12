@@ -15,16 +15,15 @@ const orderCreated = z.object({
 });
 
 export async function webbhook_oredersCreate(shop: string, payload: unknown) {
-  console.log("webbhook_oredersCreate payload:", payload);
   const data = payload?.valueOf();
   const parseResult = orderCreated.safeParse(data);
-  console.log(data);
+  console.log("webbhook_oredersCreate payload:", data);
   var paymentMethode = "INVOICE";
   var firstName = "";
   if (parseResult.success) {
     const orderData = parseResult.data;
-    console.log("data", orderData);
-    console.log("shipping_address", orderData?.shipping_address.first_name);
+    // console.log("data", orderData);
+    // console.log("shipping_address", orderData?.shipping_address.first_name);
     //if(orderData.payment_gateway_names.includes("Kauf auf Rechnung by Consors Finanz")){spaymentMethode("INVOICE")}
     //if(orderData.payment_gateway_names.includes("Kauf per Lastschrift by Consors Finanz")){spaymentMethode("DIRECT_DEBIT")}
     if (orderData.payment_gateway_names.includes("bogus")) {

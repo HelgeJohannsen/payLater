@@ -19569,9 +19569,7 @@ ${errorInfo.componentStack}`);
     const translate = useTranslate();
     const { extension: extension2 } = useApi();
     const address = useShippingAddress();
-    console.log("I'm running");
     useBuyerJourneyIntercept(({ canBlockProgress }) => {
-      console.log("canBlockProgress", canBlockProgress);
       return canBlockProgress && (address == null ? void 0 : address.countryCode) && address.countryCode !== "CA" ? {
         behavior: "block",
         reason: "Invalid shipping country",

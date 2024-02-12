@@ -2,7 +2,7 @@ import { LoaderFunction, json } from "@remix-run/node";
 import { getOrder } from "~/models/order.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  console.log("test")
+  // console.log("test")
   const requestedURL = new URL(request.url);
   const orderid = requestedURL.searchParams.get("orderId");
   if (orderid == null) {

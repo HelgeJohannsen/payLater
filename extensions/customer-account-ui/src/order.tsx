@@ -2,6 +2,7 @@
 //https://bezahlen.consorsfinanz.de/web/connector/#/home?vendorID=8403&orderID=5717552169239&customerAccountNumber=Test123456789&paymentMethode=INVOICE&order_amount=729.95&gender=FEMALE&firstNameTest=&lastName=Approval&zip=22087&city=Hamburg&street=h%C3%BChnerk+12&country=DE&returntocheckoutURL=https%3A%2F%2Fhelge-test.myshopify.com%2F%2Faccount%2Forders&notifyURL=https%3A%2F%2Fpaylater.cpro-server.de%2Fapi%2Fnotify&failureURL=https%3A%2F%2Fhelge-test.myshopify.com%2F%2Faccount%2Forders
 import {
   Banner,
+  BlockLayout,
   Button,
   Image,
   InlineLayout,
@@ -9,7 +10,6 @@ import {
   useOrder,
   useShop,
   useTotalAmount,
-  BlockLayout
 } from "@shopify/ui-extensions-react/customer-account";
 import { useEffect, useState } from "react";
 
@@ -55,7 +55,7 @@ function Extension() {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const orderInfo: fetchedOrderI = await response.json();
-        // console.log("orderInfo -", orderInfo);
+        console.log("orderInfo -", orderInfo);
         setfetchedOrder(orderInfo);
 
         const parameters2 = new URLSearchParams({
@@ -85,11 +85,9 @@ function Extension() {
     getAppConfig();
   }, []);
 
- 
-
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
 
-  console.log("link", link)
+  console.log("link", link);
 
   return order ? (
     <InlineLayout
@@ -99,18 +97,28 @@ function Extension() {
       inlineAlignment={"center"}
     >
       <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
-      {fetchedOrder?.status === "ACCEPTED" && <Banner status="success" title="Bezahlt" />}
+      {fetchedOrder?.status === "ACCEPTED" && (
+        <Banner status="success" title="Bezahlt" />
+      )}
 
-      {fetchedOrder?.status === "ERROR" && 
+      {fetchedOrder?.status === "ERROR" && (
         <BlockLayout spacing={"base"}>
-            <Banner status="warning" title="Es ist ein Fehler aufgetreten, bitte starten sie den Bezahlprozess erneut" />
-            <Button to={link} inlineAlignment="center">Jetzt Bezahlen mit Consors Finanz</Button>
-        </BlockLayout> 
-      }
+          <Banner
+            status="warning"
+            title="Es ist ein Fehler aufgetreten, bitte starten sie den Bezahlprozess erneut"
+          />
+          <Button to={link} inlineAlignment="center">
+            Jetzt Bezahlen mit Consors Finanz
+          </Button>
+        </BlockLayout>
+      )}
 
-      {fetchedOrder?.status !== "ERROR" && fetchedOrder?.status !== "ACCEPTED" && 
-        <Button to={link} inlineAlignment="center">Jetzt Bezahlen mit Consors Finanz</Button>
-      }
+      {fetchedOrder?.status !== "ERROR" &&
+        fetchedOrder?.status !== "ACCEPTED" && (
+          <Button to={link} inlineAlignment="center">
+            Jetzt Bezahlen mit Consors Finanz
+          </Button>
+        )}
     </InlineLayout>
   ) : (
     <></>
