@@ -28,14 +28,19 @@ import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
 import { useState } from "react";
+import { demoMockApi } from "~/consors/api";
 import { createConfig, getOrCreateConfig } from "../models/config.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const Settings = await getOrCreateConfig(session.shop);
 
+  const consorsMockClient = demoMockApi;
+  const clientDataOk = await consorsMockClient.jwt();
+
   return {
     ...Settings,
+    clientDataOk: !!clientDataOk,
   };
 };
 
@@ -76,6 +81,8 @@ type AppConfig = {
 
 export default function Index() {
   const laoderData = useLoaderData<typeof loader>();
+
+  const submit = useSubmit();
   console.log("laoderData", laoderData);
   const { id, customerAccountNumber, vendorId, shop } = laoderData!; // TODO: might be undefined if server not reachable ?
 
@@ -85,34 +92,13 @@ export default function Index() {
     password: "",
     apiKey: "",
     customerAccountNumber: "",
-  });
-
-  const [customerAccountNumberTextfield, setcustomerAccountNumberTextfield] =
-    useState(customerAccountNumber);
-  const [vendorIdTextfield, setVendorIdTextfield] = useState(vendorId);
-
-  const submit = useSubmit();
-
-  // function handleSave() {
-  //   if (id === undefined) {
-  //     console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
-  //   } else {
-  //     const data = {
-  //       id: id,
-  //       customerAccountNumber: customerAccountNumberTextfield ?? null,
-  //       vendorId: vendorIdTextfield ?? null,
-  //       shop: shop ?? null,
-  //     };
-
-  //     submit(data, { method: "post" });
-  //   }
-  // }
+  }); // TODO - start the useState with the values that comes from loaderData
 
   function handleSave() {
     if (id === undefined) {
       console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
     } else {
-      submit(appConfig, { method: "post" });
+      submit({ id, ...appConfig }, { method: "post" });
     }
   }
 
