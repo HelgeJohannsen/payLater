@@ -8,8 +8,8 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
- // provider = "sqlite"
- // url      = "file:dev.sqlite"
+  // provider = "sqlite"
+  // url      = "file:dev.sqlite"
 }
 
 model Session {
@@ -24,21 +24,26 @@ model Session {
 }
 
 model Orders {
-  id              Int   @id @default(autoincrement())
-  orderId         String?
-  orderName       String?
-  paymentMethode  String?
-  status          String?
-  firstName       String
-  lastName        String
-  zip             String
-  city            String
-  street          String
-  country         String
+  id             Int     @id @default(autoincrement())
+  orderId        String?
+  orderName      String?
+  paymentMethode String?
+  status         String?
+  firstName      String
+  lastName       String
+  zip            String
+  city           String
+  street         String
+  country        String
 }
+
 model Config {
-  id                Int     @id @default(autoincrement())
-  customerAccountNumber          String  
-  vendorId          String  
-  shop              String  @unique
+  id                    Int     @id @default(autoincrement())
+  shop                  String  @unique
+  customerAccountNumber String
+  vendorId              String
+  username              String
+  password              String
+  apiKey                String
+  notificationHashKey   String?
 }
