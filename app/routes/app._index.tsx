@@ -60,12 +60,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   // console.log("request: ", request);
   // console.log(" minBestellWert:" + body.get("minBestellWert"));
   // console.log(" id:" + body.get("vendorId"));
+
   const Config = await db.config.update({
     where: { shop },
     data: {
+      shop: shop,
       customerAccountNumber: String(body.get("customerAccountNumber")),
       vendorId: String(body.get("vendorId")),
-      shop: shop,
+      username: String(body.get("username")),
+      apiKey: String(body.get("apiKey")),
+      password: String(body.get("password"))
     },
   });
   return Config;
