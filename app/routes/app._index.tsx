@@ -85,21 +85,26 @@ export default function Index() {
 
   const submit = useSubmit();
   console.log("laoderData", laoderData);
-  const { id, customerAccountNumber, vendorId, shop } = laoderData!; // TODO: might be undefined if server not reachable ?
+  const { id, customerAccountNumber, vendorId, apiKey, password, username, shop } = laoderData!; // TODO: might be undefined if server not reachable ?
 
   const [appConfig, setAppConfig] = useState<AppConfig>({
-    vendorId: "",
-    username: "",
-    password: "",
-    apiKey: "",
-    customerAccountNumber: "",
-  }); // TODO - start the useState with the values that comes from loaderData
+    vendorId: vendorId ?? "",
+    username: username ?? "",
+    password: password ?? "",
+    apiKey: apiKey ?? "",
+    customerAccountNumber: customerAccountNumber ?? "",
+  });
 
   function handleSave() {
     if (id === undefined) {
       console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
     } else {
-      submit({ id, ...appConfig }, { method: "post" });
+      const data = {
+        id,
+        shop: shop ?? "",
+        ...appConfig
+      }
+      submit(data, { method: "post" });
     }
   }
 
