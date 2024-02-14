@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { getOrCreateConfig } from "../models/config.server";
 
 function parseJwt(token: string) {
@@ -45,7 +44,7 @@ export class ConsorsAPI {
         headers: {
           "x-api-key": this.authData.apiKey,
           "Content-Type": "application/x-www-form-urlencoded",
-          "X-Request-Id": randomUUID(),
+          "X-Request-Id": "1",
           "X-Conversation-Id": "111",
         },
         body: new URLSearchParams({
