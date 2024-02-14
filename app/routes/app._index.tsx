@@ -33,6 +33,7 @@ import { createConfig, getOrCreateConfig } from "../models/config.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const Settings = await getOrCreateConfig(session.shop);
+
   return {
     ...Settings,
   };
@@ -43,7 +44,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { shop } = session;
   const body = await request.formData();
 
-  console.log("body: ", body);
+  console.log(
+    "body: -> ",
+    body,
+    body.get("customerAccountNumber"),
+    body.get("vendorId")
+  );
   // console.log("session: ", session);
   // console.log("request: ", request);
   // console.log(" minBestellWert:" + body.get("minBestellWert"));
@@ -59,9 +65,27 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return Config;
 };
 
+type AppConfig = {
+  vendorId: string;
+  username: string;
+  password: string;
+  apiKey: string;
+  notificationHashKey?: string;
+  customerAccountNumber: string;
+};
+
 export default function Index() {
   const laoderData = useLoaderData<typeof loader>();
+  console.log("laoderData", laoderData);
   const { id, customerAccountNumber, vendorId, shop } = laoderData!; // TODO: might be undefined if server not reachable ?
+
+  const [appConfig, setAppConfig] = useState<AppConfig>({
+    vendorId: "",
+    username: "",
+    password: "",
+    apiKey: "",
+    customerAccountNumber: "",
+  });
 
   const [customerAccountNumberTextfield, setcustomerAccountNumberTextfield] =
     useState(customerAccountNumber);
@@ -69,18 +93,26 @@ export default function Index() {
 
   const submit = useSubmit();
 
+  // function handleSave() {
+  //   if (id === undefined) {
+  //     console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
+  //   } else {
+  //     const data = {
+  //       id: id,
+  //       customerAccountNumber: customerAccountNumberTextfield ?? null,
+  //       vendorId: vendorIdTextfield ?? null,
+  //       shop: shop ?? null,
+  //     };
+
+  //     submit(data, { method: "post" });
+  //   }
+  // }
+
   function handleSave() {
     if (id === undefined) {
       console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
     } else {
-      const data = {
-        id: id,
-        customerAccountNumber: customerAccountNumberTextfield ?? null,
-        vendorId: vendorIdTextfield ?? null,
-        shop: shop ?? null,
-      };
-
-      submit(data, { method: "post" });
+      submit(appConfig, { method: "post" });
     }
   }
 
@@ -96,17 +128,54 @@ export default function Index() {
           id="customer-account-number"
           label="customerAccountNumber"
           autoComplete="off"
-          value={customerAccountNumberTextfield}
-          onChange={(value) => setcustomerAccountNumberTextfield(value)}
-          onBlur={() => handleSave()}
+          value={appConfig.customerAccountNumber}
+          onChange={(value) =>
+            setAppConfig((prev) => ({
+              ...prev,
+              customerAccountNumber: value,
+            }))
+          }
+          onBlur={handleSave}
         />
         <TextField
           id="vendor-id"
           label="VendorID"
           autoComplete="off"
-          value={vendorIdTextfield}
-          onChange={(value) => setVendorIdTextfield(value)}
-          onBlur={() => handleSave()}
+          value={appConfig.vendorId}
+          onChange={(value) =>
+            setAppConfig((prev) => ({ ...prev, vendorId: value }))
+          }
+          onBlur={handleSave}
+        />
+        <TextField
+          id="username"
+          label="Username"
+          autoComplete="off"
+          value={appConfig.username}
+          onChange={(value) =>
+            setAppConfig((prev) => ({ ...prev, username: value }))
+          }
+          onBlur={handleSave}
+        />
+        <TextField
+          id="password"
+          label="Password"
+          autoComplete="off"
+          value={appConfig.password}
+          onChange={(value) =>
+            setAppConfig((prev) => ({ ...prev, password: value }))
+          }
+          onBlur={handleSave}
+        />
+        <TextField
+          id="x-api-key"
+          label="Api Key"
+          autoComplete="off"
+          value={appConfig.apiKey}
+          onChange={(value) =>
+            setAppConfig((prev) => ({ ...prev, apiKey: value }))
+          }
+          onBlur={handleSave}
         />
       </Card>
     </Page>

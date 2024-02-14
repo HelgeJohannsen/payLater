@@ -8,6 +8,7 @@ export async function getOrCreateConfig(shop: string) {
     const entry = await createConfig(shop);
     return entry;
   }
+  console.log("config", config);
   return config;
 }
 export async function createConfig(shop: string) {
