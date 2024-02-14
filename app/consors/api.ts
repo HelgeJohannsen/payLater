@@ -85,7 +85,7 @@ export class ConsorsAPI {
         }
       });
     } else {
-      console.log("this JWT TOKEN -", this.jwt);
+      console.log("this JWT TOKEN -", this.jwtData.jwt);
       return this.jwtData.jwt;
     }
   }

@@ -36,11 +36,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const Settings = await getOrCreateConfig(session.shop);
 
   const consorsMockClient = demoMockApi;
-  const clientDataOk = await consorsMockClient.jwt();
+  const clientAuth = await consorsMockClient.jwt();
+  console.log("clientAuth", clientAuth);
 
   return {
     ...Settings,
-    clientDataOk: !!clientDataOk,
+    clientDataOk: !!clientAuth,
   };
 };
 
