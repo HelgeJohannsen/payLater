@@ -8,16 +8,14 @@ export async function getOrder(orderId: string) {
   }
   return order;
 }
-export async function setOrderStatus(orderId: string, status: string) {
-  // console.log(` --> setOrderId(orderId:${orderId}, status:${status})`);
-  /** @type {any} */
+export async function setOrderStatus(orderId: string, status: string, applicationNumber: string) {
   const data = {
     status,
+    applicationNumber
   };
-  const order2 = await db.orders.findFirst({ where: { orderId } });
-  const id = order2?.id;
-  // console.log(` --> setOrderId(orderId:${orderId}, status:${status})`);
-  const order = await db.orders.update({ where: { id }, data });
+  const order = await db.orders.findFirst({ where: { orderId } });
+  const id = order?.id;
+  await db.orders.update({ where: { id }, data });
   return;
 }
 
