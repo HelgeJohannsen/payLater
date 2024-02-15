@@ -38,6 +38,8 @@ model Orders {
   applicationNumber String?
 }
 
+//TODO - add paymentGatewayName, CostumerId, OrderAmount, fulfillStatus, cancelStatus and the created_at(from order create webhook) to Orders model
+
 model Config {
   id                    Int     @id @default(autoincrement())
   shop                  String  @unique

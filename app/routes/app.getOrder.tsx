@@ -1,4 +1,5 @@
-import { LoaderFunction, json } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { getOrder } from "~/models/order.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -13,13 +14,19 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       }
     );
   }
-      const order = await getOrder(orderid)
-      if (order == null) {
-        throw new Response("shop not found", {
-          status: 404,
-        });
-      }
-      const response = json(order);
-      response.headers.append("Access-Control-Allow-Origin", "*");
-      return response;
-  };
+  const order = await getOrder(orderid);
+  if (order == null) {
+    throw new Response("shop not found", {
+      status: 404,
+    });
+  }
+  // const response = json(order);
+  // response.headers.append("Access-Control-Allow-Origin", "*");
+  // return response;
+  return json(order, {
+    headers: {
+      "Access-Control-Allow-Origin": "*", // Allows any origin
+      // Add any other headers you need here
+    },
+  });
+};
