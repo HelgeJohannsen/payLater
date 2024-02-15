@@ -10,10 +10,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   // console.log("notify loader Request:", request.url);
   const requestedURL = new URL(request.url);
-  console.log("requestedURL", requestedURL);
-  const orderID = requestedURL.searchParams.get("orderId");
+  console.log("requestedURL -- ", requestedURL);
+  console.log("params -- ", params);
+  const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
-  if (orderID == null || status == null) {
+  const applicationNumber = requestedURL.searchParams.get("applicationNum");
+  // const hash = requestedURL.searchParams.get("hash");
+  if (orderId === null || status === null || applicationNumber === null) {
     throw new Response(
       "Bad Request" /*", query parameter shop is mandatory"*/,
       {
@@ -21,7 +24,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       }
     );
   }
-  setOrderStatus(orderID, status);
+  setOrderStatus(orderId, status, applicationNumber);
 
   const response = json("order");
   response.headers.append("Access-Control-Allow-Origin", "*");

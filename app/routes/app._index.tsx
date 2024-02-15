@@ -1,35 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import {
-  Link,
-  useActionData,
   useLoaderData,
-  useNavigate,
   useSubmit,
 } from "@remix-run/react";
 import {
+  BlockStack,
+  Button,
   Card,
-  Checkbox,
-  ChoiceList,
-  EmptyState,
-  Icon,
-  IndexTable,
-  Layout,
   Page,
-  Select,
-  Tabs,
   Text,
-  TextField,
-  Thumbnail,
-  Tooltip,
+  TextField
 } from "@shopify/polaris";
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
 import { useState } from "react";
 import { demoMockApi } from "~/consors/api";
-import { createConfig, getOrCreateConfig } from "../models/config.server";
+import { getOrCreateConfig } from "../models/config.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
@@ -85,11 +73,11 @@ type AppConfig = {
 };
 
 export default function Index() {
-  const laoderData = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  console.log("laoderData", laoderData);
-  const { id, customerAccountNumber, vendorId, apiKey, password, username, shop } = laoderData!; // TODO: might be undefined if server not reachable ?
+  console.log("loaderData", loaderData);
+  const { id, customerAccountNumber, vendorId, apiKey, password, username, shop } = loaderData!; // TODO: might be undefined if server not reachable ?
 
   const [appConfig, setAppConfig] = useState<AppConfig>({
     vendorId: vendorId ?? "",
@@ -116,10 +104,11 @@ export default function Index() {
     <Page>
       <ui-title-bar title="Einstellungen"> </ui-title-bar>
 
-      <Card>
+      <Card >
         <Text as="h2" variant="headingMd">
           Consors EFI
         </Text>
+        <BlockStack align="center" inlineAlign="center">
         <TextField
           id="customer-account-number"
           label="customerAccountNumber"
@@ -173,6 +162,11 @@ export default function Index() {
           }
           onBlur={handleSave}
         />
+        </BlockStack>
+        <BlockStack>
+          <Button onClick={() => handleSave()}></Button>
+        </BlockStack>
+
       </Card>
     </Page>
   );
