@@ -8,6 +8,7 @@ function jwtExpiresAt(jwt: string): number {
   const payload = parseJwt(jwt);
   //payload.exp
   //payload.data.exp  // TODO: is this field needed ?
+  console.log("parsed JWT", payload);
   if (payload.exp != payload.data.exp) {
     console.warn("JWT with two different values for .exp and .data.exp", jwt);
   }
@@ -36,7 +37,6 @@ export class ConsorsAPI {
   }
 
   private async getNewJWT(): Promise<string | undefined> {
-    // console.log("getting new consors JWT");
     const response = await fetch(
       `https://api.consorsfinanz.de/common-services/cfg/token/${this.authData.vendorId}`,
       {
@@ -68,7 +68,7 @@ export class ConsorsAPI {
     //return this.getNewJWT()
     // TODO: Token läuft ab
     if (
-      this.jwtData == undefined ||
+      this.jwtData === undefined ||
       this.jwtData.jwtValideUntil - jwtMinimalAcceptableLiveTime < Date.now()
     ) {
       return this.getNewJWT().then((jwt) => {
@@ -89,32 +89,6 @@ export class ConsorsAPI {
       return this.jwtData.jwt;
     }
   }
-
-  // async provideOrderId(
-  //   transactionId: string,
-  //   subscriptionIdentifierExternal: bigint
-  // ) {
-  //   const clientId = this.authData.vendorId;
-  //   const consorsUrl = `https://api.consorsfinanz.de/ratanet-api/cfg/subscription/${clientId}/transaction/partnerdata?version=${CONSORS_API_VERSION}`;
-
-  //   const consorsAuthToken = await this.jwt();
-
-  //   const res = await fetch(consorsUrl, {
-  //     method: "PUT",
-  //     headers: {
-  //       "x-api-key": this.authData.apiKey,
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${consorsAuthToken}`,
-  //     },
-  //     body: JSON.stringify({
-  //       subscriptionIdentifierExternal:
-  //         subscriptionIdentifierExternal.toString(),
-  //       transactionId,
-  //     }),
-  //   });
-  //   // TODO: check status code usw.
-  //   return res;
-  // }
 
   // async stornoOrder(transactionId: string) {
   //   const clientId = this.authData.vendorId;
@@ -157,7 +131,7 @@ export class ConsorsAPI {
   // }
 }
 
-// const consorsClientCache: { [shop: string]: ConsorsAPI | undefined } = {};
+const consorsClientCache: { [shop: string]: ConsorsAPI | undefined } = {};
 
 // export async function resetConsorsClient(shop: string) {
 //   consorsClientCache[shop] = undefined;
@@ -165,37 +139,36 @@ export class ConsorsAPI {
 
 export async function getConsorsClient(shop: string) {
   // console.log("consorsClientCache", consorsClientCache);
-  // const chachedClient = consorsClientCache[shop];
+  const chachedClient = consorsClientCache[shop];
   const config = await getOrCreateConfig(shop);
-  console.log("getConsorsClient", config);
 
-  // if (config == undefined) {
-  //   return undefined;
-  // }
-  // if (chachedClient != undefined) {
-  //   if (
-  //     chachedClient.authData.apiKey === config.apiKey &&
-  //     chachedClient.authData.password === config.passwort &&
-  //     chachedClient.authData.username === config.username &&
-  //     chachedClient.authData.vendorId === config.vendorId
-  //   ) {
-  //     return chachedClient;
-  //   }
-  // }
-  // const newClient = new ConsorsAPI({
-  //   apiKey: config.apiKey,
-  //   username: config.username,
-  //   password: config.passwort,
-  //   vendorId: config.vendorId,
-  // });
+  if (config == undefined) {
+    return undefined;
+  }
+  if (chachedClient !== undefined) {
+    if (
+      chachedClient.authData.apiKey === config.apiKey &&
+      chachedClient.authData.password === config.password &&
+      chachedClient.authData.username === config.username &&
+      chachedClient.authData.vendorId === config.vendorId
+    ) {
+      return chachedClient;
+    }
+  }
+  const newClient = new ConsorsAPI({
+    apiKey: config.apiKey,
+    username: config.username,
+    password: config.password,
+    vendorId: config.vendorId,
+  });
 
-  // consorsClientCache[shop] = newClient;
-  // return newClient;
+  consorsClientCache[shop] = newClient;
+  return newClient;
 }
 
-export const demoMockApi = new ConsorsAPI({
-  apiKey: "6f600501-6bca-47b7-a2b9-9314e75f626e",
-  username: "1pstest",
-  password: "ecec8403",
-  vendorId: "8403",
-});
+// export const demoMockApi = new ConsorsAPI({
+//   apiKey: "6f600501-6bca-47b7-a2b9-9314e75f626e",
+//   username: "1pstest",
+//   password: "ecec8403",
+//   vendorId: "8403",
+// });

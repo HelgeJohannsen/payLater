@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useSubmit } from "@remix-run/react";
 import {
+  Badge,
   BlockStack,
   Button,
-  Card,
   Page,
   Text,
   TextField,
@@ -13,19 +12,20 @@ import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
 import { useState } from "react";
-import { demoMockApi } from "~/consors/api";
+// import { demoMockApi } from "~/consors/api";
+import { getConsorsClient } from "~/consors/api";
 import { getOrCreateConfig } from "../models/config.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
-  const Settings = await getOrCreateConfig(session.shop);
+  const settings = await getOrCreateConfig(session.shop);
 
-  const consorsMockClient = demoMockApi;
-  const clientAuth = await consorsMockClient.jwt();
+  const consorsClient = await getConsorsClient(session.shop);
+  const clientAuth = await consorsClient?.jwt();
   console.log("clientAuth", clientAuth);
 
   return {
-    ...Settings,
+    ...settings,
     clientDataOk: !!clientAuth,
   };
 };
@@ -35,18 +35,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { shop } = session;
   const body = await request.formData();
 
-  console.log(
-    "body: -> ",
-    body,
-    body.get("customerAccountNumber"),
-    body.get("vendorId")
-  );
-  // console.log("session: ", session);
-  // console.log("request: ", request);
-  // console.log(" minBestellWert:" + body.get("minBestellWert"));
-  // console.log(" id:" + body.get("vendorId"));
+  console.log("action body: -> ", body);
 
-  const Config = await db.config.update({
+  const config = await db.config.update({
     where: { shop },
     data: {
       shop: shop,
@@ -57,7 +48,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       password: String(body.get("password")),
     },
   });
-  return Config;
+  return config;
 };
 
 type AppConfig = {
@@ -71,9 +62,8 @@ type AppConfig = {
 
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
-
   const submit = useSubmit();
-  console.log("loaderData", loaderData);
+
   const {
     id,
     customerAccountNumber,
@@ -82,7 +72,8 @@ export default function Index() {
     password,
     username,
     shop,
-  } = loaderData!; // TODO: might be undefined if server not reachable ?
+    clientDataOk,
+  } = loaderData!;
 
   const [appConfig, setAppConfig] = useState<AppConfig>({
     vendorId: vendorId ?? "",
@@ -94,7 +85,7 @@ export default function Index() {
 
   function handleSave() {
     if (id === undefined) {
-      console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
+      console.error("could not load ID from server, cant submit without ID");
     } else {
       const data = {
         id,
@@ -108,8 +99,7 @@ export default function Index() {
   return (
     <Page>
       <ui-title-bar title="Einstellungen"> </ui-title-bar>
-
-      <Card>
+      <BlockStack gap={"100"} align="center" inlineAlign="start">
         <Text as="h2" variant="headingMd">
           Consors EFI
         </Text>
@@ -169,11 +159,16 @@ export default function Index() {
               onBlur={handleSave}
             />
           </BlockStack>
-          <BlockStack align="center" inlineAlign="end">
-            <Button onClick={() => handleSave()}>Save</Button>
+          <BlockStack align="space-between">
+            <BlockStack align="center" inlineAlign="end">
+              <Button onClick={() => handleSave()}>Save</Button>
+            </BlockStack>
+            <BlockStack align="center" inlineAlign="start">
+              {clientDataOk && <Badge size="medium">Error</Badge>}
+            </BlockStack>
           </BlockStack>
         </BlockStack>
-      </Card>
+      </BlockStack>
     </Page>
   );
 }
