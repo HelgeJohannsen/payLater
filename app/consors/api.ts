@@ -6,9 +6,6 @@ function parseJwt(token: string) {
 
 function jwtExpiresAt(jwt: string): number {
   const payload = parseJwt(jwt);
-  //payload.exp
-  //payload.data.exp  // TODO: is this field needed ?
-  console.log("parsed JWT", payload);
   if (payload.exp != payload.data.exp) {
     console.warn("JWT with two different values for .exp and .data.exp", jwt);
   }
@@ -23,9 +20,6 @@ interface ApiAuthData {
 }
 
 const jwtMinimalAcceptableLiveTime = 2 * 60 * 1000; // 2min
-
-// const CONSORS_API_VERSION = "2.0";
-
 export class ConsorsAPI {
   private jwtData?: {
     jwt: string;
@@ -54,7 +48,6 @@ export class ConsorsAPI {
       }
     );
     if (response.ok) {
-      // console.log("jwt response", response);
       return response
         .json()
         .then((body) => body["token"].substring("Bearer ".length));
@@ -65,8 +58,6 @@ export class ConsorsAPI {
   }
 
   async jwt(): Promise<string | undefined> {
-    //return this.getNewJWT()
-    // TODO: Token läuft ab
     if (
       this.jwtData === undefined ||
       this.jwtData.jwtValideUntil - jwtMinimalAcceptableLiveTime < Date.now()
@@ -85,7 +76,6 @@ export class ConsorsAPI {
         }
       });
     } else {
-      console.log("this JWT TOKEN -", this.jwtData.jwt);
       return this.jwtData.jwt;
     }
   }
@@ -138,7 +128,6 @@ const consorsClientCache: { [shop: string]: ConsorsAPI | undefined } = {};
 // }
 
 export async function getConsorsClient(shop: string) {
-  // console.log("consorsClientCache", consorsClientCache);
   const chachedClient = consorsClientCache[shop];
   const config = await getOrCreateConfig(shop);
 
