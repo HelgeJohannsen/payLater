@@ -4,6 +4,7 @@ import {
   Badge,
   BlockStack,
   Button,
+  Card,
   Page,
   Text,
   TextField,
@@ -22,7 +23,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const consorsClient = await getConsorsClient(session.shop);
   const clientAuth = await consorsClient?.jwt();
-  console.log("clientAuth", clientAuth);
 
   return {
     ...settings,
@@ -97,78 +97,80 @@ export default function Index() {
   }
 
   return (
-    <Page>
-      <ui-title-bar title="Einstellungen"> </ui-title-bar>
-      <BlockStack gap={"100"} align="center" inlineAlign="start">
-        <Text as="h2" variant="headingMd">
-          Consors EFI
-        </Text>
-        <BlockStack gap={"050"}>
-          <BlockStack align="center" inlineAlign="start">
-            <TextField
-              id="customer-account-number"
-              label="customerAccountNumber"
-              autoComplete="off"
-              value={appConfig.customerAccountNumber}
-              onChange={(value) =>
-                setAppConfig((prev) => ({
-                  ...prev,
-                  customerAccountNumber: value,
-                }))
-              }
-              onBlur={handleSave}
-            />
-            <TextField
-              id="vendor-id"
-              label="VendorID"
-              autoComplete="off"
-              value={appConfig.vendorId}
-              onChange={(value) =>
-                setAppConfig((prev) => ({ ...prev, vendorId: value }))
-              }
-              onBlur={handleSave}
-            />
-            <TextField
-              id="username"
-              label="Username"
-              autoComplete="off"
-              value={appConfig.username}
-              onChange={(value) =>
-                setAppConfig((prev) => ({ ...prev, username: value }))
-              }
-              onBlur={handleSave}
-            />
-            <TextField
-              id="password"
-              label="Password"
-              autoComplete="off"
-              value={appConfig.password}
-              onChange={(value) =>
-                setAppConfig((prev) => ({ ...prev, password: value }))
-              }
-              onBlur={handleSave}
-            />
-            <TextField
-              id="x-api-key"
-              label="Api Key"
-              autoComplete="off"
-              value={appConfig.apiKey}
-              onChange={(value) =>
-                setAppConfig((prev) => ({ ...prev, apiKey: value }))
-              }
-              onBlur={handleSave}
-            />
-          </BlockStack>
-          <BlockStack align="space-between">
-            <BlockStack align="center" inlineAlign="end">
-              <Button onClick={() => handleSave()}>Save</Button>
-            </BlockStack>
+    <Page narrowWidth>
+      <Card>
+        <ui-title-bar title="Einstellungen"> </ui-title-bar>
+        <BlockStack gap={"150"} align="center" inlineAlign="start">
+          <Text as="h2" variant="headingMd">
+            Consors EFI
+          </Text>
+          <BlockStack gap={"100"}>
             <BlockStack align="center" inlineAlign="start">
-              {clientDataOk && <Badge size="medium">Error</Badge>}
+              <TextField
+                id="customer-account-number"
+                label="customerAccountNumber"
+                autoComplete="off"
+                value={appConfig.customerAccountNumber}
+                onChange={(value) =>
+                  setAppConfig((prev) => ({
+                    ...prev,
+                    customerAccountNumber: value,
+                  }))
+                }
+                onBlur={handleSave}
+              />
+              <TextField
+                id="vendor-id"
+                label="VendorID"
+                autoComplete="off"
+                value={appConfig.vendorId}
+                onChange={(value) =>
+                  setAppConfig((prev) => ({ ...prev, vendorId: value }))
+                }
+                onBlur={handleSave}
+              />
+              <TextField
+                id="username"
+                label="Username"
+                autoComplete="off"
+                value={appConfig.username}
+                onChange={(value) =>
+                  setAppConfig((prev) => ({ ...prev, username: value }))
+                }
+                onBlur={handleSave}
+              />
+              <TextField
+                id="password"
+                label="Password"
+                autoComplete="off"
+                value={appConfig.password}
+                onChange={(value) =>
+                  setAppConfig((prev) => ({ ...prev, password: value }))
+                }
+                onBlur={handleSave}
+              />
+              <TextField
+                id="x-api-key"
+                label="Api Key"
+                autoComplete="off"
+                value={appConfig.apiKey}
+                onChange={(value) =>
+                  setAppConfig((prev) => ({ ...prev, apiKey: value }))
+                }
+                onBlur={handleSave}
+              />
+            </BlockStack>
+            <BlockStack align="space-between" inlineAlign="center">
+              {!clientDataOk && (
+                <Badge size="medium" tone="attention">
+                  Error
+                </Badge>
+              )}
+              <Button onClick={() => handleSave()}>Save</Button>
             </BlockStack>
           </BlockStack>
         </BlockStack>
-      </BlockStack>
+      </Card>
     </Page>
   );
 }
