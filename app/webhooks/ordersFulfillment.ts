@@ -17,14 +17,15 @@
 //   tags: z.string(),
 // });
 
-export async function webbhook_ordersFulfillment(
+export async function webhook_ordersFulfillment(
   shop: string,
   payload: unknown
 ) {
   const data = payload?.valueOf();
-  console.log("webbhook_ordersFulfillment", data);
+  console.log("webhook_ordersFulfillment", data);
 
   // const result = orderFulfilled.safeParse(data);
+  // console.log("result", result);
   // if (result.success) {
   //   const orderData = result.data;
   //   // console.log("parsed oderData", orderData);

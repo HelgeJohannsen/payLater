@@ -1,4 +1,6 @@
 // import { z } from "zod";
+// import { handleOrderCancel } from "~/models/OrderCancel.server";
+// import { isPayLaterPaymentGateway } from "~/utils/checkPaymentGateway";
 // import {
 //   getCheckout,
 //   getCheckoutByOrderId,
@@ -10,18 +12,21 @@
 //   incrementCounterShopifyOrderCancelUnhandled,
 // } from "~/models/ShopifyOrderCancel.server";
 
-// const orderCreated = z.object({
+// const orderCancel = z.object({
 //   id: z.number(),
-//   admin_graphql_api_id: z.string(),
-//   current_total_price: z.string(),
+//   total_price: z.string(),
 //   tags: z.string(),
+//   payment_gateway_names: z.array(z.string()),
 // });
 
-export async function webbhook_oredersCancel(shop: string, payload: unknown) {
+export async function webhook_ordersCancel(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   console.log("webbhook_oredersCancel - ", data);
-  // const data = payload?.valueOf();
-  // const orderData = orderCreated.parse(data);
+  // const cancellationData = orderCancel.parse(data);
+  // console.log("cancellationData parsed - ", cancellationData);
+  // if (isPayLaterPaymentGateway(cancellationData.payment_gateway_names)) {
+  //   handleOrderCancel(cancellationData.id);
+  // }
   // console.log("parsed oderData", orderData);
   // if (orderData.tags.includes("Consors Finanzierung")) {
   //   console.log("Cancel order because it is Consors Finanzierung:", orderData);

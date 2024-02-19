@@ -17,12 +17,12 @@
 //   tags: z.string(),
 // });
 
-export async function webbhook_ordersPartiallyFulFilled(
+export async function webhook_ordersPartiallyFulFilled(
   shop: string,
   payload: unknown
 ) {
   const data = payload?.valueOf();
-  console.log("webbhook_ordersPartiallyFulFilled", data);
+  console.log("webhook_ordersPartiallyFulFilled", data);
 
   // const result = orderFulfilled.safeParse(data);
   // if (result.success) {
