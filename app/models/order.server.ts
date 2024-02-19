@@ -59,14 +59,8 @@ export async function createOrderWithCustomerDetails({
   createCustomerInfo,
   createOrderInfo,
 }: CreateOrderWithCustomerDetails) {
-  console.log(
-    "createOrderWithCustomerDetails - createCustomerInfo, createOrderInfo",
-    createCustomerInfo,
-    createOrderInfo
-  );
   // A transaction ensure both records are created together
   const result = await db.$transaction(async (prisma) => {
-    console.log("createOrderWithCustomerDetails inside");
     const {
       orderId,
       orderNumber,
@@ -88,7 +82,6 @@ export async function createOrderWithCustomerDetails({
         orderAmount,
       },
     });
-    console.log("createOrderWithCustomerDetails order", order);
 
     if (!order) {
       throw new Error("Order not created");
@@ -106,10 +99,6 @@ export async function createOrderWithCustomerDetails({
         country,
       },
     });
-    console.log(
-      "createOrderWithCustomerDetails customerDetails",
-      customerDetails
-    );
 
     if (!customerDetails) {
       throw new Error("Customer details not created");

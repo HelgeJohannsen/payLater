@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { webbhook_oredersCancel } from "~/webhooks/ordersCancel";
-import { webbhook_ordersCreate } from "~/webhooks/ordersCreate";
-import { webbhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
-import { webbhook_ordersPartiallyFulFilled } from "~/webhooks/ordersPartiallyFulFilled";
+import { webhook_ordersCancel } from "~/webhooks/ordersCancel";
+import { webhook_ordersCreate } from "~/webhooks/ordersCreate";
+import { webhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
+import { webhook_ordersPartiallyFulFilled } from "~/webhooks/ordersPartiallyFulFilled";
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
@@ -21,21 +21,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (topic) {
     case "ORDERS_CREATE":
-      webbhook_ordersCreate(shop, payload);
+      webhook_ordersCreate(shop, payload);
       return new Response("webhook ORDERS_CREATE", { status: 200 });
 
     case "ORDERS_FULFILLED":
-      webbhook_ordersFulfillment(shop, payload);
+      webhook_ordersFulfillment(shop, payload);
       return new Response("webhook ORDERS_FULFILLED", { status: 200 });
 
     case "ORDERS_PARTIALLY_FULFILLED":
-      webbhook_ordersPartiallyFulFilled(shop, payload);
+      webhook_ordersPartiallyFulFilled(shop, payload);
       return new Response("webhook ORDERS_PARTIALLY_FULFILLED", {
         status: 200,
       });
 
     case "ORDERS_CANCELLED":
-      webbhook_oredersCancel(shop, payload);
+      webhook_ordersCancel(shop, payload);
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "APP_UNINSTALLED":

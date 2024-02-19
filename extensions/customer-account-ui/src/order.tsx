@@ -37,6 +37,7 @@ function Extension() {
   useEffect(() => {
     const setConsorsUrl = async () => {
       try {
+        console.log("inside useEffect")
         const apiEndpoint = "app/getOrder";
         const parameters = new URLSearchParams({ orderId: order_id });
         const requestUrl = `${application_url}/${apiEndpoint}?${parameters}`;
