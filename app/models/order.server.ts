@@ -86,7 +86,8 @@ export async function createOrderWithCustomerDetails({
     if (!order) {
       throw new Error("Order not created");
     }
-
+    console.log("createCustomerInfo, createOrderInfo", createCustomerInfo,
+    createOrderInfo,)
     const customerDetails = await prisma.customerDetails.create({
       data: {
         orderNumberRef: order.orderNumber,
