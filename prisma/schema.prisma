@@ -38,14 +38,14 @@ model Config {
 model Customer {
   id                  Int      @id @default(autoincrement())
   customCustomerIdRef String   @unique
-  customerId          Int      @unique
+  customerId          BigInt   @unique
   orders              Orders[]
 }
 
 model Orders {
   id                  Int              @id @default(autoincrement())
   orderId             String           @unique
-  orderNumber         Int              @unique
+  orderNumber         BigInt           @unique
   orderName           String
   customCustomerId    String?
   applicationNumber   String?
@@ -65,8 +65,8 @@ model Orders {
 
 model CustomerDetails {
   id             Int    @id @default(autoincrement())
-  orderNumberRef Int    @unique
-  customerId     Int    @unique
+  orderNumberRef BigInt @unique
+  customerId     BigInt @unique
   firstName      String
   lastName       String
   zip            String
@@ -78,14 +78,14 @@ model CustomerDetails {
 
 model OrderDetails {
   id             Int     @id @default(autoincrement())
-  orderNumberRef Int     @unique
+  orderNumberRef BigInt  @unique
   details        String?
   order          Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
 }
 
 model BillingInfo {
   id                     Int       @id @default(autoincrement())
-  orderNumberRef         Int       @unique
+  orderNumberRef         BigInt    @unique
   billingType            String
   billingNumber          String?
   billingDate            DateTime
