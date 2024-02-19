@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       }
     );
   }
-  setCreditCheck(orderId, status, applicationNumber);
+  await setCreditCheck(orderId, status, applicationNumber);
 
   const response = json("order");
   response.headers.append("Access-Control-Allow-Origin", "*");

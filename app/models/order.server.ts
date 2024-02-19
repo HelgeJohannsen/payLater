@@ -29,7 +29,7 @@ export async function setCreditCheck(
   return;
 }
 
-type CreateOrder = Pick<
+export type CreateOrder = Pick<
   Orders,
   | "orderId"
   | "orderNumber"
@@ -37,9 +37,11 @@ type CreateOrder = Pick<
   | "paymentGatewayName"
   | "paymentMethode"
   | "orderAmount"
+  | "customCustomerId"
+  | "note"
 >;
 
-type CreateCustomerInfo = Pick<
+export type CreateCustomerInfo = Pick<
   CustomerDetails,
   | "customerId"
   | "firstName"
@@ -68,10 +70,13 @@ export async function createOrderWithCustomerDetails({
       paymentGatewayName,
       paymentMethode,
       orderAmount,
+      note,
+      customCustomerId
     } = createOrderInfo;
 
     const { customerId, firstName, lastName, city, street, zip, country } =
       createCustomerInfo;
+
     const order = await prisma.orders.create({
       data: {
         orderId,
@@ -80,14 +85,15 @@ export async function createOrderWithCustomerDetails({
         paymentGatewayName,
         paymentMethode,
         orderAmount,
+        customCustomerId: customCustomerId ?? "",
+        note: note ?? "",
       },
     });
 
     if (!order) {
       throw new Error("Order not created");
     }
-    console.log("createCustomerInfo, createOrderInfo", createCustomerInfo,
-    createOrderInfo,)
+
     const customerDetails = await prisma.customerDetails.create({
       data: {
         orderNumberRef: order.orderNumber,
