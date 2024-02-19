@@ -33,14 +33,11 @@ function Extension() {
         const parameters = new URLSearchParams({ orderId: order_id });
         const requestUrl = `${application_url}/${apiEndpoint}?${parameters}`;
 
-        console.log("requestUrl", requestUrl);
         const response = await fetch(requestUrl, { method: "GET" });
-        console.log("response getOrder - ", response);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const orderInfo: OrderWithCustomerDetails = await response.json();
-        console.log("orderInfo -", orderInfo);
         setOrderData(orderInfo);
 
         const { customerDetails } = orderInfo
@@ -73,8 +70,6 @@ function Extension() {
   }, []);
 
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
-
-  console.log("link", link);
 
   return order ? (
     <InlineLayout

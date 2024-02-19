@@ -35,8 +35,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { shop } = session;
   const body = await request.formData();
 
-  console.log("action body: -> ", body);
-
   const config = await db.config.update({
     where: { shop },
     data: {
