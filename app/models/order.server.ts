@@ -59,6 +59,11 @@ export async function createOrderWithCustomerDetails({
   createCustomerInfo,
   createOrderInfo,
 }: CreateOrderWithCustomerDetails) {
+  console.log(
+    "createOrderWithCustomerDetails - createCustomerInfo, createOrderInfo",
+    createCustomerInfo,
+    createOrderInfo
+  );
   // A transaction ensure both records are created together
   const result = await db.$transaction(async (prisma) => {
     const {
