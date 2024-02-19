@@ -34,18 +34,18 @@ model Config {
   notificationHashKey   String?
 }
 
-//customCustomerId is made of the last 5 digits of the customerId provided by shopify and the last 5 digits of the orderId
+//customCustomerId is made of the last 5 digits of the customerId provided by shopify and the last 5 digits of the orderNumber
 model Customer {
   id                  Int      @id @default(autoincrement())
   customCustomerIdRef String   @unique
-  customerId          BigInt   @unique
+  customerId          String   @unique
   orders              Orders[]
 }
 
 model Orders {
   id                  Int              @id @default(autoincrement())
   orderId             String           @unique
-  orderNumber         BigInt           @unique
+  orderNumber         String           @unique
   orderName           String
   customCustomerId    String?
   applicationNumber   String?
@@ -55,7 +55,7 @@ model Orders {
   confirmCreditStatus String?
   fulfillStatus       String?
   cancelStatus        String?
-  partialFFStatus     Boolean?
+  partialFFStatus     String?
   partialFFAmount     Float?
   customer            Customer?        @relation(fields: [customCustomerId], references: [customCustomerIdRef])
   customerDetails     CustomerDetails?
@@ -65,8 +65,8 @@ model Orders {
 
 model CustomerDetails {
   id             Int    @id @default(autoincrement())
-  orderNumberRef BigInt @unique
-  customerId     BigInt @unique
+  orderNumberRef String @unique
+  customerId     String @unique
   firstName      String
   lastName       String
   zip            String
@@ -78,14 +78,14 @@ model CustomerDetails {
 
 model OrderDetails {
   id             Int     @id @default(autoincrement())
-  orderNumberRef BigInt  @unique
+  orderNumberRef String  @unique
   details        String?
   order          Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
 }
 
 model BillingInfo {
   id                     Int       @id @default(autoincrement())
-  orderNumberRef         BigInt    @unique
+  orderNumberRef         String    @unique
   billingType            String
   billingNumber          String?
   billingDate            DateTime
