@@ -25,14 +25,14 @@ export class ConsorsAPI {
     jwt: string;
     jwtValideUntil: number;
   };
-
+  private baseURL = "https://api.consorsfinanz.de";
+  
   constructor(public authData: ApiAuthData) {
     this.jwtData = undefined;
   }
-
   private async getNewJWT(): Promise<string | undefined> {
     const response = await fetch(
-      `https://api.consorsfinanz.de/common-services/cfg/token/${this.authData.vendorId}`,
+      `${this.baseURL}/common-services/cfg/token/${this.authData.vendorId}`,
       {
         method: "POST",
         headers: {
@@ -71,7 +71,6 @@ export class ConsorsAPI {
             jwt,
             jwtValideUntil: jwtExpiresAt(jwt),
           };
-          console.log("JWT TOKEN -", jwt);
           return jwt;
         }
       });
@@ -80,25 +79,25 @@ export class ConsorsAPI {
     }
   }
 
-  // async stornoOrder(transactionId: string) {
-  //   const clientId = this.authData.vendorId;
-  //   // console.log("storno transactionId", transactionId);
-  //   // console.log("storno clientId", clientId);
-  //   const consorsUrl = `https://api.consorsfinanz.de/ratanet-api/cfg/subscription/${clientId}/${transactionId}/partnerdata?version=${CONSORS_API_VERSION}`;
+  async stornoOrder(applicationReferenceNumber: string, countryCode: string, timeStamp: string) {
+    console.log("storno applicationReferenceNumber", applicationReferenceNumber);
+    const consorsUrl = `${this.baseURL}psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
-  //   const consorsAuthToken = await this.jwt();
-  //   // console.log("storno with url", consorsUrl);
-  //   const res = await fetch(consorsUrl, {
-  //     method: "DELETE",
-  //     headers: {
-  //       "x-api-key": this.authData.apiKey,
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${consorsAuthToken}`,
-  //     },
-  //   });
-  //   // TODO: check status code usw.
-  //   return res;
-  // }
+    const consorsAuthToken = await this.jwt();
+    const res = await fetch(consorsUrl, {
+      method: "DELETE",
+      headers: {
+        "x-api-key": this.authData.apiKey,
+        "Content-Type": "application/json",
+        "X-Request-Id": "1",
+        "X-Conversation-Id": "111",
+        "X-TimeStamp": timeStamp,
+        "X-CountryCode": countryCode,
+        "X-Token": `Bearer ${consorsAuthToken}`,
+      }
+    });
+    return res;
+  }
 
   // async fulfillmentOrder(transactionId: string) {
   //   const clientId = this.authData.vendorId;
@@ -122,10 +121,6 @@ export class ConsorsAPI {
 }
 
 const consorsClientCache: { [shop: string]: ConsorsAPI | undefined } = {};
-
-// export async function resetConsorsClient(shop: string) {
-//   consorsClientCache[shop] = undefined;
-// }
 
 export async function getConsorsClient(shop: string) {
   const chachedClient = consorsClientCache[shop];

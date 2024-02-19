@@ -1,4 +1,4 @@
-// import { z } from "zod";
+import { z } from "zod";
 // import { handleOrderCancel } from "~/models/OrderCancel.server";
 // import { isPayLaterPaymentGateway } from "~/utils/checkPaymentGateway";
 // import {
@@ -12,18 +12,20 @@
 //   incrementCounterShopifyOrderCancelUnhandled,
 // } from "~/models/ShopifyOrderCancel.server";
 
-// const orderCancel = z.object({
-//   id: z.number(),
-//   total_price: z.string(),
-//   tags: z.string(),
-//   payment_gateway_names: z.array(z.string()),
-// });
+const orderCancel = z.object({
+  id: z.number().transform((num) => num.toString()),
+  cancelled_at: z.string().transform((str) => new Date(str).toUTCString()),
+  total_price: z.string(),
+  billing_address: z.object({
+    country_code: z.string()
+  })
+});
 
 export async function webhook_ordersCancel(shop: string, payload: unknown) {
   const data = payload?.valueOf();
-  console.log("webbhook_oredersCancel - ", data);
-  // const cancellationData = orderCancel.parse(data);
-  // console.log("cancellationData parsed - ", cancellationData);
+  console.log("webhook_ordersCancel - ", data);
+  const cancellationData = orderCancel.parse(data);
+  console.log("cancellationData parsed - ", cancellationData);
   // if (isPayLaterPaymentGateway(cancellationData.payment_gateway_names)) {
   //   handleOrderCancel(cancellationData.id);
   // }
