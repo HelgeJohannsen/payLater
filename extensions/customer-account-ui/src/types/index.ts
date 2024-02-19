@@ -1,7 +1,7 @@
 export interface CustomerDetails {
   id: number;
-  orderNumberRef: number;
-  customerId: number;
+  orderNumberRef: BigInt;
+  customerId: BigInt;
   firstName: string;
   lastName: string;
   zip: string;
@@ -13,7 +13,7 @@ export interface CustomerDetails {
 export interface OrderWithCustomerDetails {
   id: number;
   orderId: string;
-  orderNumber: number;
+  orderNumber: BigInt;
   orderName: string;
   customCustomerId?: string;
   applicationNumber?: string;

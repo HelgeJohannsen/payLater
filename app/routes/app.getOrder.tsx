@@ -11,15 +11,14 @@ export const loader: LoaderFunction = async ({ request }) => {
     });
   }
   const order = await getOrderWithDetails(orderId);
+  console.log("getOrder - ", order);
   if (order == null) {
     throw new Response("shop not found", {
       status: 404,
     });
   }
 
-  return json(order, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+  const response = json(order);
+  response.headers.append("Access-Control-Allow-Origin", "*");
+  return response;
 };
