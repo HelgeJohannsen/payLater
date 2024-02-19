@@ -28,43 +28,34 @@ CREATE TABLE `Config` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Customer` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `customCustomerIdRef` VARCHAR(191) NOT NULL,
-    `customerId` INTEGER NOT NULL,
-
-    UNIQUE INDEX `Customer_customCustomerIdRef_key`(`customCustomerIdRef`),
-    UNIQUE INDEX `Customer_customerId_key`(`customerId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `Orders` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `orderId` VARCHAR(191) NOT NULL,
-    `orderNumber` INTEGER NOT NULL,
+    `orderNumber` VARCHAR(191) NOT NULL,
     `orderName` VARCHAR(191) NOT NULL,
     `customCustomerId` VARCHAR(191) NULL,
     `applicationNumber` VARCHAR(191) NULL,
     `paymentGatewayName` VARCHAR(191) NOT NULL,
     `paymentMethode` VARCHAR(191) NOT NULL,
     `orderAmount` VARCHAR(191) NOT NULL,
+    `note` VARCHAR(191) NULL,
     `confirmCreditStatus` VARCHAR(191) NULL,
     `fulfillStatus` VARCHAR(191) NULL,
     `cancelStatus` VARCHAR(191) NULL,
-    `partialFFStatus` BOOLEAN NULL,
+    `partialFFStatus` VARCHAR(191) NULL,
     `partialFFAmount` DOUBLE NULL,
 
     UNIQUE INDEX `Orders_orderId_key`(`orderId`),
     UNIQUE INDEX `Orders_orderNumber_key`(`orderNumber`),
+    UNIQUE INDEX `Orders_customCustomerId_key`(`customCustomerId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `CustomerDetails` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `orderNumberRef` INTEGER NOT NULL,
-    `customerId` INTEGER NOT NULL,
+    `orderNumberRef` VARCHAR(191) NOT NULL,
+    `customerId` VARCHAR(191) NOT NULL,
     `firstName` VARCHAR(191) NOT NULL,
     `lastName` VARCHAR(191) NOT NULL,
     `zip` VARCHAR(191) NOT NULL,
@@ -73,24 +64,13 @@ CREATE TABLE `CustomerDetails` (
     `country` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `CustomerDetails_orderNumberRef_key`(`orderNumberRef`),
-    UNIQUE INDEX `CustomerDetails_customerId_key`(`customerId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `OrderDetails` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `orderNumberRef` INTEGER NOT NULL,
-    `details` VARCHAR(191) NULL,
-
-    UNIQUE INDEX `OrderDetails_orderNumberRef_key`(`orderNumberRef`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `BillingInfo` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `orderNumberRef` INTEGER NOT NULL,
+    `orderNumberRef` VARCHAR(191) NOT NULL,
     `billingType` VARCHAR(191) NOT NULL,
     `billingNumber` VARCHAR(191) NULL,
     `billingDate` DATETIME(3) NOT NULL,
@@ -106,13 +86,7 @@ CREATE TABLE `BillingInfo` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Orders` ADD CONSTRAINT `Orders_customCustomerId_fkey` FOREIGN KEY (`customCustomerId`) REFERENCES `Customer`(`customCustomerIdRef`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `CustomerDetails` ADD CONSTRAINT `CustomerDetails_orderNumberRef_fkey` FOREIGN KEY (`orderNumberRef`) REFERENCES `Orders`(`orderNumber`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `OrderDetails` ADD CONSTRAINT `OrderDetails_orderNumberRef_fkey` FOREIGN KEY (`orderNumberRef`) REFERENCES `Orders`(`orderNumber`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `BillingInfo` ADD CONSTRAINT `BillingInfo_orderNumberRef_fkey` FOREIGN KEY (`orderNumberRef`) REFERENCES `Orders`(`orderNumber`) ON DELETE RESTRICT ON UPDATE CASCADE;
