@@ -23,23 +23,6 @@ model Session {
   userId      BigInt?
 }
 
-model Orders {
-  id                Int     @id @default(autoincrement())
-  orderId           String?
-  orderName         String?
-  paymentMethode    String?
-  status            String?
-  firstName         String
-  lastName          String
-  zip               String
-  city              String
-  street            String
-  country           String
-  applicationNumber String?
-}
-
-//TODO - add paymentGatewayName, CostumerId, OrderAmount, fulfillStatus, cancelStatus and the created_at(from order create webhook) to Orders model
-
 model Config {
   id                    Int     @id @default(autoincrement())
   shop                  String  @unique
@@ -49,4 +32,68 @@ model Config {
   password              String
   apiKey                String
   notificationHashKey   String?
+}
+
+//customCustomerId is made of the last 5 digits of the customerId provided by shopify and the last 5 digits of the orderId
+model Customer {
+  id                  Int      @id @default(autoincrement())
+  customCustomerIdRef String   @unique
+  customerId          Int      @unique
+  orders              Orders[]
+}
+
+model Orders {
+  id                  Int              @id @default(autoincrement())
+  orderId             String           @unique
+  orderNumber         Int              @unique
+  orderName           String
+  customCustomerId    String?
+  applicationNumber   String?
+  paymentGatewayName  String
+  paymentMethode      String
+  orderAmount         String
+  confirmCreditStatus String?
+  fulfillStatus       String?
+  cancelStatus        String?
+  partialFFStatus     Boolean?
+  partialFFAmount     Float?
+  customer            Customer?        @relation(fields: [customCustomerId], references: [customCustomerIdRef])
+  customerDetails     CustomerDetails?
+  orderDetails        OrderDetails?
+  billingInfo         BillingInfo?
+}
+
+model CustomerDetails {
+  id             Int    @id @default(autoincrement())
+  orderNumberRef Int    @unique
+  customerId     Int    @unique
+  firstName      String
+  lastName       String
+  zip            String
+  city           String
+  street         String
+  country        String
+  order          Orders @relation(fields: [orderNumberRef], references: [orderNumber])
+}
+
+model OrderDetails {
+  id             Int     @id @default(autoincrement())
+  orderNumberRef Int     @unique
+  details        String?
+  order          Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
+}
+
+model BillingInfo {
+  id                     Int       @id @default(autoincrement())
+  orderNumberRef         Int       @unique
+  billingType            String
+  billingNumber          String?
+  billingDate            DateTime
+  billingReferenceNumber String?
+  dueDate                DateTime?
+  billingAmount          Float
+  billingNetAmount       Float
+  paymentType            String
+  receiptNote            String?
+  order                  Orders    @relation(fields: [orderNumberRef], references: [orderNumber])
 }
