@@ -16,6 +16,7 @@ const orderCancel = z.object({
   id: z.number().transform((num) => num.toString()),
   cancelled_at: z.string().transform((str) => new Date(str).toUTCString()),
   total_price: z.string(),
+  payment_gateway_names: z.array(z.string()),
   billing_address: z.object({
     country_code: z.string()
   })
@@ -47,63 +48,3 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
   //   console.log("keine Consors Finanzierung");
   // }
 }
-
-// interface OrderQueueEntry {
-//   orderId: bigint;
-//   shop: string;
-//   admin_graphql_api_id: string;
-//   current_total_price: string;
-//   createdAt: Date;
-//   counter: number;
-// }
-
-// export async function handleOrderCancelQueue({
-//   shop,
-//   orderId,
-//   admin_graphql_api_id,
-//   counter,
-//   createdAt,
-// }: OrderQueueEntry) {
-//   console.log("handling orderCancelQueue Entry");
-
-//   const runAt = new Date(createdAt.getTime());
-
-//   runAt.setHours(runAt.getHours() + counter);
-
-//   if (runAt.getTime() > Date.now()) {
-//     console.log("skipping orderCancelQueue entry");
-//     return false;
-//   }
-
-//   await incrementCounterShopifyOrderCancelUnhandled(orderId);
-
-//   const oderId = BigInt(admin_graphql_api_id.split("Order/")[1]);
-//   console.log("orderId from db", oderId);
-//   const checkout = await getCheckoutByOrderId(oderId);
-//   if (checkout == null) {
-//     console.error("no checkout with given uuid in database", oderId);
-//     return undefined;
-//   }
-
-//   //const transactionId = await getTransactionId(shop, admin_graphql_api_id)
-//   if (checkout.transaction_id != undefined) {
-//     const transaction_id = checkout.transaction_id;
-//     const response = await getConsorsClient(shop).then((consorsClient) =>
-//       consorsClient?.stornoOrder(transaction_id)
-//     );
-//     if (response === undefined) {
-//       console.error(`No consors Client for shop ${shop}`);
-//       return false;
-//     } else if (response.status < 200 || response.status >= 300) {
-//       console.error(
-//         `non 2xx response(${response.status}) from consorsApi.stornoOrder : `,
-//         await response.text()
-//       );
-//       return false;
-//     } else {
-//       return true;
-//     }
-//   } else {
-//     console.error("no transaction id in metafield for ", admin_graphql_api_id);
-//   }
-// }
