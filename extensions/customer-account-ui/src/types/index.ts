@@ -1,5 +1,4 @@
 export interface CustomerDetails {
-  id: string;
   orderNumberRef: string;
   customerId: string;
   firstName: string;
@@ -11,14 +10,13 @@ export interface CustomerDetails {
 }
 
 export interface OrderWithCustomerDetails {
-  id: string;
   orderId: string;
   orderNumber: string;
   orderName: string;
   customCustomerId?: string;
   applicationNumber?: string;
   paymentGatewayName: string;
-  paymentMethod: string;
+  paymentMethode: string;
   orderAmount: string;
   confirmCreditStatus?: string;
   fulfillStatus?: string;
