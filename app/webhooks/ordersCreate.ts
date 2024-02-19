@@ -6,10 +6,10 @@ const orderCreated = z.object({
   id: z.number(),
   order_number: z.number(),
   name: z.string(),
-  payment_gateway_names: z.string().array(),
+  payment_gateway_names: z.array(z.string()),
   total_price: z.string(),
-  costumer: z.object({
-    customerId: z.number(),
+  customer: z.object({
+    id: z.number(),
     first_name: z.string().nullable(),
     last_name: z.string(),
   }),
@@ -24,7 +24,8 @@ const orderCreated = z.object({
 export async function webbhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreated.safeParse(data);
-  console.log("webbhook_oredersCreate payload:", data);
+  console.log("webbhook_ordersCreate payload:", data);
+  console.log("parseResult:", parseResult);
   if (parseResult.success) {
     const orderData = parseResult.data;
     const paymentMethod = isPayLaterPaymentGateway(
@@ -40,9 +41,9 @@ export async function webbhook_ordersCreate(shop: string, payload: unknown) {
         orderAmount: orderData.total_price,
       };
       const createCustomerInfo = {
-        customerId: orderData.costumer.customerId,
-        firstName: orderData.costumer.first_name ?? "",
-        lastName: orderData.costumer.last_name,
+        customerId: orderData.customer.id,
+        firstName: orderData.customer.first_name ?? "",
+        lastName: orderData.customer.last_name,
         zip: orderData.billing_address.zip,
         city: orderData.billing_address.city,
         street: orderData.billing_address.address1,
