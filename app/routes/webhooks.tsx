@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { webbhook_oredersCancel } from "~/webhooks/ordersCancel";
-import { webbhook_oredersCreate } from "~/webhooks/ordersCreate";
+import { webbhook_ordersCreate } from "~/webhooks/ordersCreate";
 import { webbhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
 import { webbhook_ordersPartiallyFulFilled } from "~/webhooks/ordersPartiallyFulFilled";
 import db from "../db.server";
@@ -21,7 +21,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (topic) {
     case "ORDERS_CREATE":
-      webbhook_oredersCreate(shop, payload);
+      webbhook_ordersCreate(shop, payload);
       return new Response("webhook ORDERS_CREATE", { status: 200 });
 
     case "ORDERS_FULFILLED":

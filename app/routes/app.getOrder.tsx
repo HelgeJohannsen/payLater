@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { getOrder } from "~/models/order.server";
+import { getOrderWithDetails } from "~/models/order.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const requestedURL = new URL(request.url);
@@ -10,7 +10,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       status: 400,
     });
   }
-  const order = await getOrder(orderid);
+  const order = await getOrderWithDetails(orderid);
   if (order == null) {
     throw new Response("shop not found", {
       status: 404,

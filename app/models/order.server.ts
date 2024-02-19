@@ -1,17 +1,27 @@
+import type { CustomerDetails, Orders } from "@prisma/client";
 import db from "../db.server";
-export async function getOrder(orderId: string) {
-  // TODO: check typing
-  const order = await db.orders.findFirst({ where: { orderId } });
-  // console.log("shop", shop);
-  if (!order) {
+
+export async function getOrderWithDetails(orderId: string) {
+  const orderWithDetails = await db.orders.findFirst({
+    where: { orderId },
+    include: {
+      customerDetails: true,
+    },
+  });
+  if (!orderWithDetails) {
     return null;
   }
-  return order;
+  return orderWithDetails;
 }
-export async function setOrderStatus(orderId: string, status: string, applicationNumber: string) {
+
+export async function setCreditCheck(
+  orderId: string,
+  confirmCreditStatus: string,
+  applicationNumber: string
+) {
   const data = {
-    status,
-    applicationNumber
+    confirmCreditStatus,
+    applicationNumber,
   };
   const order = await db.orders.findFirst({ where: { orderId } });
   const id = order?.id;
@@ -19,34 +29,83 @@ export async function setOrderStatus(orderId: string, status: string, applicatio
   return;
 }
 
-export async function createOrder(
-  orderId: string,
-  orderName: string,
-  paymentMethode: string,
-  firstName: string,
-  lastName: string,
-  zip: string,
-  city: string,
-  street: string,
-  country: string
-) {
-  /** @type {any} */
-  const data = {
-    orderId,
-    orderName,
-    paymentMethode,
-    firstName,
-    lastName,
-    zip,
-    city,
-    street,
-    country,
-  };
-  const order = await db.orders.create({ data });
-  if (!order) {
-    // console.log("order not created");
-    return null;
-  }
+type CreateOrder = Pick<
+  Orders,
+  | "orderId"
+  | "orderNumber"
+  | "orderName"
+  | "paymentGatewayName"
+  | "paymentMethode"
+  | "orderAmount"
+>;
 
-  return order;
+type createCustomerInfo = Pick<
+  CustomerDetails,
+  | "customerId"
+  | "firstName"
+  | "lastName"
+  | "zip"
+  | "city"
+  | "street"
+  | "country"
+>;
+
+type CreateOrderWithCustomerDetails = {
+  createOrderInfo: CreateOrder;
+  createCustomerInfo: createCustomerInfo;
+};
+
+export async function createOrderWithCustomerDetails({
+  createCustomerInfo,
+  createOrderInfo,
+}: CreateOrderWithCustomerDetails) {
+  // A transaction ensure both records are created together
+  const result = await db.$transaction(async (prisma) => {
+    const {
+      orderId,
+      orderNumber,
+      orderName,
+      paymentGatewayName,
+      paymentMethode,
+      orderAmount,
+    } = createOrderInfo;
+
+    const { customerId, firstName, lastName, city, street, zip, country } =
+      createCustomerInfo;
+    const order = await prisma.orders.create({
+      data: {
+        orderId,
+        orderNumber,
+        orderName,
+        paymentGatewayName,
+        paymentMethode,
+        orderAmount,
+      },
+    });
+
+    if (!order) {
+      throw new Error("Order not created");
+    }
+
+    const customerDetails = await prisma.customerDetails.create({
+      data: {
+        orderNumberRef: order.orderNumber,
+        customerId,
+        firstName,
+        lastName,
+        zip,
+        city,
+        street,
+        country,
+      },
+    });
+
+    if (!customerDetails) {
+      throw new Error("Customer details not created");
+    }
+
+    return { order, customerDetails };
+  });
+
+  return result;
 }
