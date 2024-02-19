@@ -3,13 +3,13 @@ import { createOrderWithCustomerDetails } from "~/models/order.server";
 import { isPayLaterPaymentGateway } from "~/utils/paymentGateway";
 
 const orderCreated = z.object({
-  id: z.number(),
-  order_number: z.number(),
+  id: z.bigint(),
+  order_number: z.bigint(),
   name: z.string(),
   payment_gateway_names: z.array(z.string()),
   total_price: z.string(),
   customer: z.object({
-    id: z.number(),
+    id: z.bigint(),
     first_name: z.string().nullable(),
     last_name: z.string(),
   }),
