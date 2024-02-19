@@ -10,7 +10,7 @@ const orderCreated = z.object({
   name: z.string(),
   payment_gateway_names: z.array(z.string()),
   total_price: z.string(),
-  note: z.string(),
+  note: z.string().nullable(),
   customer: z.object({
     id: z.number().transform((num) => num.toString()),
     first_name: z.string().nullable(),
@@ -42,7 +42,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         paymentGatewayName: orderData.payment_gateway_names[0],
         paymentMethode: paymentMethod,
         orderAmount: orderData.total_price,
-        note: orderData.name,
+        note: orderData.note ?? "",
         customCustomerId: createCustomCustomerId(orderData.order_number,  orderData.customer.id)
       };
       const createCustomerInfo: CreateCustomerInfo = {
@@ -55,8 +55,8 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         country: orderData.billing_address.country_code,
       };
       await createOrderWithCustomerDetails({
-        createOrderInfo,
         createCustomerInfo,
+        createOrderInfo,
       });
     }
   } else {
