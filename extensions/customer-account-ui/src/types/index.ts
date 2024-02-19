@@ -1,7 +1,7 @@
 export interface CustomerDetails {
-  id: number;
-  orderNumberRef: BigInt;
-  customerId: BigInt;
+  id: string;
+  orderNumberRef: string;
+  customerId: string;
   firstName: string;
   lastName: string;
   zip: string;
@@ -11,9 +11,9 @@ export interface CustomerDetails {
 }
 
 export interface OrderWithCustomerDetails {
-  id: number;
+  id: string;
   orderId: string;
-  orderNumber: BigInt;
+  orderNumber: string;
   orderName: string;
   customCustomerId?: string;
   applicationNumber?: string;
@@ -23,7 +23,7 @@ export interface OrderWithCustomerDetails {
   confirmCreditStatus?: string;
   fulfillStatus?: string;
   cancelStatus?: string;
-  partialFFStatus?: boolean;
+  partialFFStatus?: string;
   partialFFAmount?: number;
   customerDetails?: CustomerDetails;
 }
