@@ -4,6 +4,8 @@ import { getOrderWithDetails } from "~/models/order.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const requestedURL = new URL(request.url);
+
+  console.log("requestedURL", requestedURL);
   const orderId = requestedURL.searchParams.get("orderId");
   if (orderId === null) {
     throw new Response("Bad Request", {

@@ -24,7 +24,7 @@ const orderCreated = z.object({
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreated.safeParse(data);
-  console.log("webbhook_ordersCreate payload:", data);
+  console.log("webhook_ordersCreate payload:", data);
   if (parseResult.success) {
     const orderData = parseResult.data;
     const paymentMethod = isPayLaterPaymentGateway(
@@ -48,10 +48,12 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         street: orderData.billing_address.address1,
         country: orderData.billing_address.country_code,
       };
-      createOrderWithCustomerDetails({
-        createOrderInfo: createOrderInfo,
-        createCustomerInfo: createCustomerInfo,
+      const resultCreateOrder = await createOrderWithCustomerDetails({
+        createOrderInfo,
+        createCustomerInfo,
       });
+
+      console.log("resultCreateOrder", resultCreateOrder)
     }
   } else {
     console.log("Error parsing data", data);

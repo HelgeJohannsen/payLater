@@ -2,12 +2,14 @@ import type { CustomerDetails, Orders } from "@prisma/client";
 import db from "../db.server";
 
 export async function getOrderWithDetails(orderId: string) {
+  console.log("orderWithDetails orderId - ", orderId)
   const orderWithDetails = await db.orders.findFirst({
     where: { orderId },
     include: {
       customerDetails: true,
     },
   });
+  console.log("orderWithDetails orderWithDetails - ", orderWithDetails)
   if (!orderWithDetails) {
     return null;
   }
@@ -39,7 +41,7 @@ type CreateOrder = Pick<
   | "orderAmount"
 >;
 
-type createCustomerInfo = Pick<
+type CreateCustomerInfo = Pick<
   CustomerDetails,
   | "customerId"
   | "firstName"
@@ -52,7 +54,7 @@ type createCustomerInfo = Pick<
 
 type CreateOrderWithCustomerDetails = {
   createOrderInfo: CreateOrder;
-  createCustomerInfo: createCustomerInfo;
+  createCustomerInfo: CreateCustomerInfo;
 };
 
 export async function createOrderWithCustomerDetails({
