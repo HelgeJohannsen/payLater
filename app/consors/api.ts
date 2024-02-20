@@ -79,7 +79,7 @@ export class ConsorsAPI {
     }
   }
 
-  async stornoOrder(applicationReferenceNumber: string, countryCode: string, timeStamp: string) {
+  async stornoOrder(applicationReferenceNumber: string, countryCode: string, timeStamp: string, orderAmount: string) {
     console.log("storno applicationReferenceNumber", applicationReferenceNumber);
     const consorsUrl = `${this.baseURL}psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
@@ -94,7 +94,10 @@ export class ConsorsAPI {
         "X-TimeStamp": timeStamp,
         "X-CountryCode": countryCode,
         "X-Token": `Bearer ${consorsAuthToken}`,
-      }
+      },body: JSON.stringify({
+        orderAmount,
+        notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder"
+      })
     });
     return res;
   }
