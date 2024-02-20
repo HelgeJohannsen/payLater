@@ -70,16 +70,16 @@ model CustomerDetails {
 }
 
 model BillingInfo {
-  id                     Int       @id @default(autoincrement())
-  orderNumberRef         String    @unique
+  id                     Int     @id @default(autoincrement())
+  orderNumberRef         String  @unique
   billingType            String
   billingNumber          String?
-  billingDate            DateTime
+  billingDate            String
   billingReferenceNumber String?
-  dueDate                DateTime?
+  dueDate                String
   billingAmount          Float
-  billingNetAmount       Float
-  paymentType            String
+  billingNetAmount       Float?
+  paymentType            String?
   receiptNote            String?
-  order                  Orders    @relation(fields: [orderNumberRef], references: [orderNumber])
+  order                  Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
 }
