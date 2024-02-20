@@ -1,3 +1,4 @@
+import type { BillingInfo } from "@prisma/client";
 import { getOrCreateConfig } from "../models/config.server";
 
 function parseJwt(token: string) {
@@ -19,6 +20,27 @@ interface ApiAuthData {
   vendorId: string;
 }
 
+export type FulFillmentBillingInfo = Omit<
+  BillingInfo,
+  "id" | "orderNumberRef" | "billingNetAmount"
+>;
+
+interface FulfillmentOrder {
+  applicationReferenceNumber: string;
+  countryCode: string;
+  timeStamp: string;
+  orderAmount: string;
+  customCustomerId: string;
+  billingInfo: FulFillmentBillingInfo;
+}
+
+interface StornoOrder {
+  applicationReferenceNumber: string;
+  countryCode: string;
+  timeStamp: string;
+  orderAmount: string;
+}
+
 const jwtMinimalAcceptableLiveTime = 2 * 60 * 1000; // 2min
 export class ConsorsAPI {
   private jwtData?: {
@@ -26,7 +48,7 @@ export class ConsorsAPI {
     jwtValideUntil: number;
   };
   private baseURL = "https://api.consorsfinanz.de";
-  
+
   constructor(public authData: ApiAuthData) {
     this.jwtData = undefined;
   }
@@ -79,8 +101,16 @@ export class ConsorsAPI {
     }
   }
 
-  async stornoOrder(applicationReferenceNumber: string, countryCode: string, timeStamp: string, orderAmount: string = "0.0") {
-    console.log("storno applicationReferenceNumber", applicationReferenceNumber);
+  async stornoOrder({
+    applicationReferenceNumber,
+    countryCode,
+    orderAmount = "0.0",
+    timeStamp,
+  }: StornoOrder) {
+    console.log(
+      "storno applicationReferenceNumber",
+      applicationReferenceNumber
+    );
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
@@ -94,33 +124,54 @@ export class ConsorsAPI {
         "X-TimeStamp": timeStamp,
         "X-CountryCode": countryCode,
         "X-Token": `Bearer ${consorsAuthToken}`,
-      },body: JSON.stringify({
+      },
+      body: JSON.stringify({
         orderAmount,
-        notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder"
-      })
+        notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
+      }),
     });
     return res;
   }
 
-  // async fulfillmentOrder(transactionId: string) {
-  //   const clientId = this.authData.vendorId;
-  //   // console.log("Fulfillment transactionId", transactionId);
-  //   // console.log("Fulfillment clientId", clientId);
-  //   const consorsUrl = `https://api.consorsfinanz.de/ratanet-api/cfg/deliverystatus/${clientId}/${transactionId}/partnerdata?version=${CONSORS_API_VERSION}`;
+  async fulfillmentOrder({
+    applicationReferenceNumber,
+    billingInfo,
+    countryCode,
+    customCustomerId,
+    orderAmount,
+    timeStamp,
+  }: FulfillmentOrder) {
+    const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
-  //   const consorsAuthToken = await this.jwt();
-  //   // console.log("Fulfillment with url", consorsUrl);
-  //   const res = await fetch(consorsUrl, {
-  //     method: "PUT",
-  //     headers: {
-  //       "x-api-key": this.authData.apiKey,
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${consorsAuthToken}`,
-  //     },
-  //   });
-  //   // TODO: check status code usw.
-  //   return res;
-  // }
+    const test = JSON.stringify({
+      customCustomerId,
+      orderAmount,
+      notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
+      billingInfo,
+    });
+    console.log("body test", test);
+
+    const consorsAuthToken = await this.jwt();
+    const res = await fetch(consorsUrl, {
+      method: "PUT",
+      headers: {
+        "x-api-key": this.authData.apiKey,
+        "Content-Type": "application/json",
+        "X-Request-Id": "1",
+        "X-Conversation-Id": "111",
+        "X-TimeStamp": timeStamp,
+        "X-CountryCode": countryCode,
+        "X-Token": `Bearer ${consorsAuthToken}`,
+      },
+      body: JSON.stringify({
+        customCustomerId,
+        orderAmount,
+        notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
+        billingInfo,
+      }),
+    });
+    return res;
+  }
 }
 
 const consorsClientCache: { [shop: string]: ConsorsAPI | undefined } = {};

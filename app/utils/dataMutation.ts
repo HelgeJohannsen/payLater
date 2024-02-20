@@ -17,6 +17,22 @@ const isPayLaterPaymentGateway = (paymentGateway: string): string | false => {
     : false;
 };
 
+enum PaymentTypeOptions {
+  "DIRECT_DEBIT" = "DIRECT_DEBIT",
+  "THREE_MONTH_PAYMENT" = "DIRECT_DEBIT",
+  "INVOICE" = "BANK_TRANSFER",
+}
+
+const getPaymentType = (paymentMethod: string): string => {
+  const paymentKey = Object.keys(PaymentTypeOptions).find(
+    (key) => key === paymentMethod
+  );
+
+  return PayLaterPaymentMethodOptions[
+    paymentKey as keyof typeof PayLaterPaymentMethodOptions
+  ]
+}
+
 const createCustomCustomerId = (orderNumber: string, customerId: string) => {
   const lastFiveOrderNumber = orderNumber.slice(-5);
   const lastFiveCustomerId = customerId.slice(-5);
@@ -35,5 +51,5 @@ function transformDateAndAdd30Days(dateStr: string) {
   return {formattedDate, formattedDatePlus30Days};
 }
 
-export { createCustomCustomerId, isPayLaterPaymentGateway, transformDateAndAdd30Days };
+export { createCustomCustomerId, getPaymentType, isPayLaterPaymentGateway, transformDateAndAdd30Days };
 

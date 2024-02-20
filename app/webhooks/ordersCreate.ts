@@ -1,7 +1,10 @@
 import { z } from "zod";
 import type { CreateCustomerInfo, CreateOrder } from "~/models/order.server";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
-import { createCustomCustomerId, isPayLaterPaymentGateway } from "~/utils/dataMutation";
+import {
+  createCustomCustomerId,
+  isPayLaterPaymentGateway,
+} from "~/utils/dataMutation";
 
 const orderCreated = z.object({
   id: z.number().transform((num) => num.toString()),
@@ -26,8 +29,8 @@ const orderCreated = z.object({
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreated.safeParse(data);
-  console.log("webhook_ordersCreate payload:", data);
-  console.log("webhook_ordersCreate parseResult:", parseResult);
+  // console.log("webhook_ordersCreate payload:", data);
+  // console.log("webhook_ordersCreate parseResult:", parseResult);
   if (parseResult.success) {
     const orderData = parseResult.data;
     const paymentMethod = isPayLaterPaymentGateway(
@@ -42,7 +45,10 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         paymentMethode: paymentMethod,
         orderAmount: orderData.total_price,
         note: orderData.note ?? "",
-        customCustomerId: createCustomCustomerId(orderData.order_number, orderData.customer.id)
+        customCustomerId: createCustomCustomerId(
+          orderData.order_number,
+          orderData.customer.id
+        ),
       };
       const createCustomerInfo: CreateCustomerInfo = {
         customerId: orderData.customer.id,

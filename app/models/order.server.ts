@@ -112,7 +112,17 @@ export async function createOrderWithCustomerDetails({
       throw new Error("Customer details not created");
     }
 
-    return { order, customerDetails };
+    const billingInfo = await prisma.billingInfo.create({
+      data: {
+        orderNumberRef: order.orderNumber,
+        billingType: "INVOICE",
+      }
+    })
+    if (!billingInfo) {
+      throw new Error("billingInfo not created");
+    }
+
+    return { order, customerDetails, billingInfo };
   });
 
   return result;
