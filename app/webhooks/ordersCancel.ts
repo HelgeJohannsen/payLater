@@ -21,14 +21,13 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
   
   if (isPayLaterPaymentGateway(cancellationData.payment_gateway_names[0])) {
 
-    console.log("isPayLaterPaymentGateway")
     const {billing_address: {country_code}, cancelled_at, id: orderId, total_price} = cancellationData
 
-    const dbResponse = await getApplicationReferenceNumber(orderId)
-    console.log("dbResponse", dbResponse)
-    if(dbResponse?.applicationNumber) {
+    const applicationNumber = await getApplicationReferenceNumber(orderId)
+    console.log("applicationNumber", applicationNumber)
+    if(applicationNumber) {
       const consorsClient = await getConsorsClient(shop)
-      const response = await consorsClient?.stornoOrder(dbResponse?.applicationNumber, country_code, cancelled_at, total_price)
+      const response = await consorsClient?.stornoOrder(applicationNumber, country_code, cancelled_at, total_price)
       console.log("bank response", response)
     }
   }
