@@ -16,9 +16,6 @@ export async function getApplicationReferenceNumber(orderId: string){
     console.log("orderId", orderId)
     const dbResponse = await db.orders.findFirst({
       where: { orderId },
-      select: {
-        applicationNumber: true
-      }
     })
     console.log("applicationNum", dbResponse?.applicationNumber)
     return dbResponse ? dbResponse?.applicationNumber : null
