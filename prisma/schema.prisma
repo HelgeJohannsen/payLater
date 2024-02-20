@@ -74,10 +74,10 @@ model BillingInfo {
   orderNumberRef         String  @unique
   billingType            String
   billingNumber          String?
-  billingDate            String
+  billingDate            String?
   billingReferenceNumber String?
-  dueDate                String
-  billingAmount          String
+  dueDate                String?
+  billingAmount          String?
   billingNetAmount       String?
   paymentType            String?
   receiptNote            String?
