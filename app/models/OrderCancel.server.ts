@@ -19,6 +19,7 @@ export async function getApplicationReferenceNumber(orderId: string){
         applicationNumber: true
       }
     })
+    console.log("applicationNum", applicationNum)
     return applicationNum
   }catch(error){
     console.error("Unable to get Application Reference Number")
