@@ -1,8 +1,7 @@
 import { z } from "zod";
 import type { CreateCustomerInfo, CreateOrder } from "~/models/order.server";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
-import { createCustomCustomerId } from "~/utils/customCustomerId";
-import { isPayLaterPaymentGateway } from "~/utils/paymentGateway";
+import { createCustomCustomerId, isPayLaterPaymentGateway } from "~/utils/dataMutation";
 
 const orderCreated = z.object({
   id: z.number().transform((num) => num.toString()),
@@ -43,7 +42,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         paymentMethode: paymentMethod,
         orderAmount: orderData.total_price,
         note: orderData.note ?? "",
-        customCustomerId: createCustomCustomerId(orderData.order_number,  orderData.customer.id)
+        customCustomerId: createCustomCustomerId(orderData.order_number, orderData.customer.id)
       };
       const createCustomerInfo: CreateCustomerInfo = {
         customerId: orderData.customer.id,
@@ -54,6 +53,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         street: orderData.billing_address.address1,
         country: orderData.billing_address.country_code,
       };
+
       await createOrderWithCustomerDetails({
         createCustomerInfo,
         createOrderInfo,

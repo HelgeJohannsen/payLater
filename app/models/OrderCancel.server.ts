@@ -11,17 +11,22 @@ export async function handleOrderCancel(orderId: string, status: string) {
     console.error("Order update failed", error);
   }
 }
-export async function getApplicationReferenceNumber(orderId: string){
-  try{
-    const orderNum = await db.orders.findUnique({
-      where: {orderId},
+export async function getOrderCancelInfo(orderId: string){
+  try {
+    const orderCancelInfo = await db.orders.findUnique({
+      where: { orderId },
       select: {
-        applicationNumber: true
-      }
-    })
-    console.log("orderNum - ", orderNum)
-    return orderNum ? orderNum?.applicationNumber : null
-  }catch(error){
-    console.error("Unable to get Application Reference Number")
+        applicationNumber: true,
+        orderAmount: true,
+        customerDetails: {
+          select: {
+            country: true,
+          }
+        },
+      },
+    });
+    return orderCancelInfo;
+  } catch (error) {
+    console.error("Unable to get Application Reference Number", error);
   }
 }

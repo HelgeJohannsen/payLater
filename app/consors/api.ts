@@ -79,7 +79,7 @@ export class ConsorsAPI {
     }
   }
 
-  async stornoOrder(applicationReferenceNumber: string, countryCode: string, timeStamp: string, orderAmount: string) {
+  async stornoOrder(applicationReferenceNumber: string, countryCode: string, timeStamp: string, orderAmount: string = "0.0") {
     console.log("storno applicationReferenceNumber", applicationReferenceNumber);
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 

@@ -76,9 +76,6 @@ export async function createOrderWithCustomerDetails({
       customCustomerId
     } = createOrderInfo;
 
-    const { customerId, firstName, lastName, city, street, zip, country } =
-      createCustomerInfo;
-
     const order = await prisma.orders.create({
       data: {
         orderId,
@@ -92,11 +89,12 @@ export async function createOrderWithCustomerDetails({
       },
     });
 
-    console.log("order - ", order)
-
     if (!order) {
       throw new Error("Order not created");
     }
+
+    const { customerId, firstName, lastName, city, street, zip, country } =
+    createCustomerInfo;
 
     const customerDetails = await prisma.customerDetails.create({
       data: {
@@ -110,7 +108,6 @@ export async function createOrderWithCustomerDetails({
         country,
       },
     });
-    console.log("customerDetails - ", customerDetails)
     if (!customerDetails) {
       throw new Error("Customer details not created");
     }

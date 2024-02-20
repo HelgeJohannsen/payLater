@@ -51,7 +51,7 @@ model Orders {
   fulfillStatus       String?
   cancelStatus        String?
   partialFFStatus     String?
-  partialFFAmount     Float?
+  partialFFAmount     String?
   customerDetails     CustomerDetails?
   billingInfo         BillingInfo?
 }
@@ -77,8 +77,8 @@ model BillingInfo {
   billingDate            String
   billingReferenceNumber String?
   dueDate                String
-  billingAmount          Float
-  billingNetAmount       Float?
+  billingAmount          String
+  billingNetAmount       String?
   paymentType            String?
   receiptNote            String?
   order                  Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
