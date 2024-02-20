@@ -10,6 +10,7 @@ import {
 } from "@shopify/ui-extensions-react/customer-account";
 import { useEffect, useState } from "react";
 import type { OrderWithCustomerDetails } from "./types";
+import { isPayLaterPaymentGateway } from "./utils";
 
 export default reactExtension(
   "customer-account.order-status.block.render",
@@ -40,7 +41,7 @@ function Extension() {
         const orderInfo: OrderWithCustomerDetails = await response.json();
         setOrderData(orderInfo);
 
-        const { customerDetails } = orderInfo
+        const { customerDetails } = orderInfo;
 
         const parameters2 = new URLSearchParams({
           vendorID: "8403",
@@ -71,7 +72,7 @@ function Extension() {
 
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
 
-  return order ? (
+  return isPayLaterPaymentGateway(orderData?.paymentGatewayName) ? (
     <InlineLayout
       columns={["45%", "50%"]}
       spacing={"base"}
