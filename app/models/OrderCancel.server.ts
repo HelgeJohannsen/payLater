@@ -14,11 +14,11 @@ export async function handleOrderCancel(orderId: string, status: string) {
 export async function getApplicationReferenceNumber(orderId: string){
   try{
     console.log("orderId", orderId)
-    const dbResponse = await db.orders.findFirst({
-      where: { orderId },
-    })
-    console.log("applicationNum", dbResponse?.applicationNumber)
-    return dbResponse ? dbResponse?.applicationNumber : null
+    console.log("orderId type", typeof orderId)
+    const order = await db.orders.findFirst({ where: { orderId } });
+   
+    console.log("order", order)
+    return order ? order?.applicationNumber : null
   }catch(error){
     console.error("Unable to get Application Reference Number")
   }
