@@ -29,7 +29,7 @@ interface FulfillmentOrder {
   applicationReferenceNumber: string;
   countryCode: string;
   timeStamp: string;
-  orderAmount: string;
+  orderAmount: number;
   customCustomerId: string;
   billingInfo: FulFillmentBillingInfo;
 }
@@ -38,7 +38,7 @@ interface StornoOrder {
   applicationReferenceNumber: string;
   countryCode: string;
   timeStamp: string;
-  orderAmount: string;
+  orderAmount: number;
 }
 
 const jwtMinimalAcceptableLiveTime = 2 * 60 * 1000; // 2min
@@ -104,13 +104,9 @@ export class ConsorsAPI {
   async stornoOrder({
     applicationReferenceNumber,
     countryCode,
-    orderAmount = "0.0",
+    orderAmount = 0.0,
     timeStamp,
   }: StornoOrder) {
-    console.log(
-      "storno applicationReferenceNumber",
-      applicationReferenceNumber
-    );
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();

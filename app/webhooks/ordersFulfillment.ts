@@ -53,7 +53,7 @@ export async function webhook_ordersFulfillment(
         receiptNote: note ?? "",
       };
 
-      console.log("billingInfo - ", billingInfo)
+      console.log("billingInfo - ", billingInfo);
 
       await updateBillingWithFulFillData(orderId, billingInfo);
       const consorsClient = await getConsorsClient(shop);

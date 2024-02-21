@@ -45,13 +45,11 @@ model Orders {
   applicationNumber   String?
   paymentGatewayName  String
   paymentMethode      String
-  orderAmount         String
-  note                String?
+  orderAmount         Float
   confirmCreditStatus String?
   fulfillStatus       String?
   cancelStatus        String?
   partialFFStatus     String?
-  partialFFAmount     String?
   customerDetails     CustomerDetails?
   billingInfo         BillingInfo?
 }
@@ -77,8 +75,8 @@ model BillingInfo {
   billingDate            String?
   billingReferenceNumber String?
   dueDate                String?
-  billingAmount          String?
-  billingNetAmount       String?
+  billingAmount          Float?
+  billingNetAmount       Float?
   paymentType            String?
   receiptNote            String?
   order                  Orders  @relation(fields: [orderNumberRef], references: [orderNumber])

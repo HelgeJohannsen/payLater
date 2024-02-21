@@ -38,7 +38,6 @@ export type CreateOrder = Pick<
   | "paymentMethode"
   | "orderAmount"
   | "customCustomerId"
-  | "note"
 >;
 
 export type CreateCustomerInfo = Pick<
@@ -62,8 +61,6 @@ export async function createOrderWithCustomerDetails({
   createOrderInfo,
 }: CreateOrderWithCustomerDetails) {
   // A transaction ensure both records are created together
-  console.log("createCustomerInfo", createCustomerInfo)
-  console.log("createOrderInfo", createOrderInfo)
   const result = await db.$transaction(async (prisma) => {
     const {
       orderId,
@@ -72,8 +69,7 @@ export async function createOrderWithCustomerDetails({
       paymentGatewayName,
       paymentMethode,
       orderAmount,
-      note,
-      customCustomerId
+      customCustomerId,
     } = createOrderInfo;
 
     const order = await prisma.orders.create({
@@ -85,7 +81,6 @@ export async function createOrderWithCustomerDetails({
         paymentMethode,
         orderAmount,
         customCustomerId: customCustomerId ?? "",
-        note: note ?? "",
       },
     });
 
@@ -94,7 +89,7 @@ export async function createOrderWithCustomerDetails({
     }
 
     const { customerId, firstName, lastName, city, street, zip, country } =
-    createCustomerInfo;
+      createCustomerInfo;
 
     const customerDetails = await prisma.customerDetails.create({
       data: {
@@ -116,8 +111,8 @@ export async function createOrderWithCustomerDetails({
       data: {
         orderNumberRef: order.orderNumber,
         billingType: "INVOICE",
-      }
-    })
+      },
+    });
     if (!billingInfo) {
       throw new Error("billingInfo not created");
     }

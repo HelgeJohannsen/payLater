@@ -11,8 +11,7 @@ const orderCreated = z.object({
   order_number: z.number().transform((num) => num.toString()),
   name: z.string(),
   payment_gateway_names: z.array(z.string()),
-  total_price: z.string(),
-  note: z.string().nullable(),
+  total_price: z.string().transform((num) => Number(num)),
   customer: z.object({
     id: z.number().transform((num) => num.toString()),
     first_name: z.string().nullable(),
@@ -29,8 +28,8 @@ const orderCreated = z.object({
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreated.safeParse(data);
-  // console.log("webhook_ordersCreate payload:", data);
-  // console.log("webhook_ordersCreate parseResult:", parseResult);
+  console.log("webhook_ordersCreate payload:", data);
+  console.log("webhook_ordersCreate parseResult:", parseResult);
   if (parseResult.success) {
     const orderData = parseResult.data;
     const paymentMethod = isPayLaterPaymentGateway(
@@ -44,7 +43,6 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         paymentGatewayName: orderData.payment_gateway_names[0],
         paymentMethode: paymentMethod,
         orderAmount: orderData.total_price,
-        note: orderData.note ?? "",
         customCustomerId: createCustomCustomerId(
           orderData.order_number,
           orderData.customer.id
