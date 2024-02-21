@@ -32,6 +32,7 @@ interface FulfillmentOrder {
   orderAmount: number;
   customCustomerId: string;
   billingInfo: FulFillmentBillingInfo;
+  notifyURL: string;
 }
 
 interface StornoOrder {
@@ -136,6 +137,7 @@ export class ConsorsAPI {
     customCustomerId,
     orderAmount,
     timeStamp,
+    notifyURL,
   }: FulfillmentOrder) {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
@@ -154,7 +156,7 @@ export class ConsorsAPI {
       body: JSON.stringify({
         customerId: customCustomerId,
         orderAmount,
-        notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
+        notifyURL,
         billingInfo,
       }),
     });

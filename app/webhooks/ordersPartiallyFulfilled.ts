@@ -16,14 +16,14 @@ const orderFulfilled = z.object({
   note: z.string().nullable(),
 });
 
-export async function webhook_ordersFulfillment(
+export async function webhook_ordersPartiallyFulfilled(
   shop: string,
   payload: unknown
 ) {
   const data = payload?.valueOf();
-  console.log("webhook_ordersFulfillment", data);
+  console.log("webhook_ordersPartiallyFulfilled", data);
   const fulfilledDataObj = orderFulfilled.safeParse(data);
-  console.log("fulfilledDataObj parsed - ", data);
+  console.log("parsed Obj - ", data);
 
   if (fulfilledDataObj.success) {
     const { closed_at, id: orderId, note } = fulfilledDataObj.data;
@@ -62,10 +62,10 @@ export async function webhook_ordersFulfillment(
         orderAmount,
         timeStamp: new Date(closed_at).toUTCString(),
         billingInfo,
-        notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
+        notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
       });
     }
   } else {
-    console.log("could not parse fullfilment date:", data);
+    console.log("could not parse partiallyFulfilled date:", data);
   }
 }
