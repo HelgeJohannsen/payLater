@@ -44,6 +44,11 @@ const shopify = shopifyApp({
       callbackUrl: "/webhooks",
       format: JSON,
     },
+    REFUNDS_CREATE: {
+      deliveryMethod: DeliveryMethod.Http,
+      callbackUrl: "/webhooks",
+      format: JSON,
+    },
   },
   hooks: {
     afterAuth: async ({ session }) => {

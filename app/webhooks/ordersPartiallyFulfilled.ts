@@ -21,9 +21,9 @@ export async function webhook_ordersPartiallyFulfilled(
   payload: unknown
 ) {
   const data = payload?.valueOf();
-  console.log("webhook_ordersPartiallyFulfilled", data);
   const fulfilledDataObj = orderFulfilled.safeParse(data);
-  console.log("parsed Obj - ", data);
+  // console.log("webhook_ordersPartiallyFulfilled", data);
+  // console.log("parsed Obj - ", data);
 
   if (fulfilledDataObj.success) {
     const { updated_at, id: orderId, note } = fulfilledDataObj.data;

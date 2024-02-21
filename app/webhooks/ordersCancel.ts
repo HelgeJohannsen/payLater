@@ -10,6 +10,8 @@ const orderCancel = z.object({
 export async function webhook_ordersCancel(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const cancellationData = orderCancel.parse(data);
+  // console.log("webhook_ordersCancel - ", data);
+  // console.log("parseResult - ", cancellationData);
 
   const { cancelled_at, id: orderId } = cancellationData;
 

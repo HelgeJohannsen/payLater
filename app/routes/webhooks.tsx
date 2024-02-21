@@ -3,6 +3,7 @@ import { webhook_ordersCancel } from "~/webhooks/ordersCancel";
 import { webhook_ordersCreate } from "~/webhooks/ordersCreate";
 import { webhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
 import { webhook_ordersPartiallyFulfilled } from "~/webhooks/ordersPartiallyFulfilled";
+import { webhook_refundsCreate } from "~/webhooks/refundsCreate";
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
@@ -36,6 +37,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     case "ORDERS_CANCELLED":
       webhook_ordersCancel(shop, payload);
+      return new Response("webhook ORDERS_CANCELLED", { status: 200 });
+
+    case "REFUNDS_CREATE":
+      webhook_refundsCreate(shop, payload);
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "APP_UNINSTALLED":
