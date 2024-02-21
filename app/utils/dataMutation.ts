@@ -1,7 +1,7 @@
 enum PayLaterPaymentMethodOptions {
   "Kauf auf Rechnung by Consors Finanz" = "INVOICE",
   "Kauf per Lastschrift by Consors Finanz" = "DIRECT_DEBIT",
-  "3-Monats-Zahlung by Consors Finanz" = "THREE_MONTH_PAYMENT",
+  "3-Monats-Zahlung by Consors Finanz" = "3_MONTH_PAYMENT",
 }
 
 const isPayLaterPaymentGateway = (paymentGateway: string): string | false => {
@@ -18,7 +18,7 @@ const isPayLaterPaymentGateway = (paymentGateway: string): string | false => {
 
 enum PaymentTypeOptions {
   "DIRECT_DEBIT" = "DIRECT_DEBIT",
-  "THREE_MONTH_PAYMENT" = "DIRECT_DEBIT",
+  "3_MONTH_PAYMENT" = "DIRECT_DEBIT",
   "INVOICE" = "BANK_TRANSFER",
 }
 
