@@ -13,7 +13,7 @@ import {
 const orderFulfilled = z.object({
   id: z.number().transform((num) => num.toString()),
   closed_at: z.string(),
-  note: z.string(),
+  note: z.string().nullable(),
 });
 
 export async function webhook_ordersFulfillment(
