@@ -113,13 +113,13 @@ export class ConsorsAPI {
     const res = await fetch(consorsUrl, {
       method: "DELETE",
       headers: {
-        "X-api-key": this.authData.apiKey,
         "Content-Type": "application/json",
         "X-Request-Id": "1",
         "X-Conversation-Id": "111",
-        "X-TimeStamp": timeStamp,
         "X-CountryCode": countryCode,
+        "X-TimeStamp": timeStamp,
         "X-Token": `Bearer ${consorsAuthToken}`,
+        "X-api-key": this.authData.apiKey,
       },
       body: JSON.stringify({
         orderAmount,
@@ -147,7 +147,7 @@ export class ConsorsAPI {
       billingInfo,
     });
     const headerTest = {
-      "x-api-key": this.authData.apiKey,
+      "X-api-key": this.authData.apiKey,
       "Content-Type": "application/json",
       "X-Request-Id": "1",
       "X-Conversation-Id": "111",
@@ -161,16 +161,16 @@ export class ConsorsAPI {
     const res = await fetch(consorsUrl, {
       method: "PUT",
       headers: {
-        "X-api-key": this.authData.apiKey,
         "Content-Type": "application/json",
         "X-Request-Id": "1",
         "X-Conversation-Id": "111",
-        "X-TimeStamp": timeStamp,
         "X-CountryCode": countryCode,
+        "X-TimeStamp": timeStamp,
         "X-Token": `Bearer ${consorsAuthToken}`,
+        "X-api-key": this.authData.apiKey,
       },
       body: JSON.stringify({
-        customCustomerId,
+        customerId: customCustomerId,
         orderAmount,
         notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
         billingInfo,
