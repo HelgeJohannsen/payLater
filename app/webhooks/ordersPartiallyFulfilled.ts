@@ -12,7 +12,7 @@ import {
 
 const orderFulfilled = z.object({
   id: z.number().transform((num) => num.toString()),
-  closed_at: z.string(),
+  updated_at: z.string(),
   note: z.string().nullable(),
 });
 
@@ -26,7 +26,7 @@ export async function webhook_ordersPartiallyFulfilled(
   console.log("parsed Obj - ", data);
 
   if (fulfilledDataObj.success) {
-    const { closed_at, id: orderId, note } = fulfilledDataObj.data;
+    const { updated_at, id: orderId, note } = fulfilledDataObj.data;
     const infoToFulFillOrder = await getOrderInfoForFulFillment(orderId);
     if (infoToFulFillOrder) {
       const {
@@ -40,7 +40,7 @@ export async function webhook_ordersPartiallyFulfilled(
       } = infoToFulFillOrder;
 
       const { formattedDate, formattedDatePlus30Days } =
-        transformDateAndAdd30Days(closed_at);
+        transformDateAndAdd30Days(updated_at);
 
       const billingInfo: FulFillmentBillingInfo = {
         billingType: "INVOICE",
@@ -60,7 +60,7 @@ export async function webhook_ordersPartiallyFulfilled(
         countryCode: customerDetails?.country ?? "",
         customCustomerId: customCustomerId ?? "",
         orderAmount,
-        timeStamp: new Date(closed_at).toUTCString(),
+        timeStamp: new Date(updated_at).toUTCString(),
         billingInfo,
         notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
       });
