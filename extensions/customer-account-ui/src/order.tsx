@@ -38,7 +38,9 @@ function Extension() {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         const orderInfo: OrderWithCustomerDetails = await response.json();
+        console.log("response get/Order", orderInfo);
         setOrderData(orderInfo);
 
         const { customerDetails } = orderInfo;
@@ -48,7 +50,7 @@ function Extension() {
           orderID: order_id,
           customerAccountNumber: "Test123456789",
           paymentMethode: orderInfo.paymentMethode,
-          order_amount: orderInfo.orderAmount,
+          order_amount: orderInfo.orderAmount.toString(),
           gender: "FEMALE",
           // firstName: orderInfo.firstName ?? "",
           // lastName: orderInfo.lastName,

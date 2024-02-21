@@ -17,11 +17,10 @@ export interface OrderWithCustomerDetails {
   applicationNumber?: string;
   paymentGatewayName: string;
   paymentMethode: string;
-  orderAmount: string;
+  orderAmount: number;
   confirmCreditStatus?: string;
   fulfillStatus?: string;
   cancelStatus?: string;
-  partialFFStatus?: string;
-  partialFFAmount?: number;
+  partiallyFFStatus?: string;
   customerDetails?: CustomerDetails;
 }

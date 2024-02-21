@@ -41,7 +41,7 @@ CREATE TABLE `Orders` (
     `confirmCreditStatus` VARCHAR(191) NULL,
     `fulfillStatus` VARCHAR(191) NULL,
     `cancelStatus` VARCHAR(191) NULL,
-    `partialFFStatus` VARCHAR(191) NULL,
+    `partiallyFFStatus` VARCHAR(191) NULL,
 
     UNIQUE INDEX `Orders_orderId_key`(`orderId`),
     UNIQUE INDEX `Orders_orderNumber_key`(`orderNumber`),

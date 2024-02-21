@@ -49,7 +49,7 @@ model Orders {
   confirmCreditStatus String?
   fulfillStatus       String?
   cancelStatus        String?
-  partiallyFF         String?
+  partiallyFFStatus   String?
   customerDetails     CustomerDetails?
   billingInfo         BillingInfo?
 }

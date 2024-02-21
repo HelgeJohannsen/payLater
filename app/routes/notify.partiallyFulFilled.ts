@@ -1,14 +1,13 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { handleOrderFulFilled } from "~/models/OrderFulfillment.server";
+import { handleOrderPartiallyFulfilled } from "~/models/OrderPartiallyFulfilled.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const requestedURL = new URL(request.url);
   const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
-  const applicationNumber = requestedURL.searchParams.get("applicationNum");
-  // const hash = requestedURL.searchParams.get("hash");
-  if (orderId === null || status === null || applicationNumber === null) {
+
+  if (orderId === null || status === null) {
     throw new Response(
       "Bad Request" /*", query parameter shop is mandatory"*/,
       {
@@ -16,7 +15,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       }
     );
   }
-  await handleOrderFulFilled(orderId, status);
+  await handleOrderPartiallyFulfilled(orderId, status);
 
   const response = json("order");
   response.headers.append("Access-Control-Allow-Origin", "*");

@@ -7,7 +7,7 @@ export async function handleOrderPartiallyFulfilled(
   try {
     const updatedOrder = await db.orders.update({
       where: { orderId },
-      data: { partiallyFF: status },
+      data: { partiallyFFStatus: status },
     });
     return updatedOrder;
   } catch (error) {
