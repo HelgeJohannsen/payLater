@@ -113,7 +113,7 @@ export class ConsorsAPI {
     const res = await fetch(consorsUrl, {
       method: "DELETE",
       headers: {
-        "x-api-key": this.authData.apiKey,
+        "X-api-key": this.authData.apiKey,
         "Content-Type": "application/json",
         "X-Request-Id": "1",
         "X-Conversation-Id": "111",
@@ -161,7 +161,7 @@ export class ConsorsAPI {
     const res = await fetch(consorsUrl, {
       method: "PUT",
       headers: {
-        "x-api-key": this.authData.apiKey,
+        "X-api-key": this.authData.apiKey,
         "Content-Type": "application/json",
         "X-Request-Id": "1",
         "X-Conversation-Id": "111",
