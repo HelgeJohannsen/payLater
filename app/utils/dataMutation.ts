@@ -27,9 +27,7 @@ const getPaymentType = (paymentMethod: string): string => {
     (key) => key === paymentMethod
   );
 
-  return PayLaterPaymentMethodOptions[
-    paymentKey as keyof typeof PayLaterPaymentMethodOptions
-  ];
+  return PaymentTypeOptions[paymentKey as keyof typeof PaymentTypeOptions];
 };
 
 const createCustomCustomerId = (orderNumber: string, customerId: string) => {

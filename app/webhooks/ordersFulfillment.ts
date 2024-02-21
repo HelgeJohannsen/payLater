@@ -50,8 +50,10 @@ export async function webhook_ordersFulfillment(
         dueDate: formattedDatePlus30Days,
         billingAmount: orderAmount,
         paymentType: getPaymentType(paymentMethode),
-        receiptNote: note,
+        receiptNote: note ?? "",
       };
+
+      console.log("billingInfo - ", billingInfo)
 
       await updateBillingWithFulFillData(orderId, billingInfo);
       const consorsClient = await getConsorsClient(shop);
