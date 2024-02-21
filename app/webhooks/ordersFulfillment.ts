@@ -37,6 +37,7 @@ export async function webhook_ordersFulfillment(
         orderAmount,
         orderName,
         paymentMethode,
+        orderNumber,
       } = infoToFulFillOrder;
 
       const { formattedDate, formattedDatePlus30Days } =
@@ -55,7 +56,7 @@ export async function webhook_ordersFulfillment(
 
       console.log("billingInfo - ", billingInfo);
 
-      await updateBillingWithFulFillData(orderName, billingInfo);
+      await updateBillingWithFulFillData(orderNumber, billingInfo);
       const consorsClient = await getConsorsClient(shop);
       const response = await consorsClient?.fulfillmentOrder({
         applicationReferenceNumber: applicationNumber ?? "",

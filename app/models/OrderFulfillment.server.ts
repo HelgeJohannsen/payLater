@@ -3,7 +3,6 @@ import db from "../db.server";
 
 export async function handleOrderFulFilled(orderId: string, status: string) {
   try {
-
     const updatedOrder = await db.orders.update({
       where: { orderId },
       data: { fulfillStatus: status },
@@ -14,7 +13,10 @@ export async function handleOrderFulFilled(orderId: string, status: string) {
   }
 }
 
-export async function updateBillingWithFulFillData(orderNumber: string, billingInfo: FulFillmentBillingInfo) {
+export async function updateBillingWithFulFillData(
+  orderNumber: string,
+  billingInfo: FulFillmentBillingInfo
+) {
   try {
     const updatedOrder = await db.billingInfo.update({
       where: { orderNumberRef: orderNumber },
@@ -26,7 +28,7 @@ export async function updateBillingWithFulFillData(orderNumber: string, billingI
   }
 }
 
-export async function getOrderInfoForFulFillment(orderId: string){
+export async function getOrderInfoForFulFillment(orderId: string) {
   try {
     const orderFulFillmentInfo = await db.orders.findUnique({
       where: { orderId },
@@ -35,11 +37,12 @@ export async function getOrderInfoForFulFillment(orderId: string){
         paymentMethode: true,
         orderAmount: true,
         orderName: true,
+        orderNumber: true,
         customCustomerId: true,
         customerDetails: {
           select: {
             country: true,
-          }
+          },
         },
       },
     });
