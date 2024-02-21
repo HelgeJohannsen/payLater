@@ -2,6 +2,7 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { webhook_ordersCancel } from "~/webhooks/ordersCancel";
 import { webhook_ordersCreate } from "~/webhooks/ordersCreate";
 import { webhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
+import { webhook_ordersPartiallyFulfilled } from "~/webhooks/ordersPartiallyFulfilled";
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
@@ -28,7 +29,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return new Response("webhook ORDERS_FULFILLED", { status: 200 });
 
     case "ORDERS_PARTIALLY_FULFILLED":
-      webhook_ordersFulfillment(shop, payload);
+      webhook_ordersPartiallyFulfilled(shop, payload);
       return new Response("webhook ORDERS_PARTIALLY_FULFILLED", {
         status: 200,
       });
