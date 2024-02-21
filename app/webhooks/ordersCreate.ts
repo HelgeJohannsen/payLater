@@ -28,8 +28,6 @@ const orderCreated = z.object({
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreated.safeParse(data);
-  console.log("webhook_ordersCreate payload:", data);
-  console.log("webhook_ordersCreate parseResult:", parseResult);
   if (parseResult.success) {
     const orderData = parseResult.data;
     const paymentMethod = isPayLaterPaymentGateway(

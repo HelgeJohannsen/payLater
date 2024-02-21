@@ -4,7 +4,6 @@ import { setCreditCheck } from "../models/order.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const requestedURL = new URL(request.url);
-  console.log("requestedURL -- ", requestedURL);
   const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
   const applicationNumber = requestedURL.searchParams.get("applicationNum");

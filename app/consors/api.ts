@@ -140,24 +140,6 @@ export class ConsorsAPI {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
-    const test = JSON.stringify({
-      customCustomerId,
-      orderAmount,
-      notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
-      billingInfo,
-    });
-    const headerTest = {
-      "X-api-key": this.authData.apiKey,
-      "Content-Type": "application/json",
-      "X-Request-Id": "1",
-      "X-Conversation-Id": "111",
-      "X-TimeStamp": timeStamp,
-      "X-CountryCode": countryCode,
-      "X-Token": `Bearer ${consorsAuthToken}`,
-    };
-    console.log("body test", test);
-    console.log("headerTest", headerTest);
-
     const res = await fetch(consorsUrl, {
       method: "PUT",
       headers: {

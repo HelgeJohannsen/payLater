@@ -21,10 +21,7 @@ export async function webhook_ordersFulfillment(
   payload: unknown
 ) {
   const data = payload?.valueOf();
-  console.log("webhook_ordersFulfillment", data);
-
   const fulfilledDataObj = orderFulfilled.safeParse(data);
-  console.log("fulfilledData parsed ", fulfilledDataObj);
 
   if (fulfilledDataObj.success) {
     const { closed_at, id: orderId, note } = fulfilledDataObj.data;
@@ -51,14 +48,12 @@ export async function webhook_ordersFulfillment(
         dueDate: formattedDatePlus30Days,
         billingAmount: orderAmount,
         paymentType: getPaymentType(paymentMethode),
-        receiptNote: note ?? "empty note",
+        receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
       };
-
-      console.log("billingInfo - ", billingInfo);
 
       await updateBillingWithFulFillData(orderNumber, billingInfo);
       const consorsClient = await getConsorsClient(shop);
-      const response = await consorsClient?.fulfillmentOrder({
+      await consorsClient?.fulfillmentOrder({
         applicationReferenceNumber: applicationNumber ?? "",
         countryCode: customerDetails?.country ?? "",
         customCustomerId: customCustomerId ?? "",
@@ -66,8 +61,6 @@ export async function webhook_ordersFulfillment(
         timeStamp: new Date(closed_at).toUTCString(),
         billingInfo,
       });
-
-      console.log("bank response - ", response);
     }
   } else {
     console.log("could not parse fullfilment date:", data);

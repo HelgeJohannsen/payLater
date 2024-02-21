@@ -9,9 +9,7 @@ const orderCancel = z.object({
 
 export async function webhook_ordersCancel(shop: string, payload: unknown) {
   const data = payload?.valueOf();
-  console.log("webhook_ordersCancel - ", data);
   const cancellationData = orderCancel.parse(data);
-  console.log("cancellationData parsed - ", cancellationData);
 
   const { cancelled_at, id: orderId } = cancellationData;
 
@@ -20,13 +18,12 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
     const { applicationNumber, customerDetails } = orderCancelInfo;
     if (applicationNumber && customerDetails?.country) {
       const consorsClient = await getConsorsClient(shop);
-      const response = await consorsClient?.stornoOrder({
+      await consorsClient?.stornoOrder({
         applicationReferenceNumber: applicationNumber,
         countryCode: customerDetails?.country,
         orderAmount: 0.0,
         timeStamp: cancelled_at,
       });
-      console.log("bank response", response);
     }
   }
 }
