@@ -61,6 +61,7 @@ export async function createOrderWithCustomerDetails({
 
     const {
       customerId,
+      email,
       customCustomerId,
       firstName,
       lastName,
@@ -74,6 +75,7 @@ export async function createOrderWithCustomerDetails({
       data: {
         orderNumberRef: order.orderNumber,
         customerId,
+        email,
         customCustomerId,
         firstName,
         lastName,

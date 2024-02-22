@@ -5,7 +5,7 @@ export async function handleRefundsOrder(orderId: string, status: string) {
   try {
     const updatedOrder = await db.orders.update({
       where: { orderId },
-      data: { fulfillStatus: status },
+      data: { refundStatus: status },
     });
     return updatedOrder;
   } catch (error) {

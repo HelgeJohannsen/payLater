@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
-import type { BillingInfoRequest } from "~/consors/types";
 import {
   createRefundsDetails,
   getOrderDataToRefund,
@@ -18,7 +17,7 @@ const refundsSchema = z.object({
   transactions: z.array(
     z.object({
       gateway: z.string(),
-      amount: z.string().transform((num) => Number(num)),
+      amount: z.string(),
     })
   ),
 });
@@ -47,8 +46,6 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     fulfilledDetails,
   } = orderData;
 
-  console.log("orderData", orderData);
-
   if (!customerDetails || !fulfilledDetails)
     return console.error("Customer or fulfilled details not found");
 
@@ -59,18 +56,14 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     billingType: "CREDIT_NOTE",
     billingReferenceNumber: orderName,
     dueDate: formattedDate,
-    billingAmount: transactions[0].amount,
-    billingNetAmount: transactions[0].amount,
+    billingDate,
+    billingNumber: orderName,
+    billingAmount: `-${transactions[0].amount}`,
+    billingNetAmount: `-${transactions[0].amount}`,
     paymentType: getPaymentType(paymentMethode),
     receiptNote:
       note ??
       `Default message: refund note for OrderNumber ${orderNumber}, amount ${transactions[0].amount}`,
-  };
-
-  const refundDataRequest: BillingInfoRequest = {
-    ...refundsData,
-    billingNumber: orderName,
-    billingDate,
   };
 
   await createRefundsDetails(orderNumber, refundsData);
@@ -81,9 +74,9 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     customerId: customerDetails?.customCustomerId ?? "",
     orderAmount,
     timeStamp: new Date(created_at).toUTCString(),
-    billingInfo: refundDataRequest,
+    billingInfo: refundsData,
     notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
 
-  console.log("bank response", response)
+  console.log("bank response", response);
 }

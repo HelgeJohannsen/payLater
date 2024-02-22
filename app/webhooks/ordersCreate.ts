@@ -8,6 +8,7 @@ import {
 
 const orderCreated = z.object({
   id: z.number().transform((num) => num.toString()),
+  email: z.string(),
   order_number: z.number().transform((num) => num.toString()),
   name: z.string(),
   payment_gateway_names: z.array(z.string()),
@@ -47,6 +48,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
       const createCustomerData: CreateCustomerDetails = {
         orderNumberRef: orderData.order_number,
         customerId: orderData.customer.id,
+        email: orderData.email,
         customCustomerId: createCustomCustomerId(
           orderData.order_number,
           orderData.customer.id

@@ -1,17 +1,21 @@
-import type { FulfilledDetails } from "@prisma/client";
+import type { FulfilledDetails, RefundsDetails } from "@prisma/client";
 
-export type BillingInfoRequest = Omit<
+export type FulfilledBillingInfoRequest = Omit<
   FulfilledDetails,
   "id" | "orderNumberRef"
 >;
 
+export type RefundBillingInfoRequest = Omit<
+  RefundsDetails,
+  "id" | "orderNumberRef"
+>;
 export interface FulfillmentOrderRequest {
   applicationReferenceNumber: string;
   countryCode: string;
   timeStamp: string;
   orderAmount: number;
   customerId: string;
-  billingInfo: BillingInfoRequest;
+  billingInfo: FulfilledBillingInfoRequest;
   notifyURL: string;
 }
 
@@ -30,5 +34,5 @@ export interface RefundOrderRequest {
   orderAmount: number;
   countryCode: string;
   notifyURL: string;
-  billingInfo: BillingInfoRequest;
+  billingInfo: RefundBillingInfoRequest;
 }

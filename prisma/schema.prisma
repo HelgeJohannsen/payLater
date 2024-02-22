@@ -62,6 +62,7 @@ model CustomerDetails {
   customCustomerId String @unique
   firstName        String
   lastName         String
+  email            String
   zip              String
   city             String
   street           String
@@ -85,14 +86,19 @@ model FulfilledDetails {
 }
 
 model RefundsDetails {
-  id                     Int    @id @default(autoincrement())
-  orderNumberRef         String @unique
+  id                     Int     @id @default(autoincrement())
+  orderNumberRef         String  @unique
   billingType            String
+  billingNumber          String
+  billingDate            String
   billingReferenceNumber String
   dueDate                String
-  billingAmount          Float
-  billingNetAmount       Float?
+  billingAmount          String
+  billingNetAmount       String?
   paymentType            String
   receiptNote            String
-  order                  Orders @relation(fields: [orderNumberRef], references: [orderNumber])
+  order                  Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
 }
+
+// Create CancelDetails with amount, note, date
+// Create PartialFFDetails with amount, note, date
