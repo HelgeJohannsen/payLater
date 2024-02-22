@@ -29,7 +29,8 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
   console.log("webhook_refundsCreate - ", data);
   console.log("refundsData parsed - ", refundsDataParsed);
 
-  if (!refundsDataParsed.success) return console.error("Error parsing data");
+  if (!refundsDataParsed.success)
+    return console.error("Error parsing schema data");
 
   const { created_at, note, order_id, transactions } = refundsDataParsed.data;
   const orderData = await getOrderDataToRefund(order_id);
@@ -46,8 +47,10 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     fulfilledDetails,
   } = orderData;
 
+  console.log("orderData", orderData);
+
   if (!customerDetails || !fulfilledDetails)
-    return console.log("Error parsing data");
+    return console.error("Customer or fulfilled details not found");
 
   const { billingDate } = fulfilledDetails;
   const { formattedDate } = transformDateAndAdd30Days(created_at);
@@ -72,7 +75,7 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
 
   await createRefundsDetails(orderNumber, refundsData);
   const consorsClient = await getConsorsClient(shop);
-  await consorsClient?.refundOrder({
+  const response = await consorsClient?.refundOrder({
     applicationReferenceNumber: applicationNumber ?? "",
     countryCode: customerDetails?.country ?? "",
     customerId: customerDetails?.customCustomerId ?? "",
@@ -81,4 +84,6 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     billingInfo: refundDataRequest,
     notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
+
+  console.log("bank response", response)
 }
