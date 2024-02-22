@@ -11,7 +11,7 @@ export async function handleOrderCancel(orderId: string, status: string) {
     console.error("Order update failed", error);
   }
 }
-export async function getOrderCancelInfo(orderId: string){
+export async function getOrderCancelInfo(orderId: string) {
   try {
     const orderCancelInfo = await db.orders.findUnique({
       where: { orderId },
@@ -21,7 +21,7 @@ export async function getOrderCancelInfo(orderId: string){
         customerDetails: {
           select: {
             country: true,
-          }
+          },
         },
       },
     });

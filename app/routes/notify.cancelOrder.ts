@@ -8,7 +8,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const status = requestedURL.searchParams.get("status");
 
   // const hash = requestedURL.searchParams.get("hash");
-  if (orderId === null || status === null ) {
+  if (orderId === null || status === null) {
     throw new Response(
       "Bad Request" /*", query parameter shop is mandatory"*/,
       {

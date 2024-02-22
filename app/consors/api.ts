@@ -1,5 +1,16 @@
-import type { BillingInfo } from "@prisma/client";
 import { getOrCreateConfig } from "../models/config.server";
+import type {
+  FulfillmentOrderRequest,
+  RefundOrderRequest,
+  StornoOrderRequest,
+} from "./types";
+
+interface ApiAuthData {
+  apiKey: string;
+  username: string;
+  password: string;
+  vendorId: string;
+}
 
 function parseJwt(token: string) {
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
@@ -11,35 +22,6 @@ function jwtExpiresAt(jwt: string): number {
     console.warn("JWT with two different values for .exp and .data.exp", jwt);
   }
   return payload.exp * 1000; // jtw.ext uses seconds, javascript uses milliseconds for timestamps
-}
-
-interface ApiAuthData {
-  apiKey: string;
-  username: string;
-  password: string;
-  vendorId: string;
-}
-
-export type FulFillmentBillingInfo = Omit<
-  BillingInfo,
-  "id" | "orderNumberRef" | "billingNetAmount"
->;
-
-interface FulfillmentOrder {
-  applicationReferenceNumber: string;
-  countryCode: string;
-  timeStamp: string;
-  orderAmount: number;
-  customCustomerId: string;
-  billingInfo: FulFillmentBillingInfo;
-  notifyURL: string;
-}
-
-interface StornoOrder {
-  applicationReferenceNumber: string;
-  countryCode: string;
-  timeStamp: string;
-  orderAmount: number;
 }
 
 const jwtMinimalAcceptableLiveTime = 2 * 60 * 1000; // 2min
@@ -107,7 +89,8 @@ export class ConsorsAPI {
     countryCode,
     orderAmount = 0.0,
     timeStamp,
-  }: StornoOrder) {
+    notifyURL,
+  }: StornoOrderRequest) {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
@@ -124,7 +107,7 @@ export class ConsorsAPI {
       },
       body: JSON.stringify({
         orderAmount,
-        notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
+        notifyURL,
       }),
     });
     return res;
@@ -134,11 +117,11 @@ export class ConsorsAPI {
     applicationReferenceNumber,
     billingInfo,
     countryCode,
-    customCustomerId,
+    customerId,
     orderAmount,
     timeStamp,
     notifyURL,
-  }: FulfillmentOrder) {
+  }: FulfillmentOrderRequest) {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
@@ -154,7 +137,40 @@ export class ConsorsAPI {
         "X-api-key": this.authData.apiKey,
       },
       body: JSON.stringify({
-        customerId: customCustomerId,
+        customerId,
+        orderAmount,
+        notifyURL,
+        billingInfo,
+      }),
+    });
+    return res;
+  }
+
+  async refundOrder({
+    applicationReferenceNumber,
+    billingInfo,
+    countryCode,
+    customerId,
+    orderAmount,
+    timeStamp,
+    notifyURL,
+  }: RefundOrderRequest) {
+    const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
+
+    const consorsAuthToken = await this.jwt();
+    const res = await fetch(consorsUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Request-Id": "1",
+        "X-Conversation-Id": "111",
+        "X-CountryCode": countryCode,
+        "X-TimeStamp": timeStamp,
+        "X-Token": `Bearer ${consorsAuthToken}`,
+        "X-api-key": this.authData.apiKey,
+      },
+      body: JSON.stringify({
+        customerId,
         orderAmount,
         notifyURL,
         billingInfo,

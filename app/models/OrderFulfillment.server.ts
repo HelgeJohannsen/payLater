@@ -1,5 +1,5 @@
-import type { FulFillmentBillingInfo } from "~/consors/api";
 import db from "../db.server";
+import type { CreateFulfilledDetails } from "./types";
 
 export async function handleOrderFulFilled(orderId: string, status: string) {
   try {
@@ -13,18 +13,28 @@ export async function handleOrderFulFilled(orderId: string, status: string) {
   }
 }
 
-export async function updateBillingWithFulFillData(
+export async function createFulfilledDetails(
   orderNumber: string,
-  billingInfo: FulFillmentBillingInfo
+  fulfilledDetailsData: CreateFulfilledDetails
 ) {
   try {
-    const updatedOrder = await db.billingInfo.update({
+    const ffData = await db.fulfilledDetails.findFirst({
       where: { orderNumberRef: orderNumber },
-      data: { ...billingInfo },
     });
-    return updatedOrder;
+    if (!ffData) {
+      const newFFData = await db.fulfilledDetails.create({
+        data: {
+          ...fulfilledDetailsData,
+          order: {
+            connect: { orderNumber },
+          },
+        },
+      });
+      return newFFData;
+    }
+    return ffData;
   } catch (error) {
-    console.error("Order update failed", error);
+    console.error("Create FulfilledDetails failed", error);
   }
 }
 
@@ -38,10 +48,10 @@ export async function getOrderInfoForFulFillment(orderId: string) {
         orderAmount: true,
         orderName: true,
         orderNumber: true,
-        customCustomerId: true,
         customerDetails: {
           select: {
             country: true,
+            customCustomerId: true,
           },
         },
       },

@@ -1,10 +1,11 @@
 import { z } from "zod";
-import type { FulFillmentBillingInfo } from "~/consors/api";
+
 import { getConsorsClient } from "~/consors/api";
 import {
+  createFulfilledDetails,
   getOrderInfoForFulFillment,
-  updateBillingWithFulFillData,
 } from "~/models/OrderFulfillment.server";
+import type { CreateFulfilledDetails } from "~/models/types";
 import {
   getPaymentType,
   transformDateAndAdd30Days,
@@ -31,37 +32,37 @@ export async function webhook_ordersFulfillment(
     if (infoToFulFillOrder) {
       const {
         applicationNumber,
-        customCustomerId,
-        customerDetails,
         orderAmount,
         orderName,
         paymentMethode,
         orderNumber,
+        customerDetails,
       } = infoToFulFillOrder;
 
       const { formattedDate, formattedDatePlus30Days } =
         transformDateAndAdd30Days(closed_at);
 
-      const billingInfo: FulFillmentBillingInfo = {
+      const fulfilledData: CreateFulfilledDetails = {
         billingType: "INVOICE",
         billingNumber: orderName,
         billingDate: formattedDate,
         billingReferenceNumber: "",
         dueDate: formattedDatePlus30Days,
         billingAmount: orderAmount,
+        billingNetAmount: orderAmount,
         paymentType: getPaymentType(paymentMethode),
         receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
       };
 
-      await updateBillingWithFulFillData(orderNumber, billingInfo);
+      await createFulfilledDetails(orderNumber, fulfilledData);
       const consorsClient = await getConsorsClient(shop);
       await consorsClient?.fulfillmentOrder({
         applicationReferenceNumber: applicationNumber ?? "",
         countryCode: customerDetails?.country ?? "",
-        customCustomerId: customCustomerId ?? "",
+        customerId: customerDetails?.customCustomerId ?? "",
         orderAmount,
         timeStamp: new Date(closed_at).toUTCString(),
-        billingInfo,
+        billingInfo: fulfilledData,
         notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
       });
     }

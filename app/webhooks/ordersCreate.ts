@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { CreateCustomerInfo, CreateOrder } from "~/models/order.server";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
+import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
 import {
   createCustomCustomerId,
   isPayLaterPaymentGateway,
@@ -36,20 +36,21 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
       orderData.payment_gateway_names[0]
     );
     if (paymentMethod && orderData.billing_address.country_code === "DE") {
-      const createOrderInfo: CreateOrder = {
+      const createOrderData: CreateOrder = {
         orderId: orderData.id,
         orderNumber: orderData.order_number,
         orderName: orderData.name,
         paymentGatewayName: orderData.payment_gateway_names[0],
         paymentMethode: paymentMethod,
         orderAmount: orderData.total_price,
+      };
+      const createCustomerData: CreateCustomerDetails = {
+        orderNumberRef: orderData.order_number,
+        customerId: orderData.customer.id,
         customCustomerId: createCustomCustomerId(
           orderData.order_number,
           orderData.customer.id
         ),
-      };
-      const createCustomerInfo: CreateCustomerInfo = {
-        customerId: orderData.customer.id,
         firstName: orderData.customer.first_name ?? "",
         lastName: orderData.customer.last_name,
         zip: orderData.billing_address.zip,
@@ -59,8 +60,8 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
       };
 
       await createOrderWithCustomerDetails({
-        createCustomerInfo,
-        createOrderInfo,
+        createCustomerData,
+        createOrderData,
       });
     }
   } else {

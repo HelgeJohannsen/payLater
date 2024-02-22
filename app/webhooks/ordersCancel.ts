@@ -25,6 +25,7 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
         countryCode: customerDetails?.country,
         orderAmount: 0.0,
         timeStamp: cancelled_at,
+        notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
       });
     }
   }

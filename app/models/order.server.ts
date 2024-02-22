@@ -1,5 +1,5 @@
-import type { CustomerDetails, Orders } from "@prisma/client";
 import db from "../db.server";
+import type { CreateOrderWithCustomerDetails } from "./types";
 
 export async function getOrderWithDetails(orderId: string) {
   const orderWithDetails = await db.orders.findFirst({
@@ -29,36 +29,9 @@ export async function setCreditCheck(
   return;
 }
 
-export type CreateOrder = Pick<
-  Orders,
-  | "orderId"
-  | "orderNumber"
-  | "orderName"
-  | "paymentGatewayName"
-  | "paymentMethode"
-  | "orderAmount"
-  | "customCustomerId"
->;
-
-export type CreateCustomerInfo = Pick<
-  CustomerDetails,
-  | "customerId"
-  | "firstName"
-  | "lastName"
-  | "zip"
-  | "city"
-  | "street"
-  | "country"
->;
-
-type CreateOrderWithCustomerDetails = {
-  createOrderInfo: CreateOrder;
-  createCustomerInfo: CreateCustomerInfo;
-};
-
 export async function createOrderWithCustomerDetails({
-  createCustomerInfo,
-  createOrderInfo,
+  createCustomerData,
+  createOrderData,
 }: CreateOrderWithCustomerDetails) {
   // A transaction ensure both records are created together
   const result = await db.$transaction(async (prisma) => {
@@ -69,8 +42,7 @@ export async function createOrderWithCustomerDetails({
       paymentGatewayName,
       paymentMethode,
       orderAmount,
-      customCustomerId,
-    } = createOrderInfo;
+    } = createOrderData;
 
     const order = await prisma.orders.create({
       data: {
@@ -80,7 +52,6 @@ export async function createOrderWithCustomerDetails({
         paymentGatewayName,
         paymentMethode,
         orderAmount,
-        customCustomerId: customCustomerId ?? "",
       },
     });
 
@@ -88,13 +59,22 @@ export async function createOrderWithCustomerDetails({
       throw new Error("Order not created");
     }
 
-    const { customerId, firstName, lastName, city, street, zip, country } =
-      createCustomerInfo;
+    const {
+      customerId,
+      customCustomerId,
+      firstName,
+      lastName,
+      city,
+      street,
+      zip,
+      country,
+    } = createCustomerData;
 
     const customerDetails = await prisma.customerDetails.create({
       data: {
         orderNumberRef: order.orderNumber,
         customerId,
+        customCustomerId,
         firstName,
         lastName,
         zip,
@@ -107,17 +87,7 @@ export async function createOrderWithCustomerDetails({
       throw new Error("Customer details not created");
     }
 
-    const billingInfo = await prisma.billingInfo.create({
-      data: {
-        orderNumberRef: order.orderNumber,
-        billingType: "INVOICE",
-      },
-    });
-    if (!billingInfo) {
-      throw new Error("billingInfo not created");
-    }
-
-    return { order, customerDetails, billingInfo };
+    return { order, customerDetails };
   });
 
   return result;
