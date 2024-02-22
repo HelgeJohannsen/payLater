@@ -37,47 +37,62 @@ model Config {
 //customCustomerId is made of the last 5 digits of the customerId provided by shopify and the last 5 digits of the orderNumber
 
 model Orders {
-  id                  Int              @id @default(autoincrement())
-  orderId             String           @unique
-  orderNumber         String           @unique
+  id                  Int               @id @default(autoincrement())
+  orderId             String            @unique
+  orderNumber         String            @unique
   orderName           String
-  customCustomerId    String?          @unique
   applicationNumber   String?
   paymentGatewayName  String
   paymentMethode      String
   orderAmount         Float
   confirmCreditStatus String?
-  fulfillStatus       String?
   cancelStatus        String?
+  fulfillStatus       String?
   partiallyFFStatus   String?
+  refundStatus        String?
   customerDetails     CustomerDetails?
-  billingInfo         BillingInfo?
+  fulfilledDetails    FulfilledDetails?
+  refundedDetails     RefundsDetails?
 }
 
 model CustomerDetails {
-  id             Int    @id @default(autoincrement())
-  orderNumberRef String @unique
-  customerId     String
-  firstName      String
-  lastName       String
-  zip            String
-  city           String
-  street         String
-  country        String
-  order          Orders @relation(fields: [orderNumberRef], references: [orderNumber])
+  id               Int    @id @default(autoincrement())
+  orderNumberRef   String @unique
+  customerId       String
+  customCustomerId String @unique
+  firstName        String
+  lastName         String
+  zip              String
+  city             String
+  street           String
+  country          String
+  order            Orders @relation(fields: [orderNumberRef], references: [orderNumber])
 }
 
-model BillingInfo {
-  id                     Int     @id @default(autoincrement())
-  orderNumberRef         String  @unique
+model FulfilledDetails {
+  id                     Int    @id @default(autoincrement())
+  orderNumberRef         String @unique
   billingType            String
-  billingNumber          String?
-  billingDate            String?
-  billingReferenceNumber String?
-  dueDate                String?
-  billingAmount          Float?
+  billingNumber          String
+  billingDate            String
+  billingReferenceNumber String
+  dueDate                String
+  billingAmount          Float
   billingNetAmount       Float?
-  paymentType            String?
-  receiptNote            String?
-  order                  Orders  @relation(fields: [orderNumberRef], references: [orderNumber])
+  paymentType            String
+  receiptNote            String
+  order                  Orders @relation(fields: [orderNumberRef], references: [orderNumber])
+}
+
+model RefundsDetails {
+  id                     Int    @id @default(autoincrement())
+  orderNumberRef         String @unique
+  billingType            String
+  billingReferenceNumber String
+  dueDate                String
+  billingAmount          Float
+  billingNetAmount       Float?
+  paymentType            String
+  receiptNote            String
+  order                  Orders @relation(fields: [orderNumberRef], references: [orderNumber])
 }
