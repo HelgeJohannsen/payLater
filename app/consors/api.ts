@@ -157,16 +157,6 @@ export class ConsorsAPI {
   }: RefundOrderRequest) {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
-    console.log(
-      "body test - ",
-      JSON.stringify({
-        customerId,
-        orderAmount,
-        notifyURL,
-        billingInfo,
-      })
-    );
-
     const consorsAuthToken = await this.jwt();
     const res = await fetch(consorsUrl, {
       method: "PUT",

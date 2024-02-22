@@ -34,7 +34,7 @@ export async function createRefundsDetails(
 
 export async function getOrderDataToRefund(orderId: string) {
   try {
-    const orderFulFillmentInfo = await db.orders.findUnique({
+    const orderData = await db.orders.findUnique({
       where: { orderId },
       select: {
         applicationNumber: true,
@@ -55,8 +55,8 @@ export async function getOrderDataToRefund(orderId: string) {
         },
       },
     });
-    return orderFulFillmentInfo;
+    return orderData;
   } catch (error) {
-    console.error("Unable to get Application Reference Number", error);
+    console.error("Unable to get order data", error);
   }
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
-import { getOrderCancelInfo } from "~/models/OrderCancel.server";
+import { getOrderInfoForCancel } from "~/models/OrderCancel.server";
 
 const orderCancel = z.object({
   id: z.number().transform((num) => num.toString()),
@@ -15,7 +15,7 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
 
   const { cancelled_at, id: orderId } = cancellationData;
 
-  const orderCancelInfo = await getOrderCancelInfo(orderId);
+  const orderCancelInfo = await getOrderInfoForCancel(orderId);
   if (orderCancelInfo) {
     const { applicationNumber, customerDetails } = orderCancelInfo;
     if (applicationNumber && customerDetails?.country) {

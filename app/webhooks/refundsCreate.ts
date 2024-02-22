@@ -68,7 +68,7 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
 
   await createRefundsDetails(orderNumber, refundsData);
   const consorsClient = await getConsorsClient(shop);
-  const response = await consorsClient?.refundOrder({
+  await consorsClient?.refundOrder({
     applicationReferenceNumber: applicationNumber ?? "",
     countryCode: customerDetails?.country ?? "",
     customerId: customerDetails?.customCustomerId ?? "",
@@ -77,6 +77,4 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     billingInfo: refundsData,
     notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
-
-  console.log("bank response", response);
 }

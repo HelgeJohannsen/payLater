@@ -11,9 +11,10 @@ export async function handleOrderCancel(orderId: string, status: string) {
     console.error("Order update failed", error);
   }
 }
-export async function getOrderCancelInfo(orderId: string) {
+
+export async function getOrderInfoForCancel(orderId: string) {
   try {
-    const orderCancelInfo = await db.orders.findUnique({
+    const orderData = await db.orders.findUnique({
       where: { orderId },
       select: {
         applicationNumber: true,
@@ -25,8 +26,8 @@ export async function getOrderCancelInfo(orderId: string) {
         },
       },
     });
-    return orderCancelInfo;
+    return orderData;
   } catch (error) {
-    console.error("Unable to get Application Reference Number", error);
+    console.error("Unable to get order data", error);
   }
 }
