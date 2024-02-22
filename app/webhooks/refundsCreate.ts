@@ -13,7 +13,7 @@ import {
 const refundsSchema = z.object({
   order_id: z.number().transform((num) => num.toString()),
   created_at: z.string(),
-  note: z.string(),
+  note: z.string().nullable(),
   transactions: z.array(
     z.object({
       gateway: z.string(),
@@ -61,9 +61,9 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     billingAmount: `-${transactions[0].amount}`,
     billingNetAmount: `-${transactions[0].amount}`,
     paymentType: getPaymentType(paymentMethode),
-    receiptNote:
-      note ??
-      `Default message: refund note for OrderNumber ${orderNumber}, amount ${transactions[0].amount}`,
+    receiptNote: note
+      ? note
+      : `Default message: refund note for OrderNumber ${orderNumber}, amount -${transactions[0].amount}`,
   };
 
   await createRefundsDetails(orderNumber, refundsData);
