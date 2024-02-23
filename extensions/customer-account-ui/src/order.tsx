@@ -9,7 +9,8 @@ import {
   useShop,
 } from "@shopify/ui-extensions-react/customer-account";
 import { useEffect, useState } from "react";
-import type { OrderWithCustomerDetails } from "./types";
+import { useAppConfig } from "./hooks/useAppConfig";
+import type { LinkOrderInfo } from "./types";
 import { isPayLaterPaymentGateway } from "./utils";
 
 export default reactExtension(
@@ -20,46 +21,49 @@ export default reactExtension(
 function Extension() {
   const order = useOrder();
 
-  const order_id = order?.id.split("Order/")[1];
+  const orderId = order?.id.split("Order/")[1];
   const shop = useShop();
-  const [orderData, setOrderData] = useState<OrderWithCustomerDetails>();
+  const appSettings = useAppConfig(shop.myshopifyDomain);
+  const [orderData, setOrderData] = useState<LinkOrderInfo>();
   const [parametersLink, setParametersLink] = useState<
     URLSearchParams | undefined
   >();
-  const application_url = "https://paylater.cpro-server.de";
+  
   useEffect(() => {
     const setConsorsUrl = async () => {
       try {
-        const apiEndpoint = "app/getOrder";
-        const parameters = new URLSearchParams({ orderId: order_id });
-        const requestUrl = `${application_url}/${apiEndpoint}?${parameters}`;
+        const apiEndpoint = "api/getOrder";
+        const parameters = new URLSearchParams({ orderId: orderId });
+        const requestUrl = `https://paylater.cpro-server.de/${apiEndpoint}?${parameters}`;
 
         const response = await fetch(requestUrl, { method: "GET" });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const orderInfo: OrderWithCustomerDetails = await response.json();
-        console.log("response get/Order", orderInfo);
+        const orderInfo: LinkOrderInfo = await response.json();
         setOrderData(orderInfo);
 
-        const { customerDetails } = orderInfo;
+        const { vendorId, customerAccountNumber } = appSettings;
+        const { customerDetails, orderAmount, paymentMethode } = orderInfo;
+        const { city, country, firstName, lastName, street, zip } =
+          customerDetails;
 
         const parameters2 = new URLSearchParams({
-          vendorID: "8403",
-          orderID: order_id,
-          customerAccountNumber: "Test123456789",
-          paymentMethode: orderInfo.paymentMethode,
-          order_amount: orderInfo.orderAmount.toString(),
-          gender: "FEMALE",
-          // firstName: orderInfo.firstName ?? "",
-          // lastName: orderInfo.lastName,
-          firstName: "Test",
-          lastName: "Approval",
-          zip: customerDetails.zip,
-          city: customerDetails.city,
-          street: customerDetails.street,
-          country: customerDetails.country,
+          vendorID: vendorId,
+          orderID: orderId,
+          customerAccountNumber,
+          paymentMethode,
+          order_amount: orderAmount.toString(),
+          firstName: firstName ?? "",
+          lastName,
+          // gender: "FEMALE",
+          // firstName: "Test",
+          // lastName: "Approval",
+          zip,
+          city,
+          street,
+          country,
           returntocheckoutURL: `${shop.storefrontUrl}/account/orders`,
           notifyURL: `https://paylater.cpro-server.de/notify/creditCheck`,
           failureURL: `${shop.storefrontUrl}/account/orders`,
@@ -70,11 +74,12 @@ function Extension() {
       }
     };
     setConsorsUrl();
-  }, []);
+  }, [orderId, shop.storefrontUrl, appSettings]);
 
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
 
-  return isPayLaterPaymentGateway(orderData?.paymentGatewayName) ? (
+  return appSettings &&
+    isPayLaterPaymentGateway(orderData?.paymentGatewayName) ? (
     <InlineLayout
       columns={["45%", "50%"]}
       spacing={"base"}

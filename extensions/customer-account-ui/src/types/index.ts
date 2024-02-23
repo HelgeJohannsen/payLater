@@ -1,26 +1,18 @@
-export interface CustomerDetails {
-  orderNumberRef: string;
-  customerId: string;
-  firstName: string;
-  lastName: string;
-  zip: string;
-  city: string;
-  street: string;
-  country: string;
-}
+import type { CustomerDetails, Orders } from "@prisma/client";
 
-export interface OrderWithCustomerDetails {
-  orderId: string;
-  orderNumber: string;
-  orderName: string;
-  customCustomerId?: string;
-  applicationNumber?: string;
-  paymentGatewayName: string;
-  paymentMethode: string;
-  orderAmount: number;
-  confirmCreditStatus?: string;
-  fulfillStatus?: string;
-  cancelStatus?: string;
-  partiallyFFStatus?: string;
-  customerDetails?: CustomerDetails;
-}
+type LinkCustomerDetails = Omit<
+  CustomerDetails,
+  "id" | "customerId" | "customCustomerId" | "email" | "orderNumberRef"
+>;
+type LinkOrderDetails = Pick<
+  Orders,
+  | "orderId"
+  | "paymentGatewayName"
+  | "paymentMethode"
+  | "orderAmount"
+  | "confirmCreditStatus"
+>;
+
+export type LinkOrderInfo = LinkOrderDetails & {
+  customerDetails: LinkCustomerDetails;
+};

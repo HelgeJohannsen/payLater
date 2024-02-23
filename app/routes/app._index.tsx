@@ -13,7 +13,6 @@ import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
 import { useState } from "react";
-// import { demoMockApi } from "~/consors/api";
 import { getConsorsClient } from "~/consors/api";
 import { getOrCreateConfig } from "../models/config.server";
 
@@ -164,7 +163,7 @@ export default function Index() {
                   Error
                 </Badge>
               )}
-              <Button onClick={() => handleSave()}>Save</Button>
+              <Button onClick={handleSave}>Save</Button>
             </BlockStack>
           </BlockStack>
         </BlockStack>

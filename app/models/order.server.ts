@@ -2,7 +2,7 @@ import db from "../db.server";
 import type { CreateOrderWithCustomerDetails } from "./types";
 
 export async function getOrderWithDetails(orderId: string) {
-  const orderWithDetails = await db.orders.findFirst({
+  const orderWithDetails = await db.orders.findUnique({
     where: { orderId },
     include: {
       customerDetails: true,
