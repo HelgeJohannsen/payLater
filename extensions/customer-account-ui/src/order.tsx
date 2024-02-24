@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { useAppConfig } from "./hooks/useAppConfig";
 import { useOrderData } from "./hooks/useOrderData";
-import { isPayLaterPaymentGateway } from "./utils";
+import { getConsorsLink, isPayLaterPaymentGateway } from "./utils";
 
 export default reactExtension(
   "customer-account.order-status.block.render",
@@ -37,26 +37,11 @@ function Extension() {
       return;
     }
 
-    const { customerDetails, orderAmount, orderId, paymentMethode } = orderData;
-    const { city, country, street, zip } = customerDetails;
-    const { vendorId, customerAccountNumber } = appSettings;
-
-    const consorsParametersLink = new URLSearchParams({
-      vendorID: vendorId,
-      orderID: orderId,
-      customerAccountNumber,
-      paymentMethode,
-      order_amount: orderAmount.toString(),
-      firstName: "Test",
-      lastName: "Approval",
-      zip,
-      city,
-      street,
-      country,
-      returntocheckoutURL: `${shop.storefrontUrl}/account/orders`,
-      notifyURL: `https://paylater.cpro-server.de/notify/creditCheck`,
-      failureURL: `${shop.storefrontUrl}/account/orders`,
-    });
+    const consorsParametersLink = getConsorsLink(
+      orderData,
+      appSettings,
+      shop.storefrontUrl
+    );
     setParametersLink(consorsParametersLink);
   }, [appSettings, orderData, shop.storefrontUrl]);
 

@@ -35,54 +35,18 @@ export async function createOrderWithCustomerDetails({
 }: CreateOrderWithCustomerDetails) {
   // A transaction ensure both records are created together
   const result = await db.$transaction(async (prisma) => {
-    const {
-      orderId,
-      orderNumber,
-      orderName,
-      paymentGatewayName,
-      paymentMethode,
-      orderAmount,
-    } = createOrderData;
-
     const order = await prisma.orders.create({
-      data: {
-        orderId,
-        orderNumber,
-        orderName,
-        paymentGatewayName,
-        paymentMethode,
-        orderAmount,
-      },
+      data: { ...createOrderData },
     });
 
     if (!order) {
       throw new Error("Order not created");
     }
 
-    const {
-      customerId,
-      email,
-      customCustomerId,
-      firstName,
-      lastName,
-      city,
-      street,
-      zip,
-      country,
-    } = createCustomerData;
-
     const customerDetails = await prisma.customerDetails.create({
       data: {
+        ...createCustomerData,
         orderNumberRef: order.orderNumber,
-        customerId,
-        email,
-        customCustomerId,
-        firstName,
-        lastName,
-        zip,
-        city,
-        street,
-        country,
       },
     });
     if (!customerDetails) {
