@@ -1,15 +1,15 @@
 import { z } from "zod";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
 import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
-// import { addTags } from "~/utils/addTags";
+import { addTags } from "~/utils/addTags";
 import {
   createCustomCustomerId,
-  // getOrderTagsAsArray,
+  getOrderTagsAsArray,
   isPayLaterPaymentGateway,
 } from "~/utils/dataMutation";
 
 const orderCreateSchema = z.object({
-  id: z.number().transform((num) => num.toString()),
+  id: z.number(),
   admin_graphql_api_id: z.string(),
   tags: z.union([z.string(), z.array(z.string())]).nullable(),
   email: z.string(),
@@ -30,7 +30,11 @@ const orderCreateSchema = z.object({
   }),
 });
 
-export async function webhook_ordersCreate(shop: string, payload: unknown) {
+export async function webhook_ordersCreate(
+  shop: string,
+  payload: unknown,
+  request: Request
+) {
   const data = payload?.valueOf();
   const parseResult = orderCreateSchema.safeParse(data);
   console.log("webhook_ordersCreate", data);
@@ -42,7 +46,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
     );
     if (paymentMethod && orderData.billing_address.country_code === "DE") {
       const createOrderData: CreateOrder = {
-        orderId: orderData.id,
+        orderId: orderData.id.toString(),
         orderNumber: orderData.order_number,
         orderName: orderData.name,
         paymentGatewayName: orderData.payment_gateway_names[0],
@@ -70,11 +74,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         createOrderData,
       });
 
-      // await addTags(
-      //   shop,
-      //   orderData.admin_graphql_api_id,
-      //   getOrderTagsAsArray(orderData.tags)
-      // );
+      await addTags(request, orderData.id, getOrderTagsAsArray(orderData.tags));
     }
   } else {
     console.log("Error parsing data", data);

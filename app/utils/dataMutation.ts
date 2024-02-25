@@ -49,9 +49,9 @@ function transformDateAndAdd30Days(dateStr: string) {
 }
 
 function getOrderTagsAsArray(tags: string | string[] | null) {
-  if (!tags) return ["Pay Later"];
-  if (Array.isArray(tags)) return tags.concat("PayLater");
-  return tags.split(",").concat("PayLater");
+  if (!tags) return "Pay Later";
+  if (Array.isArray(tags)) return tags.concat("Pay Later").join();
+  return tags.split(",").concat("Pay Later").join();
 }
 
 export {
