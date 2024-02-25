@@ -1,3 +1,6 @@
+import type { Session } from "@shopify/shopify-api";
+import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
+import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 import { z } from "zod";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
 import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
@@ -33,7 +36,8 @@ const orderCreateSchema = z.object({
 export async function webhook_ordersCreate(
   shop: string,
   payload: unknown,
-  request: Request
+  shopifyAdmin: AdminApiContext<RestResources>,
+  session: Session
 ) {
   const data = payload?.valueOf();
   const parseResult = orderCreateSchema.safeParse(data);
@@ -73,8 +77,14 @@ export async function webhook_ordersCreate(
         createCustomerData,
         createOrderData,
       });
-      console.log("request", request);
-      await addTags(request, orderData.id, getOrderTagsAsArray(orderData.tags));
+      console.log("shopifyAdmin: ", shopifyAdmin);
+      console.log("session: ", session);
+      await addTags(
+        shopifyAdmin,
+        orderData.id,
+        getOrderTagsAsArray(orderData.tags),
+        session
+      );
     }
   } else {
     console.log("Error parsing data", data);

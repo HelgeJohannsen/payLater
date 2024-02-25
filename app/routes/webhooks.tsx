@@ -22,7 +22,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (topic) {
     case "ORDERS_CREATE":
-      webhook_ordersCreate(shop, payload, request);
+      webhook_ordersCreate(shop, payload, admin, session);
       return new Response("webhook ORDERS_CREATE", { status: 200 });
 
     case "ORDERS_FULFILLED":

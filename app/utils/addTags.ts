@@ -1,6 +1,8 @@
 // import { getGraphqlClient } from "./getGraphqlClient";
 
-import { authenticate } from "~/shopify.server";
+import type { Session } from "@shopify/shopify-api";
+import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
+import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 
 // export async function addTags(
 //   shop: string,
@@ -47,15 +49,14 @@ import { authenticate } from "~/shopify.server";
 // }
 
 export const addTags = async (
-  request: Request,
+  shopifyAdmin: AdminApiContext<RestResources>,
   orderId: number,
-  orderTags: string
+  orderTags: string,
+  session: Session
 ) => {
-  const { admin, session } = await authenticate.admin(request);
-
-  console.log("request, orderId, orderTags", request, orderId, orderTags);
-
-  const order = new admin.rest.resources.Order({ session: session });
+  const order = new shopifyAdmin.rest.resources.Order({
+    session: session,
+  });
   console.log("order", order);
 
   order.id = orderId;
