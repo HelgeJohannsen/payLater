@@ -1,13 +1,16 @@
 import { z } from "zod";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
 import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
+import { addTags } from "~/utils/addTags";
 import {
   createCustomCustomerId,
   isPayLaterPaymentGateway,
 } from "~/utils/dataMutation";
 
-const orderCreated = z.object({
+const orderCreateSchema = z.object({
   id: z.number().transform((num) => num.toString()),
+  admin_graphql_api_id: z.string(),
+  tags: z.union([z.string(), z.array(z.string())]).nullable(),
   email: z.string(),
   order_number: z.number().transform((num) => num.toString()),
   name: z.string(),
@@ -28,7 +31,7 @@ const orderCreated = z.object({
 
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
-  const parseResult = orderCreated.safeParse(data);
+  const parseResult = orderCreateSchema.safeParse(data);
   console.log("webhook_ordersCreate", data);
   console.log("parseResult - ", parseResult);
   if (parseResult.success) {
@@ -65,6 +68,17 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         createCustomerData,
         createOrderData,
       });
+
+      await addTags(
+        shop,
+        orderData.admin_graphql_api_id,
+        orderData.tags
+          ? Array.isArray(orderData.tags)
+            ? orderData.tags
+            : [orderData.tags]
+          : [""],
+        "Pay Later"
+      );
     }
   } else {
     console.log("Error parsing data", data);
