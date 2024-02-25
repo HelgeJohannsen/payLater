@@ -3,10 +3,8 @@ import { getGraphqlClient } from "./getGraphqlClient";
 export async function addTags(
   shop: string,
   admin_graphql_api_id: string,
-  orderTags: string[],
-  newTag: string
+  orderTags: string[]
 ) {
-  const newTagArray = orderTags.concat([newTag]);
   await getGraphqlClient(shop)
     .then((client) =>
       client.query({
@@ -27,7 +25,7 @@ export async function addTags(
           variables: {
             input: {
               id: admin_graphql_api_id,
-              tags: newTagArray,
+              tags: orderTags,
             },
           },
         },

@@ -1,7 +1,7 @@
+import type { GraphqlClientParams } from "@shopify/shopify-api";
 import { shopifyApi } from "@shopify/shopify-api";
-import "@shopify/shopify-app-remix/adapters/node";
-
 import { LATEST_API_VERSION } from "@shopify/shopify-app-remix";
+import "@shopify/shopify-app-remix/adapters/node";
 
 const appHostName = process.env.SHOPIFY_APP_URL;
 
@@ -21,6 +21,8 @@ export function getGraphqlClient(shop: string) {
     if (session == null) {
       throw "no session for given shop"; // TODO: handle exception
     }
-    return new api.clients.Graphql({ session }); // TODO: convert types if neccessary
+    return new api.clients.Graphql({
+      session: session as unknown as GraphqlClientParams["session"],
+    }); // TODO: convert types if neccessary
   });
 }

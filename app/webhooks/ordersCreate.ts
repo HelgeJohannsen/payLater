@@ -4,6 +4,7 @@ import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
 import { addTags } from "~/utils/addTags";
 import {
   createCustomCustomerId,
+  getOrderTagsAsArray,
   isPayLaterPaymentGateway,
 } from "~/utils/dataMutation";
 
@@ -72,12 +73,7 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
       await addTags(
         shop,
         orderData.admin_graphql_api_id,
-        orderData.tags
-          ? Array.isArray(orderData.tags)
-            ? orderData.tags
-            : [orderData.tags]
-          : [""],
-        "Pay Later"
+        getOrderTagsAsArray(orderData.tags)
       );
     }
   } else {
