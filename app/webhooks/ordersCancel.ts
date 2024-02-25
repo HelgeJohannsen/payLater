@@ -1,13 +1,22 @@
+import type { Session } from "@shopify/shopify-api";
+import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
+import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
 import { getOrderInfoForCancel } from "~/models/OrderCancel.server";
+import { addNotes } from "~/utils/addNotes";
 
 const orderCancel = z.object({
-  id: z.number().transform((num) => num.toString()),
+  id: z.number(),
   cancelled_at: z.string().transform((str) => new Date(str).toUTCString()),
 });
 
-export async function webhook_ordersCancel(shop: string, payload: unknown) {
+export async function webhook_ordersCancel(
+  shop: string,
+  payload: unknown,
+  shopifyAdmin: AdminApiContext<RestResources>,
+  session: Session
+) {
   const data = payload?.valueOf();
   const cancellationData = orderCancel.parse(data);
   // console.log("webhook_ordersCancel - ", data);
@@ -15,7 +24,7 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
 
   const { cancelled_at, id: orderId } = cancellationData;
 
-  const orderCancelInfo = await getOrderInfoForCancel(orderId);
+  const orderCancelInfo = await getOrderInfoForCancel(orderId.toString());
   if (orderCancelInfo) {
     const { applicationNumber, customerDetails } = orderCancelInfo;
     if (applicationNumber && customerDetails?.country) {
@@ -27,7 +36,13 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
         timeStamp: cancelled_at,
         notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
       });
-      console.log("bankResponse", bankResponse);
+      if (bankResponse) {
+        const test = await bankResponse?.json();
+        console.log("bankResponse", bankResponse);
+        console.log("bankResponse json", test);
+
+        await addNotes(shopifyAdmin, session, orderId, "Testing notes");
+      }
     }
   }
 }

@@ -2,17 +2,20 @@ import type { Session } from "@shopify/shopify-api";
 import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
 import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 
-export const addTags = async (
+export const addNotes = async (
   shopifyAdmin: AdminApiContext<RestResources>,
+  session: Session,
   orderId: number,
-  orderNotes: string,
-  session: Session
+  orderNotes: string
 ) => {
   const order = new shopifyAdmin.rest.resources.Order({
     session: session,
   });
+
   order.id = orderId;
   order.note = orderNotes;
+
+  console.log("order", order);
   try {
     await order.save({
       update: true,

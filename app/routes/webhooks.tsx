@@ -36,7 +36,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       });
 
     case "ORDERS_CANCELLED":
-      webhook_ordersCancel(shop, payload);
+      webhook_ordersCancel(shop, payload, admin, session);
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "REFUNDS_CREATE":

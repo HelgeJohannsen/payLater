@@ -93,24 +93,28 @@ export class ConsorsAPI {
   }: StornoOrderRequest) {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
-    const consorsAuthToken = await this.jwt();
-    const res = await fetch(consorsUrl, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Request-Id": "1",
-        "X-Conversation-Id": "111",
-        "X-CountryCode": countryCode,
-        "X-TimeStamp": timeStamp,
-        "X-Token": `Bearer ${consorsAuthToken}`,
-        "X-api-key": this.authData.apiKey,
-      },
-      body: JSON.stringify({
-        orderAmount,
-        notifyURL,
-      }),
-    });
-    return res;
+    try {
+      const consorsAuthToken = await this.jwt();
+      const res = await fetch(consorsUrl, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Request-Id": "1",
+          "X-Conversation-Id": "111",
+          "X-CountryCode": countryCode,
+          "X-TimeStamp": timeStamp,
+          "X-Token": `Bearer ${consorsAuthToken}`,
+          "X-api-key": this.authData.apiKey,
+        },
+        body: JSON.stringify({
+          orderAmount,
+          notifyURL,
+        }),
+      });
+      return res;
+    } catch (error) {
+      console.log("Error sending cancellation data to Consors");
+    }
   }
 
   async fulfillmentOrder({

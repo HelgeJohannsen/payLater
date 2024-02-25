@@ -2,7 +2,6 @@ import db from "../db.server";
 
 export async function getOrCreateConfig(shop: string) {
   const config = await db.config.findUnique({ where: { shop } });
-  console.log("app config - ", config);
   if (!config) {
     const entry = await createConfig(shop);
     return entry;
