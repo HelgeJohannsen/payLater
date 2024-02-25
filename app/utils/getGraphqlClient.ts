@@ -16,13 +16,17 @@ const api = shopifyApi({
 });
 
 export function getGraphqlClient(shop: string) {
+  console.log("shop", shop);
   // might throw an exception, if no session for the shop exists
   return prisma.session.findFirst({ where: { shop } }).then((session) => {
+    console.log("session", session);
     if (session == null) {
       throw "no session for given shop"; // TODO: handle exception
     }
-    return new api.clients.Graphql({
+    const graphQlClient = new api.clients.Graphql({
       session: session as unknown as GraphqlClientParams["session"],
     }); // TODO: convert types if neccessary
+    console.log("graphQLClient ", graphQlClient);
+    return graphQlClient;
   });
 }

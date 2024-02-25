@@ -5,6 +5,12 @@ export async function addTags(
   admin_graphql_api_id: string,
   orderTags: string[]
 ) {
+  console.log(
+    "shop, graphql_api_id, orderTags",
+    shop,
+    admin_graphql_api_id,
+    orderTags
+  );
   await getGraphqlClient(shop)
     .then((client) =>
       client.query({
