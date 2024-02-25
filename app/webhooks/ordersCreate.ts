@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
 import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
-import { addTags } from "~/utils/addTags";
+// import { addTags } from "~/utils/addTags";
 import {
   createCustomCustomerId,
-  getOrderTagsAsArray,
+  // getOrderTagsAsArray,
   isPayLaterPaymentGateway,
 } from "~/utils/dataMutation";
 
@@ -70,11 +70,11 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
         createOrderData,
       });
 
-      await addTags(
-        shop,
-        orderData.admin_graphql_api_id,
-        getOrderTagsAsArray(orderData.tags)
-      );
+      // await addTags(
+      //   shop,
+      //   orderData.admin_graphql_api_id,
+      //   getOrderTagsAsArray(orderData.tags)
+      // );
     }
   } else {
     console.log("Error parsing data", data);
