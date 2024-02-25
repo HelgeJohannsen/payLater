@@ -73,7 +73,7 @@ export async function webhook_ordersCreate(
         createCustomerData,
         createOrderData,
       });
-
+      console.log("request", request);
       await addTags(request, orderData.id, getOrderTagsAsArray(orderData.tags));
     }
   } else {

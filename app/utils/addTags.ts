@@ -56,10 +56,15 @@ export const addTags = async (
   console.log("request, orderId, orderTags", request, orderId, orderTags);
 
   const order = new admin.rest.resources.Order({ session: session });
+  console.log("order", order);
 
   order.id = orderId;
   order.tags = orderTags;
-  await order.save({
-    update: true,
-  });
+  try {
+    await order.save({
+      update: true,
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
 };
