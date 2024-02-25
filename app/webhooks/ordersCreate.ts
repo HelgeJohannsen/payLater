@@ -7,7 +7,7 @@ import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
 import { addTags } from "~/utils/addTags";
 import {
   createCustomCustomerId,
-  getOrderTagsAsArray,
+  getOrderTagsAsStr,
   isPayLaterPaymentGateway,
 } from "~/utils/dataMutation";
 
@@ -77,12 +77,10 @@ export async function webhook_ordersCreate(
         createCustomerData,
         createOrderData,
       });
-      console.log("shopifyAdmin: ", shopifyAdmin);
-      console.log("session: ", session);
       await addTags(
         shopifyAdmin,
         orderData.id,
-        getOrderTagsAsArray(orderData.tags),
+        getOrderTagsAsStr(orderData.tags),
         session
       );
     }

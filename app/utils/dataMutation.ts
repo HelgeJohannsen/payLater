@@ -48,15 +48,15 @@ function transformDateAndAdd30Days(dateStr: string) {
   return { formattedDate, formattedDatePlus30Days };
 }
 
-function getOrderTagsAsArray(tags: string | string[] | null) {
+function getOrderTagsAsStr(tags: string | string[] | null) {
   if (!tags) return "Pay Later";
   if (Array.isArray(tags)) return tags.concat("Pay Later").join();
-  return tags.split(",").concat("Pay Later").join();
+  return `${tags},"Pay Later"`;
 }
 
 export {
   createCustomCustomerId,
-  getOrderTagsAsArray,
+  getOrderTagsAsStr,
   getPaymentType,
   isPayLaterPaymentGateway,
   transformDateAndAdd30Days,

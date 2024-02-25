@@ -20,13 +20,14 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
     const { applicationNumber, customerDetails } = orderCancelInfo;
     if (applicationNumber && customerDetails?.country) {
       const consorsClient = await getConsorsClient(shop);
-      await consorsClient?.stornoOrder({
+      const bankResponse = await consorsClient?.stornoOrder({
         applicationReferenceNumber: applicationNumber,
         countryCode: customerDetails?.country,
         orderAmount: 0.0,
         timeStamp: cancelled_at,
         notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
       });
+      console.log("bankResponse", bankResponse);
     }
   }
 }

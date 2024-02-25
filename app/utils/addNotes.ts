@@ -5,14 +5,14 @@ import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/bu
 export const addTags = async (
   shopifyAdmin: AdminApiContext<RestResources>,
   orderId: number,
-  orderTags: string,
+  orderNotes: string,
   session: Session
 ) => {
   const order = new shopifyAdmin.rest.resources.Order({
     session: session,
   });
   order.id = orderId;
-  order.tags = orderTags;
+  order.note = orderNotes;
   try {
     await order.save({
       update: true,
