@@ -14,6 +14,7 @@ export const addNotes = async (
     id: orderId,
     fields: "id,name,total_price,tags,note,note_attributes",
   });
+  console.log("ACtion - currentOrder - ", action, currentOrder);
   if (!currentOrder) return;
 
   if (!currentOrder.note_attributes) {

@@ -1,13 +1,27 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { authenticate } from "~/shopify.server";
-import { addNotes } from "~/utils/addNotes";
-import { crateNoteMessage } from "~/utils/dataMutation";
+// import { authenticate } from "~/shopify.server";
+// import { addNotes } from "~/utils/addNotes";
+// import { crateNoteMessage } from "~/utils/dataMutation";
 import { setCreditCheck } from "../models/order.server";
 
-export const loader: LoaderFunction = async ({ request, params }) => {
-  const { admin, session } = await authenticate.admin(request);
+export const action: ActionFunction = async ({ request }) => {
+  console.log("Request - Action credit check", request);
+  // const { admin, session } = await authenticate.admin(request);
+  // const { shop } = session;
+  // const body = await request.formData();
+  // await addNotes(
+  //   admin,
+  //   session,
+  //   "Credit Check",
+  //   Number(orderId),
+  //   crateNoteMessage("Credit Check", status)
+  // );
+  // return config;
+};
 
+export const loader: LoaderFunction = async ({ request, params }) => {
+  // const { admin, session } = await authenticate.admin(request);
   const requestedURL = new URL(request.url);
   const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
@@ -24,13 +38,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
   await setCreditCheck(orderId, status, applicationNumber);
 
-  await addNotes(
-    admin,
-    session,
-    "Credit Check",
-    Number(orderId),
-    crateNoteMessage("Credit Check", status)
-  );
+  // await addNotes(
+  //   admin,
+  //   session,
+  //   "Credit Check",
+  //   Number(orderId),
+  //   crateNoteMessage("Credit Check", status)
+  // );
 
   const response = json("order");
   response.headers.append("Access-Control-Allow-Origin", "*");
