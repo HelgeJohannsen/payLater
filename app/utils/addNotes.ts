@@ -5,9 +5,9 @@ import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/bu
 export const addNotes = async (
   shopifyAdmin: AdminApiContext<RestResources>,
   session: Session,
+  action: string,
   orderId: number,
-  newNote: string,
-  action?: string
+  newNote: string
 ) => {
   const currentOrder = await shopifyAdmin.rest.resources.Order.find({
     session: session,
@@ -15,21 +15,20 @@ export const addNotes = async (
     fields: "id,name,total_price,tags,note,note_attributes",
   });
   if (!currentOrder) return;
-  console.log("currentOrder Notes - ", currentOrder);
 
-  const orderNotes = currentOrder.note
-    ? `- ${currentOrder.note} -
-       - ${newNote} - `
-    : newNote;
-
-  currentOrder.id = orderId;
-  currentOrder.note = orderNotes;
-  currentOrder.note_attributes?.push({
-    name: action ?? "test",
-    value: newNote,
-  });
-
-  console.log("Orders Notes after changes - ", currentOrder);
+  if (!currentOrder.note_attributes) {
+    currentOrder.note_attributes = [
+      {
+        name: action ?? "default",
+        value: newNote,
+      },
+    ];
+  } else {
+    currentOrder.note_attributes?.push({
+      name: action ?? "test",
+      value: newNote,
+    });
+  }
 
   try {
     await currentOrder.save({

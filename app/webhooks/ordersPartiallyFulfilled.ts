@@ -14,7 +14,7 @@ import {
   getPaymentType,
   transformDateAndAdd30Days,
 } from "~/utils/dataMutation";
-import { ConsorsResponse } from "./types";
+import type { ConsorsResponse } from "./types";
 
 const orderFulfilled = z.object({
   id: z.number(),
@@ -81,6 +81,7 @@ export async function webhook_ordersPartiallyFulfilled(
         await addNotes(
           shopifyAdmin,
           session,
+          "Fulfillment",
           orderId,
           crateNoteMessage(
             "Fulfillment",

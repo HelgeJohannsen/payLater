@@ -44,6 +44,7 @@ export async function webhook_ordersCancel(
         await addNotes(
           shopifyAdmin,
           session,
+          "cancellation",
           orderId,
           crateNoteMessage(
             "cancellation",

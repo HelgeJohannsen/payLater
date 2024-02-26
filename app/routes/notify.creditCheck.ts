@@ -1,9 +1,13 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
+import { addNotes } from "~/utils/addNotes";
+import { crateNoteMessage } from "~/utils/dataMutation";
 import { setCreditCheck } from "../models/order.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
+  const { admin, session } = await authenticate.admin(request);
+
   const requestedURL = new URL(request.url);
   const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
@@ -20,13 +24,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
   await setCreditCheck(orderId, status, applicationNumber);
 
-  const { admin, session } = await authenticate.admin(request);
-  const order = new admin.rest.resources.Order({ session: session });
-  order.id = Number(orderId);
-  order.note = `${order.note} Customer Credit Check staus ${status}`;
-  await order.save({
-    update: true,
-  });
+  await addNotes(
+    admin,
+    session,
+    "Credit Check",
+    Number(orderId),
+    crateNoteMessage("Credit Check", status)
+  );
 
   const response = json("order");
   response.headers.append("Access-Control-Allow-Origin", "*");

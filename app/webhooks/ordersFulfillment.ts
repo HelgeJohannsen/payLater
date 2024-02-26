@@ -82,8 +82,8 @@ export async function webhook_ordersFulfillment(
         await addNotes(
           shopifyAdmin,
           session,
-          orderId,
           "Fulfillment",
+          orderId,
           crateNoteMessage(
             "Fulfillment",
             responseData.status,
