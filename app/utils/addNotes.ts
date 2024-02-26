@@ -1,7 +1,6 @@
 import type { Session } from "@shopify/shopify-api";
 import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
 import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
-import { getOrder } from "./getOrder";
 
 export const addNotes = async (
   shopifyAdmin: AdminApiContext<RestResources>,
@@ -9,30 +8,33 @@ export const addNotes = async (
   orderId: number,
   newNote: string
 ) => {
-  const order = new shopifyAdmin.rest.resources.Order({
+  const currentOrder = await shopifyAdmin.rest.resources.Order.find({
     session: session,
+    id: orderId,
+    fields: "id,name,total_price,tags,note,note_attributes",
   });
-  console.log("Orders Notes - ", order);
+  if (!currentOrder) return;
+  console.log("currentOrder Notes - ", currentOrder);
 
-  const orderNotes = order.note ? `${order.note} ${newNote}` : newNote;
+  const orderNotes = currentOrder.note
+    ? `${currentOrder.note} ${newNote}`
+    : newNote;
 
-  order.id = orderId;
-  order.note = orderNotes;
-
-  order.note_attributes = [
+  currentOrder.id = orderId;
+  currentOrder.note = orderNotes;
+  currentOrder.note_attributes = [
     {
-      name: "colour",
-      value: "red",
+      name: newNote,
+    },
+    {
+      name: `newNote 2`,
     },
   ];
 
-  console.log("Orders Notes after changes - ", order);
+  console.log("Orders Notes after changes - ", currentOrder);
 
-  const testOrder = await getOrder(shopifyAdmin, session, orderId);
-
-  console.log("Order from GET - ", testOrder);
   try {
-    await order.save({
+    await currentOrder.save({
       update: true,
     });
   } catch (error) {
