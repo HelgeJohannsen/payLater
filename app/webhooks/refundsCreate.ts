@@ -57,8 +57,19 @@ export async function webhook_refundsCreate(
     fulfilledDetails,
   } = orderData;
 
-  if (!customerDetails || !fulfilledDetails)
+  if (!customerDetails || !fulfilledDetails) {
+    await addNotes(
+      shopifyAdmin,
+      session,
+      order_id,
+      crateNoteMessage(
+        "Refund",
+        "ERROR",
+        "The order must be fulfilled prior to issuing a refund."
+      )
+    );
     return console.error("Customer or fulfilled details not found");
+  }
 
   const { billingDate } = fulfilledDetails;
   const { formattedDate } = transformDateAndAdd30Days(created_at);

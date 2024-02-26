@@ -6,14 +6,14 @@ export const addNotes = async (
   shopifyAdmin: AdminApiContext<RestResources>,
   session: Session,
   orderId: number,
-  orderNotes: string
+  newNote: string
 ) => {
   const order = new shopifyAdmin.rest.resources.Order({
     session: session,
   });
 
   order.id = orderId;
-  order.note = orderNotes;
+  order.note = `${order.note} ${newNote}`;
 
   console.log("order", order);
   try {

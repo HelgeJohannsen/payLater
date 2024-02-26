@@ -1,5 +1,3 @@
-import type { BankResponseStatus } from "~/webhooks/types";
-
 enum PayLaterPaymentMethodOptions {
   "Kauf auf Rechnung by Consors Finanz" = "INVOICE",
   "Kauf per Lastschrift by Consors Finanz" = "DIRECT_DEBIT",
@@ -58,7 +56,7 @@ function getOrderTagsAsStr(tags: string | string[] | null) {
 
 function crateNoteMessage(
   action: string,
-  status: BankResponseStatus,
+  status: string,
   errorMessage?: string,
   errorCode?: string
 ): string {
