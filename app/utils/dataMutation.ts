@@ -51,7 +51,7 @@ function transformDateAndAdd30Days(dateStr: string) {
 function getOrderTagsAsStr(tags: string | string[] | null) {
   if (!tags) return "Pay Later";
   if (Array.isArray(tags)) return tags.concat("Pay Later").join();
-  return `${tags},"Pay Later"`;
+  return `${tags}, Pay Later`;
 }
 
 function crateNoteMessage(
