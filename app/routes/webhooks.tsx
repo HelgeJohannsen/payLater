@@ -26,11 +26,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return new Response("webhook ORDERS_CREATE", { status: 200 });
 
     case "ORDERS_FULFILLED":
-      webhook_ordersFulfillment(shop, payload);
+      webhook_ordersFulfillment(shop, payload, admin, session);
       return new Response("webhook ORDERS_FULFILLED", { status: 200 });
 
     case "ORDERS_PARTIALLY_FULFILLED":
-      webhook_ordersPartiallyFulfilled(shop, payload);
+      webhook_ordersPartiallyFulfilled(shop, payload, admin, session);
       return new Response("webhook ORDERS_PARTIALLY_FULFILLED", {
         status: 200,
       });
@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "REFUNDS_CREATE":
-      webhook_refundsCreate(shop, payload);
+      webhook_refundsCreate(shop, payload, admin, session);
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "APP_UNINSTALLED":

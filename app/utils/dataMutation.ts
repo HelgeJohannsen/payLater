@@ -1,3 +1,5 @@
+import type { BankResponseStatus } from "~/webhooks/types";
+
 enum PayLaterPaymentMethodOptions {
   "Kauf auf Rechnung by Consors Finanz" = "INVOICE",
   "Kauf per Lastschrift by Consors Finanz" = "DIRECT_DEBIT",
@@ -54,7 +56,21 @@ function getOrderTagsAsStr(tags: string | string[] | null) {
   return `${tags},"Pay Later"`;
 }
 
+function crateNoteMessage(
+  action: string,
+  status: BankResponseStatus,
+  errorMessage?: string,
+  errorCode?: string
+): string {
+  return `Bank has been notified of the ${action} request, current status: ${status}.`.concat(
+    status !== "SUCCESS"
+      ? `Error message: ${errorMessage ?? errorCode ?? ""}`
+      : ""
+  );
+}
+
 export {
+  crateNoteMessage,
   createCustomCustomerId,
   getOrderTagsAsStr,
   getPaymentType,

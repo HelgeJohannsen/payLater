@@ -5,6 +5,8 @@ import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
 import { getOrderInfoForCancel } from "~/models/OrderCancel.server";
 import { addNotes } from "~/utils/addNotes";
+import { crateNoteMessage } from "~/utils/dataMutation";
+import type { ConsorsResponse } from "./types";
 
 const orderCancel = z.object({
   id: z.number(),
@@ -37,11 +39,18 @@ export async function webhook_ordersCancel(
         notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
       });
       if (bankResponse) {
-        const test = await bankResponse?.json();
-        console.log("bankResponse", bankResponse);
-        console.log("bankResponse json", test);
+        const responseData: ConsorsResponse = await bankResponse?.json();
 
-        await addNotes(shopifyAdmin, session, orderId, "Testing notes");
+        await addNotes(
+          shopifyAdmin,
+          session,
+          orderId,
+          crateNoteMessage(
+            "cancellation",
+            responseData.status,
+            responseData.errorMessage
+          )
+        );
       }
     }
   }

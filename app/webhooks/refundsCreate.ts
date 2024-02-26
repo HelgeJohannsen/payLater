@@ -1,3 +1,6 @@
+import type { Session } from "@shopify/shopify-api";
+import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
+import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
 import {
@@ -5,13 +8,16 @@ import {
   getOrderDataToRefund,
 } from "~/models/OrderRefund.server";
 import type { CreateRefundsDetails } from "~/models/types";
+import { addNotes } from "~/utils/addNotes";
 import {
+  crateNoteMessage,
   getPaymentType,
   transformDateAndAdd30Days,
 } from "~/utils/dataMutation";
+import type { ConsorsResponse } from "./types";
 
 const refundsSchema = z.object({
-  order_id: z.number().transform((num) => num.toString()),
+  order_id: z.number(),
   created_at: z.string(),
   note: z.string().nullable(),
   transactions: z.array(
@@ -22,7 +28,12 @@ const refundsSchema = z.object({
   ),
 });
 
-export async function webhook_refundsCreate(shop: string, payload: unknown) {
+export async function webhook_refundsCreate(
+  shop: string,
+  payload: unknown,
+  shopifyAdmin: AdminApiContext<RestResources>,
+  session: Session
+) {
   const data = payload?.valueOf();
   const refundsDataParsed = refundsSchema.safeParse(data);
   console.log("webhook_refundsCreate - ", data);
@@ -32,7 +43,7 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     return console.error("Error parsing schema data");
 
   const { created_at, note, order_id, transactions } = refundsDataParsed.data;
-  const orderData = await getOrderDataToRefund(order_id);
+  const orderData = await getOrderDataToRefund(order_id.toString());
 
   if (!orderData) return console.error("Order not found!");
 
@@ -68,7 +79,7 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
 
   await createRefundsDetails(orderNumber, refundsData);
   const consorsClient = await getConsorsClient(shop);
-  await consorsClient?.refundOrder({
+  const bankResponse = await consorsClient?.refundOrder({
     applicationReferenceNumber: applicationNumber ?? "",
     countryCode: customerDetails?.country ?? "",
     customerId: customerDetails?.customCustomerId ?? "",
@@ -77,4 +88,15 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     billingInfo: refundsData,
     notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
+
+  if (bankResponse) {
+    const responseData: ConsorsResponse = await bankResponse?.json();
+
+    await addNotes(
+      shopifyAdmin,
+      session,
+      order_id,
+      crateNoteMessage("Refund", responseData.status, responseData.errorMessage)
+    );
+  }
 }
