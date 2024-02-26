@@ -12,11 +12,12 @@ export const addNotes = async (
   const order = new shopifyAdmin.rest.resources.Order({
     session: session,
   });
+  console.log("Orders Notes - ", order);
+
+  const orderNotes = order.note ? `${order.note} ${newNote}` : newNote;
 
   order.id = orderId;
-  order.note = `${order.note} ${newNote}`;
-
-  console.log("order", order);
+  order.note = orderNotes;
 
   order.note_attributes = [
     {
@@ -25,9 +26,11 @@ export const addNotes = async (
     },
   ];
 
+  console.log("Orders Notes after changes - ", order);
+
   const testOrder = await getOrder(shopifyAdmin, session, orderId);
 
-  console.log("test Order", testOrder);
+  console.log("Order from GET - ", testOrder);
   try {
     await order.save({
       update: true,

@@ -10,9 +10,8 @@ export const getOrder = async (
   const order = await shopifyAdmin.rest.resources.Order.find({
     session: session,
     id: orderId,
-    fields: "id,line_items,name,total_price",
+    fields: "id,line_items,name,total_price,tags,note",
   });
-  console.log("order getOrder", order);
 
   return order;
 };
