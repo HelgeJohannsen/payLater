@@ -6,7 +6,8 @@ export const addNotes = async (
   shopifyAdmin: AdminApiContext<RestResources>,
   session: Session,
   orderId: number,
-  newNote: string
+  newNote: string,
+  action?: string
 ) => {
   const currentOrder = await shopifyAdmin.rest.resources.Order.find({
     session: session,
@@ -17,19 +18,16 @@ export const addNotes = async (
   console.log("currentOrder Notes - ", currentOrder);
 
   const orderNotes = currentOrder.note
-    ? `${currentOrder.note} ${newNote}`
+    ? `- ${currentOrder.note} -
+       - ${newNote} - `
     : newNote;
 
   currentOrder.id = orderId;
   currentOrder.note = orderNotes;
-  currentOrder.note_attributes = [
-    {
-      name: newNote,
-    },
-    {
-      name: `newNote 2`,
-    },
-  ];
+  currentOrder.note_attributes?.push({
+    name: action ?? "test",
+    value: newNote,
+  });
 
   console.log("Orders Notes after changes - ", currentOrder);
 

@@ -83,6 +83,7 @@ export async function webhook_ordersFulfillment(
           shopifyAdmin,
           session,
           orderId,
+          "Fulfillment",
           crateNoteMessage(
             "Fulfillment",
             responseData.status,

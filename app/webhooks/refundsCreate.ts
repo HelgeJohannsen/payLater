@@ -107,6 +107,7 @@ export async function webhook_refundsCreate(
       shopifyAdmin,
       session,
       order_id,
+      "Refund",
       crateNoteMessage("Refund", responseData.status, responseData.errorMessage)
     );
   }
