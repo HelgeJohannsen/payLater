@@ -21,8 +21,8 @@ export async function webhook_ordersCancel(
 ) {
   const data = payload?.valueOf();
   const cancellationData = orderCancel.parse(data);
-  // console.log("webhook_ordersCancel - ", data);
-  // console.log("parseResult - ", cancellationData);
+  console.log("webhook_ordersCancel - ", data);
+  console.log("parseResult - ", cancellationData);
 
   const { cancelled_at, id: orderId } = cancellationData;
 

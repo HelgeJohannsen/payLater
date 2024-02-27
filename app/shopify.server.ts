@@ -27,27 +27,22 @@ const shopify = shopifyApp({
     ORDERS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON,
     },
     ORDERS_FULFILLED: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON,
     },
     ORDERS_CANCELLED: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON,
     },
     ORDERS_PARTIALLY_FULFILLED: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON,
     },
     REFUNDS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON,
     },
   },
   hooks: {
