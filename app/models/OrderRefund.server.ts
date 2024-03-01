@@ -15,7 +15,7 @@ export async function handleRefundsOrder(orderId: string, status: string) {
 
 export async function createRefundsDetails(
   orderNumber: string,
-  refundInfo: CreateRefundsDetails
+  refundInfo: CreateRefundsDetails,
 ) {
   try {
     const refundData = await db.refundsDetails.create({

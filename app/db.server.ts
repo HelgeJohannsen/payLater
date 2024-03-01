@@ -5,9 +5,9 @@ declare global {
 }
 
 const prisma: PrismaClient = global.prisma || new PrismaClient();
-console.log("production env proc", process.env.NODE_ENV);
+console.log("production env proc",process.env.NODE_ENV)
 if (process.env.NODE_ENV !== "production") {
-  console.log("production env");
+  console.log("production env")
   if (!global.prisma) {
     global.prisma = new PrismaClient();
   }

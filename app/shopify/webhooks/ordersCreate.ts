@@ -1,15 +1,11 @@
-import type { Session } from "@shopify/shopify-api";
-import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
-import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 import { z } from "zod";
 import { createOrderWithCustomerDetails } from "~/models/order.server";
 import type { CreateCustomerDetails, CreateOrder } from "~/models/types";
-import { addTags } from "~/utils/addTags";
 import {
   createCustomCustomerId,
-  getOrderTagsAsStr,
   isPayLaterPaymentGateway,
 } from "~/utils/dataMutation";
+import { addTagsToOrder } from "../graphql/addTagsToOrder";
 
 const orderCreateSchema = z.object({
   id: z.number(),
@@ -33,20 +29,15 @@ const orderCreateSchema = z.object({
   }),
 });
 
-export async function webhook_ordersCreate(
-  shop: string,
-  payload: unknown,
-  shopifyAdmin: AdminApiContext<RestResources>,
-  session: Session
-) {
+export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreateSchema.safeParse(data);
-  console.log("webhook_ordersCreate", data);
-  console.log("parseResult - ", parseResult);
+  // console.log("webhook_ordersCreate", data);
+  // console.log("parseResult - ", parseResult);
   if (parseResult.success) {
     const orderData = parseResult.data;
     const paymentMethod = isPayLaterPaymentGateway(
-      orderData.payment_gateway_names[0]
+      orderData.payment_gateway_names[0],
     );
     if (paymentMethod && orderData.billing_address.country_code === "DE") {
       const createOrderData: CreateOrder = {
@@ -61,10 +52,7 @@ export async function webhook_ordersCreate(
         orderNumberRef: orderData.order_number,
         customerId: orderData.customer.id,
         email: orderData.email,
-        customCustomerId: createCustomCustomerId(
-          orderData.order_number,
-          orderData.customer.id
-        ),
+        customCustomerId: createCustomCustomerId(orderData.customer.id),
         firstName: orderData.customer.first_name ?? "",
         lastName: orderData.customer.last_name,
         zip: orderData.billing_address.zip,
@@ -77,12 +65,7 @@ export async function webhook_ordersCreate(
         createCustomerData,
         createOrderData,
       });
-      await addTags(
-        shopifyAdmin,
-        orderData.id,
-        getOrderTagsAsStr(orderData.tags),
-        session
-      );
+      await addTagsToOrder(shop, orderData.id.toString(), "Pay Later");
     }
   } else {
     console.log("Error parsing data", data);

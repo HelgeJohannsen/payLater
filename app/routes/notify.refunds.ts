@@ -12,7 +12,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       "Bad Request" /*", query parameter shop is mandatory"*/,
       {
         status: 400,
-      }
+      },
     );
   }
   await handleRefundsOrder(orderId, status);

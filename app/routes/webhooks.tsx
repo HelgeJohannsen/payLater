@@ -1,16 +1,14 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { webhook_ordersCancel } from "~/webhooks/ordersCancel";
-import { webhook_ordersCreate } from "~/webhooks/ordersCreate";
-import { webhook_ordersFulfillment } from "~/webhooks/ordersFulfillment";
-import { webhook_ordersPartiallyFulfilled } from "~/webhooks/ordersPartiallyFulfilled";
-import { webhook_refundsCreate } from "~/webhooks/refundsCreate";
+import { webhook_ordersCancel } from "~/shopify/webhooks/ordersCancel";
+import { webhook_ordersCreate } from "~/shopify/webhooks/ordersCreate";
+import { webhook_ordersFulfillment } from "~/shopify/webhooks/ordersFulfillment";
+import { webhook_ordersPartiallyFulfilled } from "~/shopify/webhooks/ordersPartiallyFulfilled";
+import { webhook_refundsCreate } from "~/shopify/webhooks/refundsCreate";
 import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { topic, shop, session, admin, payload } = await authenticate.webhook(
-    request
-  );
+  const { topic, shop, session, admin, payload } = await authenticate.webhook(request);
   //const { admin } = await authenticate.admin(request);
   if (session == undefined) {
     console.log("session not registered:", session);
@@ -22,25 +20,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (topic) {
     case "ORDERS_CREATE":
-      webhook_ordersCreate(shop, payload, admin, session);
+      webhook_ordersCreate(shop, payload);
       return new Response("webhook ORDERS_CREATE", { status: 200 });
 
     case "ORDERS_FULFILLED":
-      webhook_ordersFulfillment(shop, payload, admin, session);
+      webhook_ordersFulfillment(shop, payload);
       return new Response("webhook ORDERS_FULFILLED", { status: 200 });
 
     case "ORDERS_PARTIALLY_FULFILLED":
-      webhook_ordersPartiallyFulfilled(shop, payload, admin, session);
+      webhook_ordersPartiallyFulfilled(shop, payload);
       return new Response("webhook ORDERS_PARTIALLY_FULFILLED", {
         status: 200,
       });
 
     case "ORDERS_CANCELLED":
-      webhook_ordersCancel(shop, payload, admin, session);
+      webhook_ordersCancel(shop, payload);
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "REFUNDS_CREATE":
-      webhook_refundsCreate(shop, payload, admin, session);
+      webhook_refundsCreate(shop, payload);
       return new Response("webhook ORDERS_CANCELLED", { status: 200 });
 
     case "APP_UNINSTALLED":

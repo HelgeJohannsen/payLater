@@ -6,7 +6,7 @@ enum PayLaterPaymentMethodOptions {
 
 const isPayLaterPaymentGateway = (paymentGateway: string): string | false => {
   const paymentKey = Object.keys(PayLaterPaymentMethodOptions).find(
-    (key) => key === paymentGateway
+    (key) => key === paymentGateway,
   );
 
   return paymentKey
@@ -24,18 +24,13 @@ enum PaymentTypeOptions {
 
 const getPaymentType = (paymentMethod: string): string => {
   const paymentKey = Object.keys(PaymentTypeOptions).find(
-    (key) => key === paymentMethod
+    (key) => key === paymentMethod,
   );
 
   return PaymentTypeOptions[paymentKey as keyof typeof PaymentTypeOptions];
 };
 
-const createCustomCustomerId = (orderNumber: string, customerId: string) => {
-  const lastFiveOrderNumber = orderNumber.slice(-5);
-  const lastFiveCustomerId = customerId.slice(-5);
-
-  return `${lastFiveOrderNumber}${lastFiveCustomerId}`;
-};
+const createCustomCustomerId = (customerId: string) => customerId.slice(-10);
 
 function transformDateAndAdd30Days(dateStr: string) {
   const dateObj = new Date(dateStr);
@@ -48,29 +43,43 @@ function transformDateAndAdd30Days(dateStr: string) {
   return { formattedDate, formattedDatePlus30Days };
 }
 
-function getOrderTagsAsStr(tags: string | string[] | null) {
-  if (!tags) return "Pay Later";
-  if (Array.isArray(tags)) return tags.concat("Pay Later").join();
-  return `${tags}, Pay Later`;
-}
+type NoteAction = "Credit_Check" | "Fulfillment" | "Cancellation" | "Refund";
 
-function crateNoteMessage(
-  action: string,
+function createNoteMessage(
+  action: NoteAction,
   status: string,
   errorMessage?: string,
-  errorCode?: string
+  errorCode?: string,
 ): string {
-  return `Bank has been notified of the ${action} request, current status: ${status}.`.concat(
-    status !== "SUCCESS"
-      ? `Error message: ${errorMessage ?? errorCode ?? ""}`
-      : ""
-  );
+  return action !== "Credit_Check"
+    ? `Bank has been notified of the ${action} request, current status: ${status}. `
+        .concat(
+          status !== "SUCCESS" && status !== "ACCEPTED"
+            ? `Error message: ${errorMessage ?? errorCode ?? ""}.`
+            : "",
+        )
+        .trim()
+    : `Client credit check current status: ${status === "SUCCESS" ? "ACCEPTED" : status}. `
+        .concat(
+          status !== "SUCCESS" && status !== "ACCEPTED"
+            ? `Error message: ${errorMessage ?? errorCode ?? ""}.`
+            : "",
+        )
+        .trim();
+}
+
+function appendUniqueNote(existingNotes: string, newNote: string): string {
+  if (!existingNotes) return newNote;
+  if (!existingNotes.includes(newNote)) {
+    return `${existingNotes}\n${newNote}`;
+  }
+  return existingNotes;
 }
 
 export {
-  crateNoteMessage,
+  appendUniqueNote,
   createCustomCustomerId,
-  getOrderTagsAsStr,
+  createNoteMessage,
   getPaymentType,
   isPayLaterPaymentGateway,
   transformDateAndAdd30Days,

@@ -94,12 +94,12 @@ export default function Index() {
   }
 
   return (
-    <Page narrowWidth>
+    <Page>
       <Card>
         <ui-title-bar title="Einstellungen"> </ui-title-bar>
         <BlockStack gap={"150"} align="center" inlineAlign="start">
           <Text as="h2" variant="headingMd">
-            Consors BNPL
+            Consors EFI
           </Text>
           <BlockStack gap={"100"}>
             <BlockStack align="center" inlineAlign="start">

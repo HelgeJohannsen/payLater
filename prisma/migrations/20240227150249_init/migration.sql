@@ -56,13 +56,13 @@ CREATE TABLE `CustomerDetails` (
     `customCustomerId` VARCHAR(191) NOT NULL,
     `firstName` VARCHAR(191) NOT NULL,
     `lastName` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
     `zip` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `street` VARCHAR(191) NOT NULL,
     `country` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `CustomerDetails_orderNumberRef_key`(`orderNumberRef`),
-    UNIQUE INDEX `CustomerDetails_customCustomerId_key`(`customCustomerId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -76,7 +76,6 @@ CREATE TABLE `FulfilledDetails` (
     `billingReferenceNumber` VARCHAR(191) NOT NULL,
     `dueDate` VARCHAR(191) NOT NULL,
     `billingAmount` DOUBLE NOT NULL,
-    `billingNetAmount` DOUBLE NULL,
     `paymentType` VARCHAR(191) NOT NULL,
     `receiptNote` VARCHAR(191) NOT NULL,
 
@@ -89,10 +88,11 @@ CREATE TABLE `RefundsDetails` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `orderNumberRef` VARCHAR(191) NOT NULL,
     `billingType` VARCHAR(191) NOT NULL,
+    `billingNumber` VARCHAR(191) NOT NULL,
+    `billingDate` VARCHAR(191) NOT NULL,
     `billingReferenceNumber` VARCHAR(191) NOT NULL,
     `dueDate` VARCHAR(191) NOT NULL,
-    `billingAmount` DOUBLE NOT NULL,
-    `billingNetAmount` DOUBLE NULL,
+    `billingAmount` VARCHAR(191) NOT NULL,
     `paymentType` VARCHAR(191) NOT NULL,
     `receiptNote` VARCHAR(191) NOT NULL,
 

@@ -1,55 +1,51 @@
-import type { Session } from "@shopify/shopify-api";
-import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
-import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 import { z } from "zod";
+
 import { getConsorsClient } from "~/consors/api";
 import {
   createFulfilledDetails,
   getOrderInfoForFulFillment,
 } from "~/models/OrderFulfillment.server";
 import type { CreateFulfilledDetails } from "~/models/types";
-import { addNotes } from "~/utils/addNotes";
 import {
-  crateNoteMessage,
+  createNoteMessage,
   getPaymentType,
   transformDateAndAdd30Days,
 } from "~/utils/dataMutation";
+import { addNoteToOrder } from "../graphql/addNoteToOrder";
 import type { ConsorsResponse } from "./types";
 
 const orderFulfilled = z.object({
   id: z.number(),
-  updated_at: z.string(),
+  created_at: z.string(),
   note: z.string().nullable(),
 });
 
-export async function webhook_ordersPartiallyFulfilled(
+export async function webhook_ordersFulfillment(
   shop: string,
   payload: unknown,
-  shopifyAdmin: AdminApiContext<RestResources>,
-  session: Session
 ) {
   const data = payload?.valueOf();
   const fulfilledDataObj = orderFulfilled.safeParse(data);
-  console.log("webhook_ordersPartiallyFulfilled", data);
-  console.log("parsed Obj - ", data);
+  // console.log("webhook_ordersFulfillment", data);
+  // console.log("fulfilledDataObj parsed - ", data);
 
   if (fulfilledDataObj.success) {
-    const { updated_at, id: orderId, note } = fulfilledDataObj.data;
+    const { created_at, id: orderId, note } = fulfilledDataObj.data;
     const infoToFulFillOrder = await getOrderInfoForFulFillment(
-      orderId.toString()
+      orderId.toString(),
     );
     if (infoToFulFillOrder) {
       const {
         applicationNumber,
-        customerDetails,
         orderAmount,
         orderName,
         paymentMethode,
         orderNumber,
+        customerDetails,
       } = infoToFulFillOrder;
 
       const { formattedDate, formattedDatePlus30Days } =
-        transformDateAndAdd30Days(updated_at);
+        transformDateAndAdd30Days(created_at);
 
       const fulfilledData: CreateFulfilledDetails = {
         billingType: "INVOICE",
@@ -58,7 +54,6 @@ export async function webhook_ordersPartiallyFulfilled(
         billingReferenceNumber: "",
         dueDate: formattedDatePlus30Days,
         billingAmount: orderAmount,
-        billingNetAmount: orderAmount,
         paymentType: getPaymentType(paymentMethode),
         receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
       };
@@ -70,28 +65,25 @@ export async function webhook_ordersPartiallyFulfilled(
         countryCode: customerDetails?.country ?? "",
         customerId: customerDetails?.customCustomerId ?? "",
         orderAmount,
-        timeStamp: new Date(updated_at).toUTCString(),
+        timeStamp: new Date(created_at).toUTCString(),
         billingInfo: fulfilledData,
-        notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
+        notifyURL: "https://paylaterplus.cpro-server.de/notify/fulfilledOrder",
       });
 
       if (bankResponse) {
         const responseData: ConsorsResponse = await bankResponse?.json();
-
-        await addNotes(
-          shopifyAdmin,
-          session,
-          "Fulfillment",
-          orderId,
-          crateNoteMessage(
+        await addNoteToOrder(
+          shop,
+          orderId.toString(),
+          createNoteMessage(
             "Fulfillment",
             responseData.status,
-            responseData.errorMessage
-          )
+            responseData.errorMessage,
+          ),
         );
       }
     }
   } else {
-    console.log("could not parse partiallyFulfilled date:", data);
+    console.log("could not parse fullfilment date:", data);
   }
 }

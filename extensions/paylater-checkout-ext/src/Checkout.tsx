@@ -1,20 +1,23 @@
 import {
   reactExtension,
-  useApi,
+  useBillingAddress,
   useBuyerJourneyIntercept,
   useSelectedPaymentOptions,
+  useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
 import { isAddressEqual } from "./utils";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
-  () => <Extension />
+  () => <Extension />,
 );
 
 function Extension() {
-  const { billingAddress, shippingAddress } = useApi();
+  const billingAddress = useBillingAddress();
+  const shippingAddress = useShippingAddress();
   const selectedPaymentMethod = useSelectedPaymentOptions();
-  const { countryCode } = shippingAddress?.current;
+
+  const { countryCode } = shippingAddress;
   let errorMsg = "";
 
   const isProcessAllow = () => {
@@ -30,21 +33,21 @@ function Extension() {
       ? {
           behavior: "allow",
         }
-      : isAddressEqual(shippingAddress.current, billingAddress.current)
-      ? {
-          behavior: "block",
-          reason: "Minimum value",
-          errors: [
-            {
-              message: errorMsg
-                ? errorMsg
-                : `Apologies, but the shipping address and billing address need to match when using a Consors Finanz payment method.`,
-            },
-          ],
-        }
-      : {
-          behavior: "allow",
-        };
+      : isAddressEqual(shippingAddress, billingAddress)
+        ? {
+            behavior: "block",
+            reason: "Minimum value",
+            errors: [
+              {
+                message: errorMsg
+                  ? errorMsg
+                  : `Apologies, but the shipping address and billing address need to match when using a Consors Finanz payment method.`,
+              },
+            ],
+          }
+        : {
+            behavior: "allow",
+          };
   });
 
   return <></>;

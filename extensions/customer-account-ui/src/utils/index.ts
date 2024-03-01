@@ -7,10 +7,10 @@ enum PayLaterPaymentMethodOptions {
 }
 
 export const isPayLaterPaymentGateway = (
-  paymentGateway: string
+  paymentGateway: string,
 ): string | false => {
   const paymentKey = Object.keys(PayLaterPaymentMethodOptions).find(
-    (key) => key === paymentGateway
+    (key) => key === paymentGateway,
   );
 
   return paymentKey ?? false;
@@ -19,7 +19,7 @@ export const isPayLaterPaymentGateway = (
 export const getConsorsLink = (
   orderData: LinkOrderData,
   appSettings: LinkConfigData,
-  storefrontUrl: string
+  storefrontUrl: string,
 ): URLSearchParams => {
   const { customerDetails, orderAmount, orderId, paymentMethode } = orderData;
   const { customerAccountNumber, vendorId } = appSettings;

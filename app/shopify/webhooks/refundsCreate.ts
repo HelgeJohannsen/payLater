@@ -1,6 +1,3 @@
-import type { Session } from "@shopify/shopify-api";
-import type { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
-import type { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
 import {
@@ -8,12 +5,12 @@ import {
   getOrderDataToRefund,
 } from "~/models/OrderRefund.server";
 import type { CreateRefundsDetails } from "~/models/types";
-import { addNotes } from "~/utils/addNotes";
 import {
-  crateNoteMessage,
+  createNoteMessage,
   getPaymentType,
   transformDateAndAdd30Days,
 } from "~/utils/dataMutation";
+import { addNoteToOrder } from "../graphql/addNoteToOrder";
 import type { ConsorsResponse } from "./types";
 
 const refundsSchema = z.object({
@@ -24,20 +21,15 @@ const refundsSchema = z.object({
     z.object({
       gateway: z.string(),
       amount: z.string(),
-    })
+    }),
   ),
 });
 
-export async function webhook_refundsCreate(
-  shop: string,
-  payload: unknown,
-  shopifyAdmin: AdminApiContext<RestResources>,
-  session: Session
-) {
+export async function webhook_refundsCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const refundsDataParsed = refundsSchema.safeParse(data);
-  console.log("webhook_refundsCreate - ", data);
-  console.log("refundsData parsed - ", refundsDataParsed);
+  // console.log("webhook_refundsCreate - ", data);
+  // console.log("refundsData parsed - ", refundsDataParsed);
 
   if (!refundsDataParsed.success)
     return console.error("Error parsing schema data");
@@ -58,20 +50,17 @@ export async function webhook_refundsCreate(
   } = orderData;
 
   if (!customerDetails || !fulfilledDetails) {
-    await addNotes(
-      shopifyAdmin,
-      session,
-      "Refund",
-      order_id,
-      crateNoteMessage(
+    await addNoteToOrder(
+      shop,
+      order_id.toString(),
+      createNoteMessage(
         "Refund",
         "ERROR",
-        "The order must be fulfilled prior to issuing a refund."
-      )
+        "The order must be fulfilled prior to issuing a refund",
+      ),
     );
     return console.error("Customer or fulfilled details not found");
   }
-
   const { billingDate } = fulfilledDetails;
   const { formattedDate } = transformDateAndAdd30Days(created_at);
 
@@ -82,7 +71,6 @@ export async function webhook_refundsCreate(
     billingDate,
     billingNumber: orderName,
     billingAmount: `-${transactions[0].amount}`,
-    billingNetAmount: `-${transactions[0].amount}`,
     paymentType: getPaymentType(paymentMethode),
     receiptNote: note
       ? note
@@ -98,18 +86,19 @@ export async function webhook_refundsCreate(
     orderAmount,
     timeStamp: new Date(created_at).toUTCString(),
     billingInfo: refundsData,
-    notifyURL: "https://paylater.cpro-server.de/notify/refunds",
+    notifyURL: "https://paylaterplus.cpro-server.de/notify/refunds",
   });
 
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
-
-    await addNotes(
-      shopifyAdmin,
-      session,
-      "Refund",
-      order_id,
-      crateNoteMessage("Refund", responseData.status, responseData.errorMessage)
+    await addNoteToOrder(
+      shop,
+      order_id.toString(),
+      createNoteMessage(
+        "Refund",
+        responseData.status,
+        responseData.errorMessage,
+      ),
     );
   }
 }

@@ -15,7 +15,7 @@ import { getConsorsLink, isPayLaterPaymentGateway } from "./utils";
 
 export default reactExtension(
   "customer-account.order-status.block.render",
-  () => <Extension />
+  () => <Extension />,
 );
 
 function Extension() {
@@ -40,7 +40,7 @@ function Extension() {
     const consorsParametersLink = getConsorsLink(
       orderData,
       appSettings,
-      shop.storefrontUrl
+      shop.storefrontUrl,
     );
     setParametersLink(consorsParametersLink);
   }, [appSettings, orderData, shop.storefrontUrl]);
