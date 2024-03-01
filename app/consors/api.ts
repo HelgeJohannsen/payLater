@@ -31,13 +31,14 @@ export class ConsorsAPI {
     jwtValideUntil: number;
   };
   private baseURL = "https://api.consorsfinanz.de";
+  private baseURLSandBox = "https://uat1-api.consorsfinanz.de/1";
 
   constructor(public authData: ApiAuthData) {
     this.jwtData = undefined;
   }
   private async getNewJWT(): Promise<string | undefined> {
     const response = await fetch(
-      `${this.baseURL}/common-services/cfg/token/${this.authData.vendorId}`,
+      `${this.baseURLSandBox}/common-services/cfg/token/${this.authData.vendorId}`,
       {
         method: "POST",
         headers: {
@@ -91,7 +92,7 @@ export class ConsorsAPI {
     timeStamp,
     notifyURL,
   }: StornoOrderRequest) {
-    const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
+    const consorsUrl = `${this.baseURLSandBox}/psp-web/rest/${this.authData.vendorId}/cancel/credit/${applicationReferenceNumber}?version=2.0`;
 
     try {
       const consorsAuthToken = await this.jwt();
@@ -126,7 +127,7 @@ export class ConsorsAPI {
     timeStamp,
     notifyURL,
   }: FulfillmentOrderRequest) {
-    const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
+    const consorsUrl = `${this.baseURLSandBox}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
     const res = await fetch(consorsUrl, {
@@ -159,7 +160,7 @@ export class ConsorsAPI {
     timeStamp,
     notifyURL,
   }: RefundOrderRequest) {
-    const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
+    const consorsUrl = `${this.baseURLSandBox}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
     const res = await fetch(consorsUrl, {

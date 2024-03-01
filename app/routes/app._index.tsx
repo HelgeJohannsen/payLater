@@ -99,7 +99,7 @@ export default function Index() {
         <ui-title-bar title="Einstellungen"> </ui-title-bar>
         <BlockStack gap={"150"} align="center" inlineAlign="start">
           <Text as="h2" variant="headingMd">
-            Consors EFI
+            Consors BNPL
           </Text>
           <BlockStack gap={"100"}>
             <BlockStack align="center" inlineAlign="start">

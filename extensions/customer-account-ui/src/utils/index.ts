@@ -31,8 +31,6 @@ export const getConsorsLink = (
     paymentMethode,
     order_amount: orderAmount.toString(),
     ...customerDetails,
-    firstName: "Test",
-    lastName: "Approval",
     returntocheckoutURL: `${storefrontUrl}/account/orders`,
     notifyURL: `https://paylater.cpro-server.de/notify/creditCheck`,
     failureURL: `${storefrontUrl}/account/orders`,
