@@ -31,14 +31,15 @@ export class ConsorsAPI {
     jwtValideUntil: number;
   };
   private baseURL = "https://api.consorsfinanz.de";
-  private baseURLSandBox = "https://uat1-api.consorsfinanz.de/1";
+  private baseURLSandBoxAuth = "https://uat1-api.consorsfinanz.de/1";
+  private baseURLSandBox = "https://uat1-api.consorsfinanz.de";
 
   constructor(public authData: ApiAuthData) {
     this.jwtData = undefined;
   }
   private async getNewJWT(): Promise<string | undefined> {
     const response = await fetch(
-      `${this.baseURLSandBox}/common-services/cfg/token/${this.authData.vendorId}`,
+      `${this.baseURLSandBoxAuth}/common-services/cfg/token/${this.authData.vendorId}`,
       {
         method: "POST",
         headers: {
@@ -51,7 +52,7 @@ export class ConsorsAPI {
           username: this.authData.username,
           password: this.authData.password,
         }),
-      }
+      },
     );
     if (response.ok) {
       return response
@@ -214,10 +215,3 @@ export async function getConsorsClient(shop: string) {
   consorsClientCache[shop] = newClient;
   return newClient;
 }
-
-// export const demoMockApi = new ConsorsAPI({
-//   apiKey: "6f600501-6bca-47b7-a2b9-9314e75f626e",
-//   username: "1pstest",
-//   password: "ecec8403",
-//   vendorId: "8403",
-// });

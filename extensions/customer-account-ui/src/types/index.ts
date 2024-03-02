@@ -1,6 +1,6 @@
 import type { Config, CustomerDetails, Orders } from "@prisma/client";
 
-export type LinkConfigData = Pick<Config, "vendorId" | "customerAccountNumber">;
+export type LinkConfigData = Pick<Config, "vendorId">;
 
 type LinkCustomerDetails = Omit<
   CustomerDetails,

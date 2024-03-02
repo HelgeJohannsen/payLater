@@ -3,10 +3,9 @@ import { useLoaderData, useSubmit } from "@remix-run/react";
 import {
   Badge,
   BlockStack,
+  Box,
   Button,
-  Card,
-  Page,
-  Text,
+  Spinner,
   TextField,
 } from "@shopify/polaris";
 import db from "../db.server";
@@ -38,11 +37,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     where: { shop },
     data: {
       shop: shop,
-      customerAccountNumber: String(body.get("customerAccountNumber")),
       vendorId: String(body.get("vendorId")),
       username: String(body.get("username")),
       apiKey: String(body.get("apiKey")),
       password: String(body.get("password")),
+      notificationHashKey: String(body.get("notificationHashKey")),
     },
   });
   return config;
@@ -54,21 +53,21 @@ type AppConfig = {
   password: string;
   apiKey: string;
   notificationHashKey?: string;
-  customerAccountNumber: string;
 };
 
 export default function Index() {
+  const [savingConfig, setSavingCofig] = useState(false);
   const loaderData = useLoaderData<typeof loader>();
   const submit = useSubmit();
 
   const {
     id,
-    customerAccountNumber,
     vendorId,
     apiKey,
     password,
     username,
     shop,
+    notificationHashKey,
     clientDataOk,
   } = loaderData!;
 
@@ -77,10 +76,11 @@ export default function Index() {
     username: username ?? "",
     password: password ?? "",
     apiKey: apiKey ?? "",
-    customerAccountNumber: customerAccountNumber ?? "",
+    notificationHashKey: notificationHashKey ?? "",
   });
 
   function handleSave() {
+    setSavingCofig(true);
     if (id === undefined) {
       console.error("could not load ID from server, cant submit without ID");
     } else {
@@ -91,83 +91,123 @@ export default function Index() {
       };
       submit(data, { method: "post" });
     }
+    setSavingCofig(false);
   }
 
   return (
-    <Page>
-      <Card>
+    <div
+      style={{
+        padding: "32px",
+      }}
+    >
+      <Box
+        background="bg-fill"
+        padding={{ md: "600" }}
+        width="400px"
+        borderRadius="300"
+      >
         <ui-title-bar title="Einstellungen"> </ui-title-bar>
-        <BlockStack gap={"150"} align="center" inlineAlign="start">
-          <Text as="h2" variant="headingMd">
-            Consors EFI
-          </Text>
-          <BlockStack gap={"100"}>
-            <BlockStack align="center" inlineAlign="start">
-              <TextField
-                id="customer-account-number"
-                label="customerAccountNumber"
-                autoComplete="off"
-                value={appConfig.customerAccountNumber}
-                onChange={(value) =>
-                  setAppConfig((prev) => ({
-                    ...prev,
-                    customerAccountNumber: value,
-                  }))
-                }
-                onBlur={handleSave}
-              />
-              <TextField
-                id="vendor-id"
-                label="VendorID"
-                autoComplete="off"
-                value={appConfig.vendorId}
-                onChange={(value) =>
-                  setAppConfig((prev) => ({ ...prev, vendorId: value }))
-                }
-                onBlur={handleSave}
-              />
-              <TextField
-                id="username"
-                label="Username"
-                autoComplete="off"
-                value={appConfig.username}
-                onChange={(value) =>
-                  setAppConfig((prev) => ({ ...prev, username: value }))
-                }
-                onBlur={handleSave}
-              />
-              <TextField
-                id="password"
-                label="Password"
-                autoComplete="off"
-                value={appConfig.password}
-                onChange={(value) =>
-                  setAppConfig((prev) => ({ ...prev, password: value }))
-                }
-                onBlur={handleSave}
-              />
-              <TextField
-                id="x-api-key"
-                label="Api Key"
-                autoComplete="off"
-                value={appConfig.apiKey}
-                onChange={(value) =>
-                  setAppConfig((prev) => ({ ...prev, apiKey: value }))
-                }
-                onBlur={handleSave}
-              />
-            </BlockStack>
-            <BlockStack align="space-between" inlineAlign="center">
-              {!clientDataOk && (
-                <Badge size="medium" tone="attention">
-                  Error
-                </Badge>
-              )}
-              <Button onClick={handleSave}>Save</Button>
-            </BlockStack>
-          </BlockStack>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+          }}
+        >
+          <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>Consors BNPL</h2>
+          <img
+            src="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799"
+            alt="consors banner"
+            style={{ maxHeight: "80px", maxWidth: "160px" }}
+          />
+        </div>
+
+        <BlockStack gap={"300"}>
+          <TextField
+            id="vendor-id"
+            label="VendorID"
+            autoComplete="off"
+            value={appConfig.vendorId}
+            onChange={(value) =>
+              setAppConfig((prev) => ({ ...prev, vendorId: value }))
+            }
+            onBlur={handleSave}
+            requiredIndicator
+          />
+          <TextField
+            id="username"
+            label="Username"
+            autoComplete="off"
+            value={appConfig.username}
+            onChange={(value) =>
+              setAppConfig((prev) => ({ ...prev, username: value }))
+            }
+            onBlur={handleSave}
+            requiredIndicator
+          />
+          <TextField
+            id="password"
+            label="Password"
+            autoComplete="off"
+            value={appConfig.password}
+            onChange={(value) =>
+              setAppConfig((prev) => ({ ...prev, password: value }))
+            }
+            onBlur={handleSave}
+            requiredIndicator
+          />
+          <TextField
+            id="x-api-key"
+            label="Api Key"
+            autoComplete="off"
+            value={appConfig.apiKey}
+            onChange={(value) =>
+              setAppConfig((prev) => ({ ...prev, apiKey: value }))
+            }
+            onBlur={handleSave}
+          />
+          <TextField
+            id="notification-hash-key"
+            label="Notification Hash Key"
+            autoComplete="off"
+            value={appConfig.notificationHashKey}
+            onChange={(value) =>
+              setAppConfig((prev) => ({
+                ...prev,
+                notificationHashKey: value,
+              }))
+            }
+            onBlur={handleSave}
+            requiredIndicator
+          />
         </BlockStack>
-      </Card>
-    </Page>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "10px",
+          }}
+        >
+          {!clientDataOk && (
+            <Badge size="medium" tone="attention">
+              Credentials Error
+            </Badge>
+          )}
+          {savingConfig ? (
+            <div
+              style={{
+                marginRight: "25px",
+              }}
+            >
+              <Spinner size="small" accessibilityLabel="Loading Saving data" />
+            </div>
+          ) : (
+            <Button onClick={handleSave}>Save</Button>
+          )}
+        </div>
+      </Box>
+    </div>
   );
 }
