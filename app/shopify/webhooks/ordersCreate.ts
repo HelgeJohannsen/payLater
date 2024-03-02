@@ -34,40 +34,41 @@ export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const parseResult = orderCreateSchema.safeParse(data);
   // console.log("webhook_ordersCreate", data);
   // console.log("parseResult - ", parseResult);
-  if (parseResult.success) {
-    const orderData = parseResult.data;
-    const paymentMethod = isPayLaterPaymentGateway(
-      orderData.payment_gateway_names[0],
-    );
-    if (paymentMethod && orderData.billing_address.country_code === "DE") {
-      const createOrderData: CreateOrder = {
-        orderId: orderData.id.toString(),
-        orderNumber: orderData.order_number,
-        orderName: orderData.name,
-        paymentGatewayName: orderData.payment_gateway_names[0],
-        paymentMethode: paymentMethod,
-        orderAmount: orderData.total_price,
-      };
-      const createCustomerData: CreateCustomerDetails = {
-        orderNumberRef: orderData.order_number,
-        customerId: orderData.customer.id,
-        email: orderData.email,
-        customCustomerId: createCustomCustomerId(orderData.customer.id),
-        firstName: orderData.customer.first_name ?? "",
-        lastName: orderData.customer.last_name,
-        zip: orderData.billing_address.zip,
-        city: orderData.billing_address.city,
-        street: orderData.billing_address.address1,
-        country: orderData.billing_address.country_code,
-      };
+  if (!parseResult.success)
+    return console.error("Error parsing create webhook order");
 
-      await createOrderWithCustomerDetails({
-        createCustomerData,
-        createOrderData,
-      });
-      await addTagsToOrder(shop, orderData.id.toString(), "Pay Later");
-    }
-  } else {
-    console.log("Error parsing data", data);
-  }
+  const orderData = parseResult.data;
+  const paymentMethod = isPayLaterPaymentGateway(
+    orderData.payment_gateway_names[0],
+  );
+
+  if (!paymentMethod || orderData.billing_address.country_code !== "DE")
+    return console.error("PaymentMethod or country code not found");
+
+  const createOrderData: CreateOrder = {
+    orderId: orderData.id.toString(),
+    orderNumber: orderData.order_number,
+    orderName: orderData.name,
+    paymentGatewayName: orderData.payment_gateway_names[0],
+    paymentMethode: paymentMethod,
+    orderAmount: orderData.total_price,
+  };
+  const createCustomerData: CreateCustomerDetails = {
+    orderNumberRef: orderData.order_number,
+    customerId: orderData.customer.id,
+    email: orderData.email,
+    customCustomerId: createCustomCustomerId(orderData.customer.id),
+    firstName: orderData.customer.first_name ?? "",
+    lastName: orderData.customer.last_name,
+    zip: orderData.billing_address.zip,
+    city: orderData.billing_address.city,
+    street: orderData.billing_address.address1,
+    country: orderData.billing_address.country_code,
+  };
+
+  await createOrderWithCustomerDetails({
+    createCustomerData,
+    createOrderData,
+  });
+  await addTagsToOrder(shop, orderData.id.toString(), "Pay Later");
 }

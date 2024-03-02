@@ -1,6 +1,19 @@
 import db from "../db.server";
 import type { CreateOrderWithCustomerDetails } from "./types";
 
+export async function getCreditCheckStatus(orderId: string) {
+  const orderCreditCheckStatus = await db.orders.findUnique({
+    where: { orderId },
+    select: {
+      confirmCreditStatus: true,
+    },
+  });
+  if (!orderCreditCheckStatus) {
+    return null;
+  }
+  return orderCreditCheckStatus;
+}
+
 export async function getOrderWithDetails(orderId: string) {
   const orderWithDetails = await db.orders.findUnique({
     where: { orderId },
@@ -17,7 +30,7 @@ export async function getOrderWithDetails(orderId: string) {
 export async function setCreditCheck(
   orderId: string,
   confirmCreditStatus: string,
-  applicationNumber: string
+  applicationNumber: string,
 ) {
   const data = {
     confirmCreditStatus,

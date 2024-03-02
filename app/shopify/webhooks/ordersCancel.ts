@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { getConsorsClient } from "~/consors/api";
 import { getOrderInfoForCancel } from "~/models/OrderCancel.server";
+import { getCreditCheckStatus } from "~/models/order.server";
 import { createNoteMessage } from "~/utils/dataMutation";
 import { addNoteToOrder } from "../graphql/addNoteToOrder";
 import type { ConsorsResponse } from "./types";
+import { defaultNote } from "./utils/defaultNote";
 
 const orderCancel = z.object({
   id: z.number(),
@@ -18,31 +20,40 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
 
   const { cancelled_at, id: orderId } = cancellationData;
 
-  const orderCancelInfo = await getOrderInfoForCancel(orderId.toString());
-  if (orderCancelInfo) {
-    const { applicationNumber, customerDetails } = orderCancelInfo;
-    if (applicationNumber && customerDetails?.country) {
-      const consorsClient = await getConsorsClient(shop);
-      const bankResponse = await consorsClient?.stornoOrder({
-        applicationReferenceNumber: applicationNumber,
-        countryCode: customerDetails?.country,
-        orderAmount: 0.0,
-        timeStamp: cancelled_at,
-        notifyURL: "https://paylaterplus.cpro-server.de/notify/cancelOrder",
-      });
-      if (bankResponse) {
-        const responseData: ConsorsResponse = await bankResponse?.json();
+  const clientCreditCheckStatus = await getCreditCheckStatus(
+    orderId.toString(),
+  );
+  if (!clientCreditCheckStatus?.confirmCreditStatus?.includes("ACCEPTED")) {
+    await defaultNote(shop, orderId);
+    return;
+  }
 
-        await addNoteToOrder(
-          shop,
-          orderId.toString(),
-          createNoteMessage(
-            "Cancellation",
-            responseData.status,
-            responseData.errorMessage,
-          ),
-        );
-      }
-    }
+  const orderCancelInfo = await getOrderInfoForCancel(orderId.toString());
+  if (!orderCancelInfo) return console.error("Order not found!");
+
+  const { applicationNumber, customerDetails } = orderCancelInfo;
+  if (!applicationNumber || !customerDetails?.country)
+    return console.error("applicationNumber or country not found!");
+
+  const consorsClient = await getConsorsClient(shop);
+  const bankResponse = await consorsClient?.stornoOrder({
+    applicationReferenceNumber: applicationNumber,
+    countryCode: customerDetails?.country,
+    orderAmount: 0.0,
+    timeStamp: cancelled_at,
+    notifyURL: "https://paylaterplus.cpro-server.de/notify/cancelOrder",
+  });
+  if (bankResponse) {
+    const responseData: ConsorsResponse = await bankResponse?.json();
+
+    await addNoteToOrder(
+      shop,
+      orderId.toString(),
+      createNoteMessage(
+        "Cancellation",
+        responseData.status,
+        responseData.errorMessage,
+      ),
+    );
   }
 }

@@ -4,6 +4,7 @@ import {
   createFulfilledDetails,
   getOrderInfoForFulFillment,
 } from "~/models/OrderFulfillment.server";
+import { getCreditCheckStatus } from "~/models/order.server";
 import type { CreateFulfilledDetails } from "~/models/types";
 import {
   createNoteMessage,
@@ -12,6 +13,7 @@ import {
 } from "~/utils/dataMutation";
 import { addNoteToOrder } from "../graphql/addNoteToOrder";
 import type { ConsorsResponse } from "./types";
+import { defaultNote } from "./utils/defaultNote";
 
 const orderFulfilled = z.object({
   id: z.number(),
@@ -30,6 +32,15 @@ export async function webhook_ordersPartiallyFulfilled(
 
   if (fulfilledDataObj.success) {
     const { updated_at, id: orderId, note } = fulfilledDataObj.data;
+
+    const clientCreditCheckStatus = await getCreditCheckStatus(
+      orderId.toString(),
+    );
+    if (!clientCreditCheckStatus?.confirmCreditStatus?.includes("ACCEPTED")) {
+      await defaultNote(shop, orderId);
+      return;
+    }
+
     const infoToFulFillOrder = await getOrderInfoForFulFillment(
       orderId.toString(),
     );

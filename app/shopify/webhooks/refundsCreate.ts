@@ -4,6 +4,7 @@ import {
   createRefundsDetails,
   getOrderDataToRefund,
 } from "~/models/OrderRefund.server";
+import { getCreditCheckStatus } from "~/models/order.server";
 import type { CreateRefundsDetails } from "~/models/types";
 import {
   createNoteMessage,
@@ -12,6 +13,7 @@ import {
 } from "~/utils/dataMutation";
 import { addNoteToOrder } from "../graphql/addNoteToOrder";
 import type { ConsorsResponse } from "./types";
+import { defaultNote } from "./utils/defaultNote";
 
 const refundsSchema = z.object({
   order_id: z.number(),
@@ -35,6 +37,14 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     return console.error("Error parsing schema data");
 
   const { created_at, note, order_id, transactions } = refundsDataParsed.data;
+
+  const clientCreditCheckStatus = await getCreditCheckStatus(
+    order_id.toString(),
+  );
+  if (!clientCreditCheckStatus?.confirmCreditStatus?.includes("ACCEPTED")) {
+    await defaultNote(shop, order_id);
+    return;
+  }
   const orderData = await getOrderDataToRefund(order_id.toString());
 
   if (!orderData) return console.error("Order not found!");
