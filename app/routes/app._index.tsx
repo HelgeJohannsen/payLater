@@ -22,6 +22,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const consorsClient = await getConsorsClient(session.shop);
   const clientAuth = await consorsClient?.jwt();
 
+  console.log("clientAuth", clientAuth);
+
   return {
     ...settings,
     clientDataOk: !!clientAuth,
@@ -190,7 +192,7 @@ export default function Index() {
             marginTop: "10px",
           }}
         >
-          {!clientDataOk ? (
+          {clientDataOk ? (
             <Badge size="medium" tone="success">
               Credentials Success
             </Badge>
