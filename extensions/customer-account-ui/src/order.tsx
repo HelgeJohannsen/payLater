@@ -45,10 +45,7 @@ function Extension() {
     setParametersLink(consorsParametersLink);
   }, [appSettings, orderData, shop.storefrontUrl]);
 
-  console.log(
-    "link parameters",
-    `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`,
-  );
+  console.log("link parameters", parametersLink && parametersLink.toString());
 
   const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`;
 
