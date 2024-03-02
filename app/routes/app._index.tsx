@@ -190,7 +190,11 @@ export default function Index() {
             marginTop: "10px",
           }}
         >
-          {!clientDataOk && (
+          {!clientDataOk ? (
+            <Badge size="medium" tone="success">
+              Credentials Success
+            </Badge>
+          ) : (
             <Badge size="medium" tone="attention">
               Credentials Error
             </Badge>
