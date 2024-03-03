@@ -22,17 +22,20 @@ export const getConsorsLink = (
   storefrontUrl: string,
 ): URLSearchParams => {
   const { customerDetails, orderAmount, orderId, paymentMethode } = orderData;
-  const { vendorId, customerAccountNumber } = appSettings;
+  const { vendorId } = appSettings;
+  const { city, country, street, zip } = customerDetails;
 
   const consorsLink = new URLSearchParams({
     vendorID: vendorId,
     orderID: orderId,
-    customerAccountNumber,
-    paymentMethode,
     order_amount: orderAmount.toString(),
-    ...customerDetails,
+    paymentMethode,
     firstName: "Test",
     lastName: "Approval",
+    zip,
+    city,
+    street,
+    country,
     returntocheckoutURL: `${storefrontUrl}/account/orders`,
     notifyURL: `https://paylater.cpro-server.de/notify/creditCheck`,
     failureURL: `${storefrontUrl}/account/orders`,
