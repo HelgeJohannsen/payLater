@@ -41,6 +41,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       shop: shop,
       vendorId: String(body.get("vendorId")),
       username: String(body.get("username")),
+      customerAccountNumber: String(body.get("customerAccountNumber")),
       apiKey: String(body.get("apiKey")),
       password: String(body.get("password")),
       notificationHashKey: String(body.get("notificationHashKey")),
@@ -54,7 +55,8 @@ type AppConfig = {
   username: string;
   password: string;
   apiKey: string;
-  notificationHashKey?: string;
+  customerAccountNumber: string;
+  notificationHashKey: string;
 };
 
 export default function Index() {
@@ -70,6 +72,7 @@ export default function Index() {
     username,
     shop,
     notificationHashKey,
+    customerAccountNumber,
     clientDataOk,
   } = loaderData!;
 
@@ -78,6 +81,7 @@ export default function Index() {
     username: username ?? "",
     password: password ?? "",
     apiKey: apiKey ?? "",
+    customerAccountNumber: customerAccountNumber ?? "",
     notificationHashKey: notificationHashKey ?? "",
   });
 
@@ -147,6 +151,19 @@ export default function Index() {
             }
             onBlur={handleSave}
             requiredIndicator
+          />
+          <TextField
+            id="customer-account-number"
+            label="Customer Account Number"
+            autoComplete="off"
+            value={appConfig.customerAccountNumber}
+            onChange={(value) =>
+              setAppConfig((prev) => ({
+                ...prev,
+                customerAccountNumber: value,
+              }))
+            }
+            onBlur={handleSave}
           />
           <TextField
             id="password"

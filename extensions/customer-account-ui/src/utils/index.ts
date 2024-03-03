@@ -23,7 +23,7 @@ export const getConsorsLink = (
 ): URLSearchParams => {
   const { customerDetails, orderAmount, orderId, paymentMethode } = orderData;
   const { vendorId, customerAccountNumber } = appSettings;
-  const { city, country, street, zip } = customerDetails;
+  const { city, country, street, zip, firstName, lastName } = customerDetails;
 
   const consorsLink = new URLSearchParams({
     vendorID: vendorId,
@@ -31,8 +31,8 @@ export const getConsorsLink = (
     order_amount: orderAmount.toString(),
     customerAccountNumber,
     paymentMethode,
-    firstName: "Test",
-    lastName: "Approval",
+    firstName,
+    lastName,
     zip,
     city,
     street,
