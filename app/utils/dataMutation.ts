@@ -43,29 +43,19 @@ function transformDateAndAdd30Days(dateStr: string) {
   return { formattedDate, formattedDatePlus30Days };
 }
 
-type NoteAction = "Credit_Check" | "Fulfillment" | "Cancellation" | "Refund";
-
 function createNoteMessage(
-  action: NoteAction,
+  action: string,
   status: string,
   errorMessage?: string,
   errorCode?: string,
 ): string {
-  return action !== "Credit_Check"
-    ? `Bank has been notified of the ${action} request, current status: ${status}. `
-        .concat(
-          status !== "SUCCESS" && status !== "ACCEPTED"
-            ? `Error message: ${errorMessage ?? errorCode ?? ""}.`
-            : "",
-        )
-        .trim()
-    : `Client credit check current status: ${status === "SUCCESS" ? "ACCEPTED" : status}. `
-        .concat(
-          status !== "SUCCESS" && status !== "ACCEPTED"
-            ? `Error message: ${errorMessage ?? errorCode ?? ""}.`
-            : "",
-        )
-        .trim();
+  return `Bank has been notified of the ${action} request, current status: ${status}. `
+    .concat(
+      status !== "SUCCESS" && status !== "ACCEPTED"
+        ? `Error message: ${errorMessage ?? errorCode ?? ""}.`
+        : "",
+    )
+    .trim();
 }
 
 function appendUniqueNote(existingNotes: string, newNote: string): string {

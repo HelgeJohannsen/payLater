@@ -32,8 +32,8 @@ const orderCreateSchema = z.object({
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
   const parseResult = orderCreateSchema.safeParse(data);
-  // console.log("webhook_ordersCreate", data);
-  // console.log("parseResult - ", parseResult);
+  console.log("webhook_ordersCreate", data);
+  console.log("parseResult - ", parseResult);
   if (!parseResult.success)
     return console.error("Error parsing create webhook order");
 

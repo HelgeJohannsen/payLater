@@ -30,7 +30,7 @@ export class ConsorsAPI {
     jwt: string;
     jwtValideUntil: number;
   };
-  // private baseURL = "https://api.consorsfinanz.de";
+  // private baseURL = "https://api.consorsfinanz.de"; // baseURL-Production-Enviroment
   private baseURL = "https://uat1-api.consorsfinanz.de/1"; // baseURL-SandBox-Enviroment
 
   constructor(public authData: ApiAuthData) {
