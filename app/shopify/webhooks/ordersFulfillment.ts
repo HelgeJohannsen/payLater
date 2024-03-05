@@ -74,18 +74,6 @@ export async function webhook_ordersFulfillment(
     receiptNote: `Billing note for OrderName: ${orderName}, OrderNumber ${orderNumber}`,
   };
 
-  const test = {
-    applicationReferenceNumber: applicationNumber ?? "",
-    countryCode: customerDetails?.country ?? "",
-    customerId: customerDetails?.customCustomerId ?? "",
-    orderAmount,
-    timeStamp: new Date(created_at).toUTCString(),
-    billingInfo: fulfilledData,
-    notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
-  };
-
-  console.log("fulfilledData - ", test);
-
   await createFulfilledDetails(orderNumber, fulfilledData);
   const consorsClient = await getConsorsClient(shop);
   const bankResponse = await consorsClient?.fulfillmentOrder({
@@ -100,7 +88,6 @@ export async function webhook_ordersFulfillment(
 
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
-    console.log("Fulfilled bankResponse - ", responseData);
     await addNoteToOrder(
       shop,
       orderId.toString(),

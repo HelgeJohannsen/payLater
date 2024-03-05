@@ -22,8 +22,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const consorsClient = await getConsorsClient(session.shop);
   const clientAuth = await consorsClient?.jwt();
 
-  console.log("clientAuth", clientAuth);
-
   return {
     ...settings,
     clientDataOk: !!clientAuth,

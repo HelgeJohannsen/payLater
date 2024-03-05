@@ -31,71 +31,70 @@ export async function webhook_ordersPartiallyFulfilled(
   // console.log("webhook_ordersPartiallyFulfilled", data);
   // console.log("parsed Obj - ", data);
 
-  if (fulfilledDataObj.success) {
-    const { updated_at, id: orderId, note } = fulfilledDataObj.data;
+  if (!fulfilledDataObj.success)
+    return console.error("Error parsing schema data");
 
-    const clientCreditCheckStatus = await getCreditCheckStatus(
+  const { updated_at, id: orderId, note } = fulfilledDataObj.data;
+
+  const clientCreditCheckStatus = await getCreditCheckStatus(
+    orderId.toString(),
+  );
+  if (!clientCreditCheckStatus?.confirmCreditStatus?.includes("ACCEPTED")) {
+    await defaultNote(shop, orderId);
+    return;
+  }
+
+  const infoToFulFillOrder = await getOrderInfoForFulFillment(
+    orderId.toString(),
+  );
+  if (!infoToFulFillOrder)
+    return console.error("OrderData to fulfillment not found");
+
+  const {
+    applicationNumber,
+    customerDetails,
+    orderAmount,
+    orderName,
+    paymentMethode,
+    orderNumber,
+  } = infoToFulFillOrder;
+
+  const { formattedDate, formattedDatePlus30Days } =
+    transformDateAndAdd30Days(updated_at);
+
+  const fulfilledData: CreateFulfilledDetails = {
+    billingType: "INVOICE",
+    billingNumber: orderName,
+    billingDate: formattedDate,
+    billingReferenceNumber: "",
+    dueDate: formattedDatePlus30Days,
+    billingAmount: orderAmount,
+    paymentType: getPaymentType(paymentMethode),
+    receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
+  };
+
+  await createFulfilledDetails(orderNumber, fulfilledData);
+  const consorsClient = await getConsorsClient(shop);
+  const bankResponse = await consorsClient?.fulfillmentOrder({
+    applicationReferenceNumber: applicationNumber ?? "",
+    countryCode: customerDetails?.country ?? "",
+    customerId: customerDetails?.customCustomerId ?? "",
+    orderAmount,
+    timeStamp: new Date(updated_at).toUTCString(),
+    billingInfo: fulfilledData,
+    notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
+  });
+  if (bankResponse) {
+    const responseData: ConsorsResponse = await bankResponse?.json();
+
+    await addNoteToOrder(
+      shop,
       orderId.toString(),
+      createNoteMessage(
+        "Fulfillment",
+        responseData.status,
+        responseData.errorMessage,
+      ),
     );
-    if (!clientCreditCheckStatus?.confirmCreditStatus?.includes("ACCEPTED")) {
-      await defaultNote(shop, orderId);
-      return;
-    }
-
-    const infoToFulFillOrder = await getOrderInfoForFulFillment(
-      orderId.toString(),
-    );
-    if (infoToFulFillOrder) {
-      const {
-        applicationNumber,
-        customerDetails,
-        orderAmount,
-        orderName,
-        paymentMethode,
-        orderNumber,
-      } = infoToFulFillOrder;
-
-      const { formattedDate, formattedDatePlus30Days } =
-        transformDateAndAdd30Days(updated_at);
-
-      const fulfilledData: CreateFulfilledDetails = {
-        billingType: "INVOICE",
-        billingNumber: orderName,
-        billingDate: formattedDate,
-        billingReferenceNumber: "",
-        dueDate: formattedDatePlus30Days,
-        billingAmount: orderAmount,
-        paymentType: getPaymentType(paymentMethode),
-        receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
-      };
-
-      await createFulfilledDetails(orderNumber, fulfilledData);
-      const consorsClient = await getConsorsClient(shop);
-      const bankResponse = await consorsClient?.fulfillmentOrder({
-        applicationReferenceNumber: applicationNumber ?? "",
-        countryCode: customerDetails?.country ?? "",
-        customerId: customerDetails?.customCustomerId ?? "",
-        orderAmount,
-        timeStamp: new Date(updated_at).toUTCString(),
-        billingInfo: fulfilledData,
-        notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
-      });
-      if (bankResponse) {
-        const responseData: ConsorsResponse = await bankResponse?.json();
-        console.log("Partially Fulfilled bankResponse - ", responseData);
-
-        await addNoteToOrder(
-          shop,
-          orderId.toString(),
-          createNoteMessage(
-            "Fulfillment",
-            responseData.status,
-            responseData.errorMessage,
-          ),
-        );
-      }
-    }
-  } else {
-    console.log("could not parse partiallyFulfilled date:", data);
   }
 }

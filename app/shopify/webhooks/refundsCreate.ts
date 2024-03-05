@@ -64,11 +64,8 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     await addNoteToOrder(
       shop,
       order_id.toString(),
-      createNoteMessage(
-        "Refund",
-        "ERROR",
-        "The order must be fulfilled prior to issuing a refund",
-      ),
+      `Refund Request Status: ERROR. 
+      Message: Refund requests can only be submitted to Consors if the order has been fulfilled.`,
     );
     return console.error("Customer or fulfilled details not found");
   }
@@ -102,7 +99,6 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
 
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
-    console.log("bankResponse refund bankResponse - ", responseData);
     await addNoteToOrder(
       shop,
       order_id.toString(),

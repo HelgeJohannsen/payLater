@@ -6,11 +6,10 @@ import { setCreditCheck } from "../models/order.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const requestedURL = new URL(request.url);
-
-  console.log("requestedURL credit check", requestedURL);
   const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
   const applicationNumber = requestedURL.searchParams.get("applicationNum");
+  // const hash = requestedURL.searchParams.get("hash");
 
   if (orderId === null || status === null || applicationNumber === null) {
     throw new Response(

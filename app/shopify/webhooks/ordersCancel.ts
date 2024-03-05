@@ -47,7 +47,6 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
 
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
-    console.log("cancel bankResponse - ", responseData);
 
     await addNoteToOrder(
       shop,

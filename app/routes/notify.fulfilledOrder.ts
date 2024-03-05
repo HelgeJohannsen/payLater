@@ -4,9 +4,9 @@ import { handleOrderFulFilled } from "~/models/OrderFulfillment.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const requestedURL = new URL(request.url);
-  console.log("requestedURL fulfillment - ", requestedURL);
   const orderId = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
+  // const hash = requestedURL.searchParams.get("hash");
 
   if (orderId === null || status === null) {
     throw new Response(
