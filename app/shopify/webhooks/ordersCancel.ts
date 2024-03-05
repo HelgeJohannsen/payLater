@@ -44,7 +44,7 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
     notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
   });
 
-  console.log("cancel bankResponse", bankResponse);
+  console.log("cancel bankResponse", bankResponse?.json());
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
 

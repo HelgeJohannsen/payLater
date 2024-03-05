@@ -99,7 +99,7 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
 
-  console.log("bankResponse refund - ", bankResponse);
+  console.log("bankResponse refund - ", bankResponse?.json());
 
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
