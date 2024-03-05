@@ -23,10 +23,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   await setCreditCheck(orderId, status, applicationNumber);
 
   const shop = process.env.SHOPIFY_SHOP;
-  console.log("shop", shop);
   if (shop) {
     await orderMarkAsPaid(shop, orderId);
-    console.log("add note to order");
     await addNoteToOrder(
       shop,
       orderId,

@@ -19,7 +19,6 @@ import { defaultNote } from "./utils/defaultNote";
 const orderFulfilled = z.object({
   id: z.number(),
   created_at: z.string(),
-  note: z.string().nullable(),
 });
 
 export async function webhook_ordersFulfillment(
@@ -34,7 +33,7 @@ export async function webhook_ordersFulfillment(
   if (!fulfilledDataObj.success)
     return console.error("Error parsing schema data");
 
-  const { created_at, id: orderId, note } = fulfilledDataObj.data;
+  const { created_at, id: orderId } = fulfilledDataObj.data;
 
   const clientCreditCheckStatus = await getCreditCheckStatus(
     orderId.toString(),
@@ -71,7 +70,7 @@ export async function webhook_ordersFulfillment(
     dueDate: formattedDatePlus30Days,
     billingAmount: orderAmount,
     paymentType: getPaymentType(paymentMethode),
-    receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
+    receiptNote: `Billing note for OrderName: ${orderName}, OrderNumber ${orderNumber}`,
   };
 
   const test = {
@@ -98,7 +97,7 @@ export async function webhook_ordersFulfillment(
     notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
   });
 
-  console.log("Fulfilled bankResponse", await bankResponse?.json());
+  console.log("Fulfilled bankResponse - ", await bankResponse?.json());
 
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();

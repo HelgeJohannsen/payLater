@@ -59,7 +59,6 @@ function createNoteMessage(
 }
 
 function appendUniqueNote(existingNotes: string, newNote: string): string {
-  console.log("existingNotes, newNote", existingNotes, newNote);
   if (!existingNotes) return newNote;
   if (!existingNotes.includes(newNote)) {
     return `${existingNotes}\n${newNote}`;

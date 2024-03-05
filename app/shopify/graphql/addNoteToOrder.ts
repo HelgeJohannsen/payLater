@@ -35,8 +35,6 @@ export async function addNoteToOrder(
     data: { order },
   } = fetchResult as unknown as OrderData;
 
-  console.log("order data from graphQL AddNote- ", order);
-
   await graphQlClient.request(
     `mutation orderUpdate($input: OrderInput!) {
     orderUpdate(input: $input) {
