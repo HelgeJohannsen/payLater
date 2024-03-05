@@ -25,6 +25,7 @@ export async function webhook_ordersFulfillment(
   shop: string,
   payload: unknown,
 ) {
+  console.log("ordersFulfillment rended");
   const data = payload?.valueOf();
   const fulfilledDataObj = orderFulfilled.safeParse(data);
   // console.log("webhook_ordersFulfillment", data);
@@ -97,10 +98,9 @@ export async function webhook_ordersFulfillment(
     notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
   });
 
-  console.log("Fulfilled bankResponse - ", await bankResponse?.json());
-
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
+    console.log("Fulfilled bankResponse - ", responseData);
     await addNoteToOrder(
       shop,
       orderId.toString(),

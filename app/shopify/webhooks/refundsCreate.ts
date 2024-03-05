@@ -28,6 +28,7 @@ const refundsSchema = z.object({
 });
 
 export async function webhook_refundsCreate(shop: string, payload: unknown) {
+  console.log("refundsCreate rended");
   const data = payload?.valueOf();
   const refundsDataParsed = refundsSchema.safeParse(data);
   // console.log("webhook_refundsCreate - ", data);
@@ -99,10 +100,9 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
 
-  console.log("bankResponse refund - ", bankResponse?.json());
-
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
+    console.log("bankResponse refund bankResponse - ", responseData);
     await addNoteToOrder(
       shop,
       order_id.toString(),

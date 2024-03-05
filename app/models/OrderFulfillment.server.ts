@@ -7,6 +7,7 @@ export async function handleOrderFulFilled(orderId: string, status: string) {
       where: { orderId },
       data: { fulfillStatus: status },
     });
+    console.log("handle order fulfillment status: " + updatedOrder);
     return updatedOrder;
   } catch (error) {
     console.error("Order update failed", error);
@@ -15,7 +16,7 @@ export async function handleOrderFulFilled(orderId: string, status: string) {
 
 export async function createFulfilledDetails(
   orderNumber: string,
-  fulfilledDetailsData: CreateFulfilledDetails
+  fulfilledDetailsData: CreateFulfilledDetails,
 ) {
   try {
     const ffData = await db.fulfilledDetails.findFirst({

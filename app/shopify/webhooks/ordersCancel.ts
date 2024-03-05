@@ -13,6 +13,7 @@ const orderCancel = z.object({
 });
 
 export async function webhook_ordersCancel(shop: string, payload: unknown) {
+  console.log("ordersCancel rended");
   const data = payload?.valueOf();
   const cancellationData = orderCancel.parse(data);
   // console.log("webhook_ordersCancel - ", data);
@@ -44,9 +45,9 @@ export async function webhook_ordersCancel(shop: string, payload: unknown) {
     notifyURL: "https://paylater.cpro-server.de/notify/cancelOrder",
   });
 
-  console.log("cancel bankResponse", bankResponse?.json());
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
+    console.log("cancel bankResponse - ", responseData);
 
     await addNoteToOrder(
       shop,

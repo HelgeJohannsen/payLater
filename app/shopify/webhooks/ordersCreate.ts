@@ -30,6 +30,7 @@ const orderCreateSchema = z.object({
 });
 
 export async function webhook_ordersCreate(shop: string, payload: unknown) {
+  console.log("ordersCreate rended");
   const data = payload?.valueOf();
   const parseResult = orderCreateSchema.safeParse(data);
   // console.log("webhook_ordersCreate", data);

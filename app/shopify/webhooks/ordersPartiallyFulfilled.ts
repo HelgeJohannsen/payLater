@@ -25,6 +25,7 @@ export async function webhook_ordersPartiallyFulfilled(
   shop: string,
   payload: unknown,
 ) {
+  console.log("ordersPartiallyFulfilled rended");
   const data = payload?.valueOf();
   const fulfilledDataObj = orderFulfilled.safeParse(data);
   // console.log("webhook_ordersPartiallyFulfilled", data);
@@ -79,9 +80,9 @@ export async function webhook_ordersPartiallyFulfilled(
         billingInfo: fulfilledData,
         notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
       });
-      console.log("Partially Fulfilled bankResponse - ", bankResponse?.json());
       if (bankResponse) {
         const responseData: ConsorsResponse = await bankResponse?.json();
+        console.log("Partially Fulfilled bankResponse - ", responseData);
 
         await addNoteToOrder(
           shop,
