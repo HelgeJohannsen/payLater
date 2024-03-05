@@ -80,7 +80,7 @@ export async function webhook_ordersPartiallyFulfilled(
         notifyURL:
           "https://paylaterplus.cpro-server.de/notify/partiallyFulfilled",
       });
-
+      console.log("Partially Fulfilled bankResponse", bankResponse);
       if (bankResponse) {
         const responseData: ConsorsResponse = await bankResponse?.json();
 

@@ -86,6 +86,8 @@ export async function webhook_ordersFulfillment(
     notifyURL: "https://paylaterplus.cpro-server.de/notify/fulfilledOrder",
   });
 
+  console.log("Fulfilled bankResponse", bankResponse);
+
   if (bankResponse) {
     const responseData: ConsorsResponse = await bankResponse?.json();
     await addNoteToOrder(
