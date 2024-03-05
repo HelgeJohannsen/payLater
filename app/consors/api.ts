@@ -31,15 +31,15 @@ export class ConsorsAPI {
     jwtValideUntil: number;
   };
   // private baseURL = "https://api.consorsfinanz.de"; // baseURL-Production-Enviroment
-  // private baseURL = "https://uat1-api.consorsfinanz.de"; // baseURL-SandBox-Enviroment
-  private baseURL = "https://uat1-api.consorsfinanz.de/1"; // baseURL-SandBox-Enviroment-Auth
+  private baseURL = "https://uat1-api.consorsfinanz.de"; // baseURL-SandBox-Enviroment
+  private baseURLSandBoxAuth = "https://uat1-api.consorsfinanz.de/1"; // baseURL-SandBox-Enviroment-Auth
 
   constructor(public authData: ApiAuthData) {
     this.jwtData = undefined;
   }
   private async getNewJWT(): Promise<string | undefined> {
     const response = await fetch(
-      `${this.baseURL}/common-services/cfg/token/${this.authData.vendorId}`,
+      `${this.baseURLSandBoxAuth}/common-services/cfg/token/${this.authData.vendorId}`,
       {
         method: "POST",
         headers: {
