@@ -77,8 +77,7 @@ export async function webhook_ordersPartiallyFulfilled(
         orderAmount,
         timeStamp: new Date(updated_at).toUTCString(),
         billingInfo: fulfilledData,
-        notifyURL:
-          "https://paylaterplus.cpro-server.de/notify/partiallyFulfilled",
+        notifyURL: "https://paylater.cpro-server.de/notify/partiallyFulfilled",
       });
       console.log("Partially Fulfilled bankResponse", bankResponse);
       if (bankResponse) {

@@ -96,7 +96,7 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
     orderAmount,
     timeStamp: new Date(created_at).toUTCString(),
     billingInfo: refundsData,
-    notifyURL: "https://paylaterplus.cpro-server.de/notify/refunds",
+    notifyURL: "https://paylater.cpro-server.de/notify/refunds",
   });
 
   console.log("bankResponse refund - ", bankResponse);

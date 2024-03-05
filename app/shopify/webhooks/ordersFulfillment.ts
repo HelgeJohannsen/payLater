@@ -83,7 +83,7 @@ export async function webhook_ordersFulfillment(
     orderAmount,
     timeStamp: new Date(created_at).toUTCString(),
     billingInfo: fulfilledData,
-    notifyURL: "https://paylaterplus.cpro-server.de/notify/fulfilledOrder",
+    notifyURL: "https://paylater.cpro-server.de/notify/fulfilledOrder",
   });
 
   console.log("Fulfilled bankResponse", bankResponse);
