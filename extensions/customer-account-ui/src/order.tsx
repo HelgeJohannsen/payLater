@@ -48,14 +48,6 @@ function Extension() {
   // const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`; //Production-Enviroment
   const link = `https://uat1-bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`; //Sandbox-Enviroment
 
-  // if (parametersLink) {
-  //   console.log(
-  //     "link - ",
-  //     `https://uat1-bezahlen.consorsfinanz.de/web/connector/#/home?`,
-  //   );
-  //   console.log("parameters - ", parametersLink && parametersLink.toString());
-  // }
-
   return (
     parametersLink && (
       <InlineLayout
