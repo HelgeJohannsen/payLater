@@ -53,7 +53,6 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
   const {
     applicationNumber,
     orderAmount,
-    orderName,
     paymentMethode,
     orderNumber,
     customerDetails,
@@ -74,10 +73,10 @@ export async function webhook_refundsCreate(shop: string, payload: unknown) {
 
   const refundsData: CreateRefundsDetails = {
     billingType: "CREDIT_NOTE",
-    billingReferenceNumber: orderName,
+    billingReferenceNumber: orderNumber,
     dueDate: formattedDate,
     billingDate,
-    billingNumber: orderName,
+    billingNumber: orderNumber,
     billingAmount: `-${transactions[0].amount}`,
     paymentType: getPaymentType(paymentMethode),
     receiptNote: note

@@ -45,8 +45,8 @@ function Extension() {
     setParametersLink(consorsParametersLink);
   }, [appSettings, orderData, shop.storefrontUrl]);
 
-  // const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`; //Production-Enviroment
-  const link = `https://uat1-bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`; //Sandbox-Enviroment
+  // const link = `https://bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`; //Production-Environment
+  const link = `https://uat1-bezahlen.consorsfinanz.de/web/connector/#/home?${parametersLink}`; //Sandbox-Environment
 
   return (
     parametersLink && (

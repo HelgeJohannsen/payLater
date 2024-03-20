@@ -30,9 +30,9 @@ export class ConsorsAPI {
     jwt: string;
     jwtValideUntil: number;
   };
-  // private baseURL = "https://api.consorsfinanz.de"; // baseURL-Production-Enviroment
-  private baseURL = "https://uat1-api.consorsfinanz.de"; // baseURL-SandBox-Enviroment
-  private baseURLSandBoxAuth = "https://uat1-api.consorsfinanz.de/1"; // baseURL-SandBox-Enviroment-Auth
+  // private baseURL = "https://api.consorsfinanz.de"; // baseURL-Production-Environment
+  private baseURL = "https://uat1-api.consorsfinanz.de"; // baseURL-SandBox-Environment
+  private baseURLSandBoxAuth = "https://uat1-api.consorsfinanz.de/1"; // baseURL-SandBox-Environment-Auth
 
   constructor(public authData: ApiAuthData) {
     this.jwtData = undefined;

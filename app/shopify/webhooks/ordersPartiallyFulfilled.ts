@@ -34,7 +34,7 @@ export async function webhook_ordersPartiallyFulfilled(
   if (!fulfilledDataObj.success)
     return console.error("Error parsing schema data");
 
-  const { updated_at, id: orderId, note } = fulfilledDataObj.data;
+  const { updated_at, id: orderId } = fulfilledDataObj.data;
 
   const clientCreditCheckStatus = await getCreditCheckStatus(
     orderId.toString(),
@@ -64,13 +64,13 @@ export async function webhook_ordersPartiallyFulfilled(
 
   const fulfilledData: CreateFulfilledDetails = {
     billingType: "INVOICE",
-    billingNumber: orderName,
+    billingNumber: orderNumber,
     billingDate: formattedDate,
     billingReferenceNumber: "",
     dueDate: formattedDatePlus30Days,
     billingAmount: orderAmount,
     paymentType: getPaymentType(paymentMethode),
-    receiptNote: note ?? `Billing note for OrderNumber ${orderNumber}`,
+    receiptNote: `Billing note for OrderName: ${orderName}, OrderNumber ${orderNumber}`,
   };
 
   await createFulfilledDetails(orderNumber, fulfilledData);
