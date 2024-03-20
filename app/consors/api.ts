@@ -131,14 +131,6 @@ export class ConsorsAPI {
     const consorsUrl = `${this.baseURL}/psp-web/rest/${this.authData.vendorId}/update/credit/${applicationReferenceNumber}?version=2.0`;
 
     const consorsAuthToken = await this.jwt();
-    const test = {
-      customerId,
-      orderAmount,
-      notifyURL,
-      billingInfo,
-    };
-
-    console.log("test", test);
 
     const res = await fetch(consorsUrl, {
       method: "PUT",
