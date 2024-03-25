@@ -65,7 +65,7 @@ export async function webhook_ordersFulfillment(
 
   const fulfilledData: CreateFulfilledDetails = {
     billingType: "INVOICE",
-    billingNumber: orderNumber,
+    billingNumber: orderName,
     billingDate: formattedDate,
     billingReferenceNumber: "",
     dueDate: formattedDatePlus30Days,

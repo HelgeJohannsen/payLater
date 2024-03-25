@@ -13,6 +13,7 @@ type LinkOrderDetails = Pick<
   | "paymentMethode"
   | "orderAmount"
   | "confirmCreditStatus"
+  | "orderName"
 >;
 
 export type LinkOrderData = LinkOrderDetails & {

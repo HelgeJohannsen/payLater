@@ -21,13 +21,13 @@ export const getConsorsLink = (
   appSettings: LinkConfigData,
   storefrontUrl: string,
 ): URLSearchParams => {
-  const { customerDetails, orderAmount, orderId, paymentMethode } = orderData;
+  const { customerDetails, orderAmount, paymentMethode, orderName } = orderData;
   const { vendorId, customerAccountNumber } = appSettings;
   const { city, country, street, zip, firstName, lastName } = customerDetails;
 
   const consorsLink = new URLSearchParams({
     vendorID: vendorId,
-    orderID: orderId,
+    orderID: orderName,
     order_amount: orderAmount.toString(),
     customerAccountNumber,
     paymentMethode,
