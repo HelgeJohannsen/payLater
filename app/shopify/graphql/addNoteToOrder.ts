@@ -15,6 +15,7 @@ export async function addNoteToOrder(
   orderId: string,
   newNote: string,
 ) {
+  console.log("shop, orderId, newNote", shop, orderId, newNote);
   const graphQlClient = await getGraphqlClient(shop);
 
   const fetchResult = await graphQlClient.request(
