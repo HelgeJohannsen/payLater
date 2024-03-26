@@ -6,12 +6,12 @@ import { setCreditCheck } from "../models/order.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const requestedURL = new URL(request.url);
-  const orderId = requestedURL.searchParams.get("orderId");
+  const orderName = requestedURL.searchParams.get("orderId");
   const status = requestedURL.searchParams.get("status");
   const applicationNumber = requestedURL.searchParams.get("applicationNum");
   // const hash = requestedURL.searchParams.get("hash");
 
-  if (orderId === null || status === null || applicationNumber === null) {
+  if (orderName === null || status === null || applicationNumber === null) {
     throw new Response(
       "Bad Request" /*", query parameter shop is mandatory"*/,
       {
@@ -19,14 +19,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       },
     );
   }
-  await setCreditCheck(orderId, status, applicationNumber);
+  await setCreditCheck(orderName, status, applicationNumber);
 
   const shop = process.env.SHOPIFY_SHOP;
   if (shop) {
-    await orderMarkAsPaid(shop, orderId);
+    await orderMarkAsPaid(shop, orderName);
     await addNoteToOrder(
       shop,
-      orderId,
+      orderName,
       `Client credit check current status: ${status}.`,
     );
   }

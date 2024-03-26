@@ -28,7 +28,7 @@ export async function getOrderWithDetails(orderId: string) {
 }
 
 export async function setCreditCheck(
-  orderId: string,
+  orderName: string,
   confirmCreditStatus: string,
   applicationNumber: string,
 ) {
@@ -36,7 +36,7 @@ export async function setCreditCheck(
     confirmCreditStatus,
     applicationNumber,
   };
-  const order = await db.orders.findFirst({ where: { orderId } });
+  const order = await db.orders.findFirst({ where: { orderName } });
   const id = order?.id;
   await db.orders.update({ where: { id }, data });
   return;
