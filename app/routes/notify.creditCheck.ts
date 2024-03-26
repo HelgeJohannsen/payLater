@@ -19,14 +19,23 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       },
     );
   }
-  await setCreditCheck(orderName, status, applicationNumber);
+  const updatedOrder = await setCreditCheck(
+    orderName,
+    status,
+    applicationNumber,
+  );
+  if (updatedOrder === null) {
+    throw new Response("update Order failed", {
+      status: 400,
+    });
+  }
 
   const shop = process.env.SHOPIFY_SHOP;
   if (shop) {
-    await orderMarkAsPaid(shop, orderName);
+    await orderMarkAsPaid(shop, updatedOrder.id.toString());
     await addNoteToOrder(
       shop,
-      orderName,
+      updatedOrder.id.toString(),
       `Client credit check current status: ${status}.`,
     );
   }

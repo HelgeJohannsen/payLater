@@ -38,8 +38,8 @@ export async function setCreditCheck(
   };
   const order = await db.orders.findFirst({ where: { orderName } });
   const id = order?.id;
-  await db.orders.update({ where: { id }, data });
-  return;
+  const updatedOrder = await db.orders.update({ where: { id }, data });
+  return updatedOrder;
 }
 
 export async function createOrderWithCustomerDetails({
