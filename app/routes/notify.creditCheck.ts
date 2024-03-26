@@ -32,10 +32,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const shop = process.env.SHOPIFY_SHOP;
   if (shop) {
-    await orderMarkAsPaid(shop, updatedOrder.id.toString());
+    await orderMarkAsPaid(shop, updatedOrder.orderId);
     await addNoteToOrder(
       shop,
-      updatedOrder.id.toString(),
+      updatedOrder.orderId,
       `Client credit check current status: ${status}.`,
     );
   }

@@ -15,7 +15,6 @@ export async function addNoteToOrder(
   orderId: string,
   newNote: string,
 ) {
-  console.log("shop, orderId, newNote", shop, orderId, newNote);
   const graphQlClient = await getGraphqlClient(shop);
 
   const fetchResult = await graphQlClient.request(
@@ -35,9 +34,6 @@ export async function addNoteToOrder(
   const {
     data: { order },
   } = fetchResult as unknown as OrderData;
-
-  console.log("fetchResult", fetchResult);
-  console.log("order ", order);
 
   await graphQlClient.request(
     `mutation orderUpdate($input: OrderInput!) {
