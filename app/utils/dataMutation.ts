@@ -60,9 +60,7 @@ function createNoteMessage(
 
 function appendUniqueNote(existingNotes: string, newNote: string): string {
   if (!existingNotes) return newNote;
-  if (!existingNotes.includes(newNote)) {
-    return `${existingNotes}\n${newNote}`;
-  }
+  if (!existingNotes.includes(newNote)) return `${existingNotes}\n${newNote}`;
   return existingNotes;
 }
 
